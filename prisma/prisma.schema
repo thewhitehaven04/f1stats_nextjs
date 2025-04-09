@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model compounds {
+  id   String @id @db.VarChar(16)
+  laps laps[]
+}
+
+model drivers {
+  id              String            @id @db.VarChar(64)
+  country_alpha3  String?           @db.VarChar(3)
+  abbreviation    String?           @db.VarChar(3)
+  first_name      String?
+  last_name       String?
+  laps            laps[]
+  session_results session_results[]
+}
+
+model event_formats {
+  event_format_name String   @id @db.VarChar(32)
+  events            events[]
+}
+
+model event_sessions {
+  event_name      String
+  season_year     Int           @db.SmallInt
+  session_type_id String        @db.VarChar(32)
+  start_time      DateTime?     @db.Timestamp(6)
+  end_time        DateTime?     @db.Timestamp(6)
+  events          events        @relation(fields: [event_name, season_year], references: [event_name, season_year], onUpdate: NoAction, map: "fk_event_name_season_year")
+  session_types   session_types @relation(fields: [session_type_id], references: [id], onUpdate: NoAction, map: "fk_session_type_id")
+
+  @@id([event_name, season_year, session_type_id])
+}
+
+model events {
+  event_name          String
+  event_official_name String?
+  date_start          DateTime?         @db.Date
+  country             String?
+  season_year         Int               @db.SmallInt
+  event_format_name   String?           @db.VarChar(32)
+  event_sessions      event_sessions[]
+  event_formats       event_formats?    @relation(fields: [event_format_name], references: [event_format_name], onDelete: Restrict, onUpdate: NoAction, map: "fk_event_format_name")
+  seasons             seasons           @relation(fields: [season_year], references: [season_year], onUpdate: NoAction, map: "fk_season_year")
+  laps                laps[]
+  session_results     session_results[]
+
+  @@id([event_name, season_year])
+}
+
+model laps {
+  id              BigInt         @id @default(autoincrement())
+  lap_number      Int?           @db.SmallInt
+  sector_1_time   Float?         @db.Real
+  sector_2_time   Float?         @db.Real
+  sector_3_time   Float?         @db.Real
+  speedtrap_1     Int?           @db.SmallInt
+  speedtrap_2     Int?           @db.SmallInt
+  speedtrap_fl    Int?           @db.SmallInt
+  stint           Int?           @db.SmallInt
+  event_name      String?
+  compound_id     String?        @db.VarChar(16)
+  driver_id       String?        @db.VarChar(64)
+  session_type_id String?        @db.VarChar(32)
+  season_year     Int?           @db.SmallInt
+  compounds       compounds?     @relation(fields: [compound_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_compound_id")
+  drivers         drivers?       @relation(fields: [driver_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_driver_id")
+  events          events?        @relation(fields: [event_name, season_year], references: [event_name, season_year], onDelete: Restrict, onUpdate: NoAction, map: "fk_event_name_season_year")
+  session_types   session_types? @relation(fields: [session_type_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_session_type_id")
+}
+
+model practice_session_results {
+  id              Int             @id @default(autoincrement())
+  laptime         Float?          @db.Real
+  gap             Float?          @db.Real
+  session_results session_results @relation(fields: [id], references: [id], onUpdate: NoAction, map: "fk_session_result_id")
+}
+
+model qualifying_session_results {
+  id              Int             @id @default(autoincrement())
+  q1_laptime      Float?          @db.Real
+  q2_laptime      Float?          @db.Real
+  q3_laptime      Float?          @db.Real
+  position        Int?            @db.SmallInt
+  session_results session_results @relation(fields: [id], references: [id], onUpdate: NoAction, map: "fk_session_result_id")
+}
+
+model race_session_results {
+  id                  Int             @id @default(autoincrement())
+  total_time          Float?          @db.Real
+  result_status       String?
+  classified_position String?
+  points              Int?            @db.SmallInt
+  gap                 Float?          @db.Real
+  session_results     session_results @relation(fields: [id], references: [id], onUpdate: NoAction, map: "fk_session_result_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model seasons {
+  season_year        Int                  @id @db.SmallInt
+  description_text   String?
+  events             events[]
+  team_season_colors team_season_colors[]
+}
+
+model session_results {
+  id                         Int                         @id @default(autoincrement())
+  event_name                 String?
+  season_year                Int?                        @db.SmallInt
+  session_type_id            String?                     @db.VarChar(32)
+  driver_id                  String?                     @db.VarChar(64)
+  practice_session_results   practice_session_results?
+  qualifying_session_results qualifying_session_results?
+  race_session_results       race_session_results?
+  drivers                    drivers?                    @relation(fields: [driver_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_driver_id")
+  events                     events?                     @relation(fields: [event_name, season_year], references: [event_name, season_year], onDelete: Restrict, onUpdate: NoAction, map: "fk_event_name_season_year")
+  session_types              session_types?              @relation(fields: [session_type_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_session_type_id")
+}
+
+model session_types {
+  id              String            @id @db.VarChar(32)
+  event_sessions  event_sessions[]
+  laps            laps[]
+  session_results session_results[]
+}
+
+model team_season_colors {
+  team_id     Int     @db.SmallInt
+  season_year Int     @db.SmallInt
+  color       String? @db.Char(7)
+  seasons     seasons @relation(fields: [season_year], references: [season_year], onUpdate: NoAction, map: "fk_seasons_season_year")
+  teams       teams   @relation(fields: [team_id], references: [id], onUpdate: NoAction, map: "fk_teams_id")
+
+  @@id([team_id, season_year])
+}
+
+model teams {
+  id                 Int                  @id @default(autoincrement()) @db.SmallInt
+  team_display_name  String?              @unique @db.VarChar(64)
+  team_season_colors team_season_colors[]
+}
