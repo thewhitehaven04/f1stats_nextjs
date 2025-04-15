@@ -9,13 +9,17 @@
     },
     "javascript": {
         "formatter": {
-            "semicolons": "asNeeded" 
+            "semicolons": "asNeeded",
+            "arrowParentheses": "asNeeded"
         }
     },
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true
+            "recommended": true,
+            "complexity": {
+                "noForEach": "off"
+            }
         }
     }
 }
