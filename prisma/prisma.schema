@@ -28,13 +28,14 @@ model event_formats {
 }
 
 model event_sessions {
-  event_name      String
-  season_year     Int           @db.SmallInt
-  session_type_id String        @db.VarChar(32)
-  start_time      DateTime?     @db.Timestamp(6)
-  end_time        DateTime?     @db.Timestamp(6)
-  events          events        @relation(fields: [event_name, season_year], references: [event_name, season_year], onUpdate: NoAction, map: "fk_event_name_season_year")
-  session_types   session_types @relation(fields: [session_type_id], references: [id], onUpdate: NoAction, map: "fk_session_type_id")
+  event_name                   String
+  season_year                  Int                            @db.SmallInt
+  session_type_id              String                         @db.VarChar(32)
+  start_time                   DateTime?                      @db.Timestamp(6)
+  end_time                     DateTime?                      @db.Timestamp(6)
+  events                       events                         @relation(fields: [event_name, season_year], references: [event_name, season_year], onUpdate: NoAction, map: "fk_event_name_season_year")
+  session_types                session_types                  @relation(fields: [session_type_id], references: [id], onUpdate: NoAction, map: "fk_session_type_id")
+  session_weather_measurements session_weather_measurements[]
 
   @@id([event_name, season_year, session_type_id])
 }
@@ -56,24 +57,25 @@ model events {
 }
 
 model laps {
-  id              BigInt         @id @default(autoincrement())
-  lap_number      Int?           @db.SmallInt
-  sector_1_time   Float?         @db.Real
-  sector_2_time   Float?         @db.Real
-  sector_3_time   Float?         @db.Real
-  speedtrap_1     Int?           @db.SmallInt
-  speedtrap_2     Int?           @db.SmallInt
-  speedtrap_fl    Int?           @db.SmallInt
-  stint           Int?           @db.SmallInt
-  event_name      String?
-  compound_id     String?        @db.VarChar(16)
-  driver_id       String?        @db.VarChar(64)
-  session_type_id String?        @db.VarChar(32)
-  season_year     Int?           @db.SmallInt
-  compounds       compounds?     @relation(fields: [compound_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_compound_id")
-  drivers         drivers?       @relation(fields: [driver_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_driver_id")
-  events          events?        @relation(fields: [event_name, season_year], references: [event_name, season_year], onDelete: Restrict, onUpdate: NoAction, map: "fk_event_name_season_year")
-  session_types   session_types? @relation(fields: [session_type_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_session_type_id")
+  id                     BigInt                   @id @default(autoincrement())
+  lap_number             Int?                     @db.SmallInt
+  sector_1_time          Float?                   @db.Real
+  sector_2_time          Float?                   @db.Real
+  sector_3_time          Float?                   @db.Real
+  speedtrap_1            Int?                     @db.SmallInt
+  speedtrap_2            Int?                     @db.SmallInt
+  speedtrap_fl           Int?                     @db.SmallInt
+  stint                  Int?                     @db.SmallInt
+  event_name             String?
+  compound_id            String?                  @db.VarChar(16)
+  driver_id              String?                  @db.VarChar(64)
+  session_type_id        String?                  @db.VarChar(32)
+  season_year            Int?                     @db.SmallInt
+  compounds              compounds?               @relation(fields: [compound_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_compound_id")
+  drivers                drivers?                 @relation(fields: [driver_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_driver_id")
+  events                 events?                  @relation(fields: [event_name, season_year], references: [event_name, season_year], onDelete: Restrict, onUpdate: NoAction, map: "fk_event_name_season_year")
+  session_types          session_types?           @relation(fields: [session_type_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "fk_session_type_id")
+  telemetry_measurements telemetry_measurements[]
 }
 
 model practice_session_results {
@@ -131,6 +133,20 @@ model session_types {
   session_results session_results[]
 }
 
+model session_weather_measurements {
+  event_name      String
+  season_year     Int            @db.SmallInt
+  session_type_id String         @db.VarChar(32)
+  time_at         Float          @db.Real
+  humidity        Int?           @db.SmallInt
+  air_pressure    Int?           @db.SmallInt
+  track_temp      Int?           @db.SmallInt
+  air_temp        Int?           @db.SmallInt
+  event_sessions  event_sessions @relation(fields: [event_name, season_year, session_type_id], references: [event_name, season_year, session_type_id], onUpdate: NoAction, map: "fk_event_name_season_year_session_type_id_event_sessions")
+
+  @@id([time_at, event_name, season_year, session_type_id])
+}
+
 model team_season_colors {
   team_id     Int     @db.SmallInt
   season_year Int     @db.SmallInt
@@ -145,4 +161,18 @@ model teams {
   id                 Int                  @id @default(autoincrement()) @db.SmallInt
   team_display_name  String?              @unique @db.VarChar(64)
   team_season_colors team_season_colors[]
+}
+
+model telemetry_measurements {
+  lap_id     BigInt
+  laptime_at Float  @db.Real
+  speed      Float? @db.Real
+  rpm        Int?   @db.SmallInt
+  brake      Int?   @db.SmallInt
+  throttle   Int?   @db.SmallInt
+  distance   Float? @db.Real
+  gear       Int?   @db.SmallInt
+  laps       laps   @relation(fields: [lap_id], references: [id], onUpdate: NoAction, map: "fk_lap_id")
+
+  @@id([lap_id, laptime_at])
 }

@@ -14,7 +14,7 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body>
-                <div className="flex flex-col gap-8 items-center overflow-y-scroll min-h-full">
+                <div className="flex flex-col gap-8 items-center overflow-y-scroll min-h-screen">
                     <Providers>{children}</Providers>
                 </div>
             </body>
