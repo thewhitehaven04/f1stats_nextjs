@@ -7,7 +7,7 @@ import { useParams } from "next/navigation"
 import type { TEventWithSessions } from "../page"
 
 export const EventCard = (props: TEventWithSessions & { roundNumber: number }) => {
-    const { event_format_name, event_name, event_sessions, country, date_start, roundNumber } =
+    const { event_format_name, event_name, event_sessions, country, date_start } =
         props
     const { season } = useParams<{ season: string }>()
     return (
@@ -22,7 +22,7 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                         <h1 className="text-lg">{event_name}</h1>
                     </div>
                     <span className="text-neutral-500 font-medium">
-                        {date_start ? format(new Date(), "MMMM dd, yyyy") : <NaLabel />}
+                        {date_start ? format(date_start, "MMMM dd, yyyy") : <NaLabel />}
                     </span>
                 </div>
                 {event_format_name === "conventional" ? (

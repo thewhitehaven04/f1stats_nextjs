@@ -2,6 +2,7 @@ import type { SessionIdentifier } from "@/client/generated"
 import { Suspense } from "react"
 import { SessionSummaryCard } from "./components/SummaryCard"
 import { SectionLoadingSpinner } from "@/components/SectionLoadingSpinner"
+import { ResultsSection } from './components/ResultsSection'
 
 export default async function Page({
     params,
@@ -18,13 +19,13 @@ export default async function Page({
                     session={session as SessionIdentifier}
                 />
             </Suspense>
-            {/* <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<SectionLoadingSpinner />}>
                 <ResultsSection
                     season={season}
-                    round={event}
+                    event={event}
                     session={session as SessionIdentifier}
                 />
-            </Suspense> */}
+            </Suspense>
         </>
     )
 }

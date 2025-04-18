@@ -1,57 +1,28 @@
 "use client"
 
 import {
-    createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
-    type ColumnDef,
     type RowData,
 } from "@tanstack/react-table"
-import { useMemo } from "react"
-import type { IBaseResultsData } from "../types"
+import type { ESessionType, IBaseResultsData } from "../types"
 import { TableCell } from "@/components/Table/Cell"
 import { TableHeader } from "@/components/Table/Header"
 import { TableHeaderCell } from "@/components/Table/Header/cell"
 import { TableWrapper } from "@/components/Table/Wrapper"
-
-const baseColumnHelper = createColumnHelper<IBaseResultsData>()
-
-const baseColumns = [
-    baseColumnHelper.display({
-        id: "selector",
-        cell: ({ row }) => (
-            <div className="flex flex-row items-center py-1 justify-center">
-                <input
-                    className="checkbox"
-                    type="checkbox"
-                    name="driver"
-                    value={row.getValue("driverNumber")}
-                    checked={row.getIsSelected()}
-                    onChange={row.getToggleSelectedHandler()}
-                />
-            </div>
-        ),
-    }),
-    baseColumnHelper.display({
-        id: "position",
-        header: () => "Pos",
-        cell: ({ row }) => row.index + 1,
-    }),
-]
+import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from '../constants'
 
 export interface IResultsTableProps<T extends RowData> {
-    columns: ColumnDef<T>[]
     rows: T[]
 }
 
-export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTableProps<T>) => {
-    const { rows, columns } = props
-    const mergedColumns = useMemo(() => [...baseColumns, ...columns], [columns]) as ColumnDef<T>[]
+export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTableProps<T> & { sessionType: ESessionType }) => {
+    const { rows, sessionType } = props
 
     const { getRowModel, getFlatHeaders, getIsSomeRowsSelected } = useReactTable<T>({
         data: rows,
-        columns: mergedColumns,
+        columns: SESSION_TYPE_TO_RESULT_COLUMN_MAP[sessionType],
         getRowId: (row) => row.driverNumber,
         getCoreRowModel: getCoreRowModel(),
     })
