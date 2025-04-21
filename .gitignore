@@ -36,3 +36,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .qodo
+
+api/.venv
+api/.READ
+api/.python-version
+api/pyproject.toml
+api/uv.lock
+api/.vscode
+api/**/__pycache__
