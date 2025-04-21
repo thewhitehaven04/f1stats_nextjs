@@ -126,6 +126,7 @@ model race_session_results {
   classified_position String?
   points              Int?            @db.SmallInt
   gap                 Float?          @db.Real
+  grid_position       Int?            @default(0) @db.SmallInt
   session_results     session_results @relation(fields: [id], references: [id], onUpdate: NoAction, map: "fk_session_result_id")
 }
 
