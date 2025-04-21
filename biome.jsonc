@@ -9,8 +9,7 @@
     },
     "javascript": {
         "formatter": {
-            "semicolons": "asNeeded",
-            "arrowParentheses": "asNeeded"
+            "semicolons": "asNeeded"
         }
     },
     "linter": {
