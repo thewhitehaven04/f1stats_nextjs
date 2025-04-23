@@ -1,3 +1,4 @@
+'use client'
 import type { RowData, Table } from "@tanstack/react-table"
 import { createContext, useContext } from "react"
 

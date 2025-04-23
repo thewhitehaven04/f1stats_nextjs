@@ -1,5 +1,6 @@
-import { PopupCard } from '@/components/PopupCard'
-import { useTableContext } from '@/components/Table/context'
+"use client"
+import { PopupCard } from "@/components/PopupCard"
+import { useTableContext } from "@/components/Table/context"
 import type { RowData } from "@tanstack/react-table"
 import { useState } from "react"
 
