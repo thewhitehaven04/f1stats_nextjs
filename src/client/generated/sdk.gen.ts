@@ -2,61 +2,19 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "@hey-api/client-fetch"
 import type {
-    GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostData,
-    GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostResponse,
-    GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostError,
-    GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostData,
-    GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostResponse,
-    GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostError,
-    GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetData,
-    GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetResponse,
-    GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetError,
-    GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostData,
-    GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostResponse,
-    GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostError,
-    GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostData,
-    GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostResponse,
-    GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostError,
-    GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostData,
-    GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostResponse,
-    GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostError,
-    GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetData,
-    GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetResponse,
-    GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetError,
-    GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostData,
-    GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostResponse,
-    GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostError,
-    GetPracticeResultsSessionResultsPracticeGetData,
-    GetPracticeResultsSessionResultsPracticeGetResponse,
-    GetPracticeResultsSessionResultsPracticeGetError,
-    GetRacelikeResultsSessionResultsRacelikeGetData,
-    GetRacelikeResultsSessionResultsRacelikeGetResponse,
-    GetRacelikeResultsSessionResultsRacelikeGetError,
-    GetQualifyingResultsSessionResultsQualilikeGetData,
-    GetQualifyingResultsSessionResultsQualilikeGetResponse,
-    GetQualifyingResultsSessionResultsQualilikeGetError,
-    GetTestingResultsSessionResultsTestingGetData,
-    GetTestingResultsSessionResultsTestingGetResponse,
-    GetTestingResultsSessionResultsTestingGetError,
-    YearEventsSeasonYearGetData,
-    YearEventsSeasonYearGetResponse,
-    YearEventsSeasonYearGetError,
-    YearTelemetryEventsSeasonYearTelemetryGetData,
-    YearTelemetryEventsSeasonYearTelemetryGetResponse,
-    YearTelemetryEventsSeasonYearTelemetryGetError,
-    GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetData,
-    GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetResponse,
-    GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetError,
-    GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetData,
-    GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetResponse,
-    GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetError,
+    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetData,
+    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponse,
+    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetError,
+    GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostData,
+    GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponse,
+    GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
-export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = ClientOptions<
-    TData,
-    ThrowOnError
-> & {
+export type Options<
+    TData extends TDataShape = TDataShape,
+    ThrowOnError extends boolean = boolean,
+> = ClientOptions<TData, ThrowOnError> & {
     /**
      * You can provide a client instance returned by `createClient()` instead of
      * individual options. This might be also useful if you want to implement a
@@ -72,318 +30,62 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 
 /**
  * Get Session Laptimes
- * Retrieve laptime data for given session
+ * Retrieve lap times for a specific Formula 1 session.
+ *
+ * Args:
+ * year (str): The year of the Formula 1 season.
+ * event (str): The specific event or round number.
+ * session (SessionIdentifier): The type of session (e.g., Practice 1, Sprint Qualifying, Race).
+ *
+ * Returns:
+ * Lap times for the specified session.
  */
-export const getSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPost = <
+export const getSessionLaptimesSeasonYearEventEventSessionSessionLapsGet = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostData, ThrowOnError>,
+    options: Options<GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetData, ThrowOnError>,
 ) => {
-    return (options.client ?? _heyApiClient).post<
-        GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostResponse,
-        GetSessionLaptimesSeasonYearRoundRoundNumberSessionSessionIdentifierLapsPostError,
+    return (options.client ?? _heyApiClient).get<
+        GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponse,
+        GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetError,
         ThrowOnError
     >({
-        url: "/season/{year}/round/{round_number}/session/{session_identifier}/laps",
+        url: "/season/{year}/event/{event}/session/{session}/laps",
         ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        },
     })
 }
 
 /**
- * Get Session Telemetry
+ * Get Session Laptimes Filtered
+ * Retrieve filtered lap times for a specific Formula 1 session.
+ *
+ * Args:
+ * year (str): The year of the Formula 1 season.
+ * event (str): The specific event or round number.
+ * session (SessionIdentifier): The type of session (e.g., Practice 1, Sprint Qualifying, Race).
+ * body (SessionQueryFilter): Filtering criteria for lap time selection.
+ *
+ * Returns:
+ * Filtered lap times for the specified session.
  */
-export const getSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPost = <
+export const getSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostData,
+        GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? _heyApiClient).post<
-        GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostResponse,
-        GetSessionTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierTelemetryComparisonPostError,
+        GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponse,
+        GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostError,
         ThrowOnError
     >({
-        url: "/season/{year}/round/{round_number}/session/{session_identifier}/telemetry/comparison",
+        url: "/season/{year}/event/{event}/session/{session}/laps",
         ...options,
         headers: {
             "Content-Type": "application/json",
             ...options?.headers,
         },
-    })
-}
-
-/**
- * Get Session Lap Driver Telemetry
- */
-export const getSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGet =
-    <ThrowOnError extends boolean = false>(
-        options: Options<
-            GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetData,
-            ThrowOnError
-        >,
-    ) => {
-        return (options.client ?? _heyApiClient).get<
-            GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetResponse,
-            GetSessionLapDriverTelemetrySeasonYearRoundRoundNumberSessionSessionIdentifierLapLapDriverDriverTelemetryGetError,
-            ThrowOnError
-        >({
-            url: "/season/{year}/round/{round_number}/session/{session_identifier}/lap/{lap}/driver/{driver}/telemetry",
-            ...options,
-        })
-    }
-
-/**
- * Get Session Lap Telemetries
- */
-export const getSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPost = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<
-        GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostData,
-        ThrowOnError
-    >,
-) => {
-    return (options.client ?? _heyApiClient).post<
-        GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostResponse,
-        GetSessionLapTelemetriesSeasonYearRoundRoundNumberSessionSessionIdentifierTelemetriesPostError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/round/{round_number}/session/{session_identifier}/telemetries",
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        },
-    })
-}
-
-/**
- * Get Testing Session Laptimes
- * Retrieve laptime data for given session
- */
-export const getTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPost = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).post<
-        GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostResponse,
-        GetTestingSessionLaptimesSeasonYearTestingRoundRoundNumberDayDayLapsPostError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/testing_round/{round_number}/day/{day}/laps",
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        },
-    })
-}
-
-/**
- * Get Testing Session Telemetry
- */
-export const getTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPost = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<
-        GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostData,
-        ThrowOnError
-    >,
-) => {
-    return (options.client ?? _heyApiClient).post<
-        GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostResponse,
-        GetTestingSessionTelemetrySeasonYearTestingRoundRoundNumberDayDayTelemetryComparisonPostError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/testing_round/{round_number}/day/{day}/telemetry/comparison",
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        },
-    })
-}
-
-/**
- * Get Testing Session Lap Driver Telemetry
- */
-export const getTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGet =
-    <ThrowOnError extends boolean = false>(
-        options: Options<
-            GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetData,
-            ThrowOnError
-        >,
-    ) => {
-        return (options.client ?? _heyApiClient).get<
-            GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetResponse,
-            GetTestingSessionLapDriverTelemetrySeasonYearTestingRoundRoundNumberDayDayLapLapDriverDriverTelemetryGetError,
-            ThrowOnError
-        >({
-            url: "/season/{year}/testing_round/{round_number}/day/{day}/lap/{lap}/driver/{driver}/telemetry",
-            ...options,
-        })
-    }
-
-/**
- * Get Testing Session Lap Telemetries
- */
-export const getTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPost = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<
-        GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostData,
-        ThrowOnError
-    >,
-) => {
-    return (options.client ?? _heyApiClient).post<
-        GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostResponse,
-        GetTestingSessionLapTelemetriesSeasonYearTestingRoundRoundNumberDayDayTelemetriesPostError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/testing_round/{round_number}/day/{day}/telemetries",
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        },
-    })
-}
-
-/**
- * Get Practice Results
- */
-export const getPracticeResultsSessionResultsPracticeGet = <ThrowOnError extends boolean = false>(
-    options: Options<GetPracticeResultsSessionResultsPracticeGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetPracticeResultsSessionResultsPracticeGetResponse,
-        GetPracticeResultsSessionResultsPracticeGetError,
-        ThrowOnError
-    >({
-        url: "/session/results/practice",
-        ...options,
-    })
-}
-
-/**
- * Get Racelike Results
- */
-export const getRacelikeResultsSessionResultsRacelikeGet = <ThrowOnError extends boolean = false>(
-    options: Options<GetRacelikeResultsSessionResultsRacelikeGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetRacelikeResultsSessionResultsRacelikeGetResponse,
-        GetRacelikeResultsSessionResultsRacelikeGetError,
-        ThrowOnError
-    >({
-        url: "/session/results/racelike",
-        ...options,
-    })
-}
-
-/**
- * Get Qualifying Results
- */
-export const getQualifyingResultsSessionResultsQualilikeGet = <ThrowOnError extends boolean = false>(
-    options: Options<GetQualifyingResultsSessionResultsQualilikeGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetQualifyingResultsSessionResultsQualilikeGetResponse,
-        GetQualifyingResultsSessionResultsQualilikeGetError,
-        ThrowOnError
-    >({
-        url: "/session/results/qualilike",
-        ...options,
-    })
-}
-
-/**
- * Get Testing Results
- */
-export const getTestingResultsSessionResultsTestingGet = <ThrowOnError extends boolean = false>(
-    options: Options<GetTestingResultsSessionResultsTestingGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetTestingResultsSessionResultsTestingGetResponse,
-        GetTestingResultsSessionResultsTestingGetError,
-        ThrowOnError
-    >({
-        url: "/session/results/testing",
-        ...options,
-    })
-}
-
-/**
- * Year Events
- */
-export const yearEventsSeasonYearGet = <ThrowOnError extends boolean = false>(
-    options: Options<YearEventsSeasonYearGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        YearEventsSeasonYearGetResponse,
-        YearEventsSeasonYearGetError,
-        ThrowOnError
-    >({
-        url: "/season/{year}",
-        ...options,
-    })
-}
-
-/**
- * Year Telemetry Events
- */
-export const yearTelemetryEventsSeasonYearTelemetryGet = <ThrowOnError extends boolean = false>(
-    options: Options<YearTelemetryEventsSeasonYearTelemetryGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        YearTelemetryEventsSeasonYearTelemetryGetResponse,
-        YearTelemetryEventsSeasonYearTelemetryGetError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/telemetry",
-        ...options,
-    })
-}
-
-/**
- * Get Session Summary
- */
-export const getSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGet = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetResponse,
-        GetSessionSummarySeasonYearRoundRoundNumberSessionSessionIdentifierSummaryGetError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/round/{round_number}/session/{session_identifier}/summary",
-        ...options,
-    })
-}
-
-/**
- * Get Testing Session Summary
- */
-export const getTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGet = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetResponse,
-        GetTestingSessionSummarySeasonYearRoundTestingRoundDayDaySummaryGetError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/round/{testing_round}/day/{day}/summary",
-        ...options,
     })
 }
