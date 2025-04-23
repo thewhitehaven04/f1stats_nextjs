@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const SEGMENTS = [
@@ -16,12 +17,14 @@ export const Breadcrumbs = () => {
                 {SEGMENTS.map((segment, index) => {
                     if (segment.test(pathname)) {
                         const match = pathname.match(segment)
-                        const segments = match.toString().split("/")
+                        const segments = match?.toString().split("/") || []
                         return (
                             <li key={index}>
-                                <a href={match}>
-                                    {decodeURIComponent(segments[segments.length - 1])}
-                                </a>
+                                {match ? (
+                                    <Link href={match.toString()}>
+                                        {decodeURIComponent(segments[segments.length - 1])}
+                                    </Link>
+                                ) : null}
                             </li>
                         )
                     }

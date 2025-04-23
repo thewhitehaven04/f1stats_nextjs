@@ -6,114 +6,113 @@ import { NaLabel } from "@/components/ValueOrNa"
 import { useParams } from "next/navigation"
 import type { TEventWithSessions } from "../page"
 
-export const EventCard = (props: TEventWithSessions & { roundNumber: number }) => {
-    const { event_format_name, event_name, event_sessions, country, date_start } =
-        props
+export const EventCard = (props: TEventWithSessions) => {
+    const { country, dateStart, name, officialName, sessions, format: eventFormat } = props
     const { season } = useParams<{ season: string }>()
     return (
         <article
-            key={event_name}
+            key={name}
             className="card bg-base-100 border-2 border-neutral-100 border-solid card-compact shadow-md"
         >
             <div className="card-body p-3">
                 <div className="flex flex-col gap-0">
                     <div className="flex flex-row gap-2 card-title items-center">
                         <span className="text-2xl">{country && getUnicodeFlagIcon(country)}</span>
-                        <h1 className="text-lg">{event_name}</h1>
+                        <h1 className="text-lg">{name}</h1>
                     </div>
                     <span className="text-neutral-500 font-medium">
-                        {date_start ? format(date_start, "MMMM dd, yyyy") : <NaLabel />}
+                        {dateStart ? format(dateStart, "MMMM dd, yyyy") : <NaLabel />}
                     </span>
                 </div>
-                {event_format_name === "conventional" ? (
+                {eventFormat === "conventional" ? (
                     <div className="flex flex-row gap-0 justify-start">
                         <ul className="menu menu-vertical p-0">
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[0].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[0].type}/results`}
                                 >
-                                    {event_sessions[0].session_type_id}
+                                    {sessions[0].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[1].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[1].type}/results`}
                                 >
-                                    {event_sessions[1].session_type_id}
+                                    {sessions[1].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[2].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[2].type}/results`}
                                 >
-                                    {event_sessions[2].session_type_id}
+                                    {sessions[2].type}
                                 </Link>
                             </li>
                         </ul>
                         <ul className="menu menu-vertical p-0">
-                            {event_sessions[3] && (
+                            {sessions[3] && (
                                 <li>
                                     <Link
                                         className="link-hover"
-                                        href={`${season}/event/${event_name}/session/${event_sessions[3].session_type_id}`}
+                                        href={`${season}/event/${name}/session/${sessions[3].type}/results`}
                                     >
-                                        {event_sessions[3].session_type_id}
+                                        {sessions[3].type}
                                     </Link>
                                 </li>
                             )}
-                            {event_sessions[4] && (
+                            {sessions[4] && (
                                 <li>
                                     <Link
                                         className="link-hover"
-                                        href={`${season}/event/${event_name}/session/${event_sessions[4].session_type_id}`}
+                                        href={`${season}/event/${name}/session/${sessions[4].type}/results`}
                                     >
-                                        {event_sessions[4].session_type_id}
+                                        {sessions[4].type}
                                     </Link>
                                 </li>
                             )}
                         </ul>
                     </div>
-                ) : event_format_name === "testing" ? (
+                ) : eventFormat === "testing" ? (
                     <div className="flex flex-row gap-0 justify-start">
                         <ul className="menu menu-vertical p-0">
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[0].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[0].type}/results`}
                                 >
-                                    {event_sessions[0].session_type_id}
+                                    {sessions[0].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[1].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[1].type}/results`}
                                 >
-                                    {event_sessions[1].session_type_id}
+                                    {sessions[1].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[2].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[2].type}/results`}
                                 >
-                                    {event_sessions[2].session_type_id}
+                                    {sessions[2].type}
                                 </Link>
                             </li>
                         </ul>
                     </div>
-                ) : event_format_name === "sprint_shootout" ? (
+                ) : eventFormat === "sprint_shootout" ? (
                     <div className="flex flex-row gap-0">
                         <ul className="menu menu-vertical p-0">
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[0].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[0].type}/results`}
                                 >
-                                    {event_sessions[0].session_type_id}
+                                    {sessions[0].type}
                                 </Link>
                             </li>
                         </ul>
@@ -121,17 +120,17 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[2].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[2].type}/results`}
                                 >
-                                    {event_sessions[2].session_type_id}
+                                    {sessions[2].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[3].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[3].type}/results`}
                                 >
-                                    {event_sessions[3].session_type_id}
+                                    {sessions[3].type}
                                 </Link>
                             </li>
                         </ul>
@@ -139,30 +138,30 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[1].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[1].type}/results`}
                                 >
-                                    {event_sessions[1].session_type_id}
+                                    {sessions[1].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[4].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[4].type}/results`}
                                 >
-                                    {event_sessions[4].session_type_id}
+                                    {sessions[4].type}
                                 </Link>
                             </li>
                         </ul>
                     </div>
-                ) : event_format_name === "sprint_qualifying" ? (
+                ) : eventFormat === "sprint_qualifying" ? (
                     <div className="flex flex-row gap-0">
                         <ul className="menu menu-vertical p-0">
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[0].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[0].type}/results`}
                                 >
-                                    {event_sessions[0].session_type_id}
+                                    {sessions[0].type}
                                 </Link>
                             </li>
                         </ul>
@@ -170,17 +169,17 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[1].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[1].type}/results`}
                                 >
-                                    {event_sessions[1].session_type_id}
+                                    {sessions[1].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[2].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[2].type}/results`}
                                 >
-                                    {event_sessions[2].session_type_id}
+                                    {sessions[2].type}
                                 </Link>
                             </li>
                         </ul>
@@ -188,56 +187,38 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[3].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[3].type}/results`}
                                 >
-                                    {event_sessions[3].session_type_id}
+                                    {sessions[3].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[4].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[4].type}/results`}
                                 >
-                                    {event_sessions[4].session_type_id}
+                                    {sessions[4].type}
                                 </Link>
                             </li>
                         </ul>
                     </div>
-                ) : event_format_name === "sprint" ? (
+                ) : eventFormat === "sprint" ? (
                     <div className="flex flex-row gap-0">
                         <ul className="menu menu-vertical p-0">
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[0].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[0].type}/results`}
                                 >
-                                    {event_sessions[0].session_type_id}
+                                    {sessions[0].type}
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[2].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[2].type}/results`}
                                 >
-                                    {event_sessions[2].session_type_id}
-                                </Link>
-                            </li>
-                        </ul>
-                        <ul className="menu menu-vertical p-0">
-                            <li>
-                                <Link
-                                    className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[1].session_type_id}`}
-                                >
-                                    {event_sessions[1].session_type_id}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[3].session_type_id}`}
-                                >
-                                    {event_sessions[3].session_type_id}
+                                    {sessions[2].type}
                                 </Link>
                             </li>
                         </ul>
@@ -245,9 +226,27 @@ export const EventCard = (props: TEventWithSessions & { roundNumber: number }) =
                             <li>
                                 <Link
                                     className="link-hover"
-                                    href={`${season}/event/${event_name}/session/${event_sessions[4].session_type_id}`}
+                                    href={`${season}/event/${name}/session/${sessions[1].type}/results`}
                                 >
-                                    {event_sessions[4].session_type_id}
+                                    {sessions[1].type}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    className="link-hover"
+                                    href={`${season}/event/${name}/session/${sessions[3].type}/results`}
+                                >
+                                    {sessions[3].type}
+                                </Link>
+                            </li>
+                        </ul>
+                        <ul className="menu menu-vertical p-0">
+                            <li>
+                                <Link
+                                    className="link-hover"
+                                    href={`${season}/event/${name}/session/${sessions[4].type}/results`}
+                                >
+                                    {sessions[4].type}
                                 </Link>
                             </li>
                         </ul>

@@ -6,12 +6,12 @@ import {
     useReactTable,
     type RowData,
 } from "@tanstack/react-table"
-import type { ESessionType, IBaseResultsData } from "../types"
+import type { ESessionType, IBaseResultsData } from "./types"
 import { TableCell } from "@/components/Table/Cell"
 import { TableHeader } from "@/components/Table/Header"
 import { TableHeaderCell } from "@/components/Table/Header/cell"
 import { TableWrapper } from "@/components/Table/Wrapper"
-import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from '../constants'
+import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from './constants'
 
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
@@ -23,7 +23,7 @@ export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTablePro
     const { getRowModel, getFlatHeaders, getIsSomeRowsSelected } = useReactTable<T>({
         data: rows,
         columns: SESSION_TYPE_TO_RESULT_COLUMN_MAP[sessionType],
-        getRowId: (row) => row.driverNumber,
+        getRowId: (row) => row.driver.name,
         getCoreRowModel: getCoreRowModel(),
     })
 

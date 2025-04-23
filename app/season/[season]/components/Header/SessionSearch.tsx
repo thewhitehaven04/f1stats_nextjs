@@ -1,31 +1,14 @@
 "use client"
-
-import { yearEventsSeasonYearGet, type SessionIdentifier } from "@/client/generated"
 import { PopupCard } from "@/components/PopupCard"
-import { buildNavigationRoute } from "@/core/helpers/buildNavigationRoute"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { ApiClient } from "@/client"
+import type { TEventWithSessions } from "../../page"
 
 const THROTTLE_TIMEOUT = 300
 
-export const SessionSearch = () => {
+export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
     const { season } = useParams<{ season: string }>()
-    const events = useQuery({
-        queryKey: ["events", season],
-        queryFn: async () =>
-            (
-                await yearEventsSeasonYearGet({
-                    throwOnError: true,
-                    client: ApiClient,
-                    path: {
-                        year: Number.parseInt(season),
-                    },
-                })
-            ).data,
-    }).data
 
     const [searchQuery, setSearchQuery] = useState<string>("")
     const [showResults, setShowResults] = useState(false)
@@ -38,9 +21,9 @@ export const SessionSearch = () => {
                   terms.every((term) => {
                       const lowercaseTerm = term.toLowerCase()
                       return (
-                          event.OfficialEventName.toLowerCase().includes(lowercaseTerm) ||
-                          event.EventName.toLowerCase().includes(lowercaseTerm) ||
-                          event.Country.toLowerCase().includes(lowercaseTerm)
+                          event.officialName.toLowerCase().includes(lowercaseTerm) ||
+                          event.name.toLowerCase().includes(lowercaseTerm) ||
+                          event.country.toLowerCase().includes(lowercaseTerm)
                       )
                   }),
               )
@@ -76,82 +59,56 @@ export const SessionSearch = () => {
                 >
                     <div className="flex flex-col gap-3">
                         {results.map((result) => (
-                            <div key={result.RoundNumber} className="flex flex-col gap-2">
+                            <div key={result.name} className="flex flex-col gap-2">
                                 <ul className="menu">
-                                    <li className="text-lg font-medium">{result.EventName}</li>
+                                    <li className="text-lg font-medium">{result.name}</li>
                                     <ul>
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={buildNavigationRoute(
-                                                    result.Session1 as SessionIdentifier,
-                                                    season,
-                                                    result.RoundNumber,
-                                                    result.EventFormat === "testing",
-                                                )}
+                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[0].type}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.Session1}
+                                                {result.sessions[0].type}
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={buildNavigationRoute(
-                                                    result.Session2 as SessionIdentifier,
-                                                    season,
-                                                    result.RoundNumber,
-                                                    result.EventFormat === "testing",
-                                                )}
+                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[1].type}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.Session2}
+                                                {result.sessions[1].type}
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                className="link-hover"
+                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[2].type}/results`}
+                                                onClick={onLinkClick}
+                                            >
+                                                {result.sessions[2].type}
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={buildNavigationRoute(
-                                                    result.Session3 as SessionIdentifier,
-                                                    season,
-                                                    result.RoundNumber,
-                                                    result.EventFormat === "testing",
-                                                )}
+                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[3].type}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.Session3}
+                                                {result.sessions[3].type}
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={buildNavigationRoute(
-                                                    result.Session4 as SessionIdentifier,
-                                                    season,
-                                                    result.RoundNumber,
-                                                    result.EventFormat === "testing",
-                                                )}
+                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[4].type}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.Session4}
-                                            </Link>
-                                        </li>
-
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={buildNavigationRoute(
-                                                    result.Session5 as SessionIdentifier,
-                                                    season,
-                                                    result.RoundNumber,
-                                                    result.EventFormat === "testing",
-                                                )}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.Session5}
+                                                {result.sessions[4].type}
                                             </Link>
                                         </li>
                                     </ul>

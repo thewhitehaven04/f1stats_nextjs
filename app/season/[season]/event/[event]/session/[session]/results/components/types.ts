@@ -1,6 +1,5 @@
 export interface IBaseResultsData {
-    driver: { name: string; country: string }
-    driverNumber: string
+    driver: { name: string; country: string, id: string }
     teamName: string
 }
 
@@ -16,11 +15,11 @@ export interface IQualifyingData extends IBaseResultsData {
 }
 
 export interface IRaceData extends IBaseResultsData {
-    gridPosition: number
+    gridPosition: number | null
     time: number | null
     gap: number | null
-    points: number
-    status: string
+    points: number | null
+    status: string | null
 }
 
 export enum ESessionType {
