@@ -1,12 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui";
 
 html,
 body {
-  @apply bg-white dark:bg-gray-900;
+    @apply bg-white dark:bg-gray-900;
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+    @media (prefers-color-scheme: dark) {
+        color-scheme: dark;
+    }
+}
+
+@theme {
+    --color-non-personal-best: "#F8D30B";
+    --color-best: "#AA3CDC";
+    --color-personal-best: "#4DD346";
+    --color-hard-tyre: "#fdfffe";
+    --color-medium-tyre: "#ffe826";
+    --color-soft-tyre: "#e32526";
+    --color-wet-tyre: "#0e629e";
+    --color-intermediate-tyre: "#148f37";
 }

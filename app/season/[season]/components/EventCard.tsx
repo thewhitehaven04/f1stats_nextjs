@@ -12,9 +12,9 @@ export const EventCard = (props: TEventWithSessions) => {
     return (
         <article
             key={name}
-            className="card bg-base-100 border-2 border-neutral-100 border-solid card-compact shadow-md"
+            className="card bg-base-100 card-sm shadow-md"
         >
-            <div className="card-body p-3">
+            <div className="card-body p-4">
                 <div className="flex flex-col gap-0">
                     <div className="flex flex-row gap-2 card-title items-center">
                         <span className="text-2xl">{country && getUnicodeFlagIcon(country)}</span>

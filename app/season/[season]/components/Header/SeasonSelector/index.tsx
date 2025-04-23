@@ -8,7 +8,7 @@ export const SeasonSelector = () => {
     const { season } = useParams<{ season: string }>()
     return (
         <Form action={action}>
-            <select name="year" className="select select-md w-max" defaultValue={season}>
+            <select name="year" className="select select-sm w-max" defaultValue={season}>
                 {SUPPORTED_SEASONS.map((season) => (
                     <option key={season} value={season}>
                         {season}

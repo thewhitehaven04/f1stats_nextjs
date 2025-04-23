@@ -7,7 +7,7 @@ export function Tabs<T extends string>(props: ITabsProps<T>) {
     return (
         <div
             role="tablist"
-            className="tabs tabs-bordered w-full flex flex-row justify-center"
+            className="tabs tabs-border"
             {...rest}
         >
             {tabs.map((tab) => (
@@ -15,7 +15,7 @@ export function Tabs<T extends string>(props: ITabsProps<T>) {
                     key={tab.param}
                     role="tab"
                     type="button"
-                    className={clsx("tab w-full", className, {
+                    className={clsx("tab", className, {
                         "tab-active": currentTab === tab.param,
                     })}
                     onClick={() => onTabChange(tab.param)}

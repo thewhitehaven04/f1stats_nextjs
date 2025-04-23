@@ -12,7 +12,7 @@ export const PopupCard = (
     return (
         <div
             className={clsx(
-                "card card-compact bg-base-100 border-2 border-neutral-100 border-solid shadow-xl absolute left-0 top-10 min-w-40 py-4",
+                "card card-sm bg-base-100 border-2 border-neutral-100 border-solid shadow-xl absolute left-0 top-10 min-w-40 py-4",
                 className,
             )}
             {...rest}

@@ -36,6 +36,7 @@ export default async function Page({
         body: { queries },
         throwOnError: true,
     }).then((data) => data.data)
+
     return (
         <LapsSection
             tableSlot={<LapsTableTab laps={lapSelectionData} />}

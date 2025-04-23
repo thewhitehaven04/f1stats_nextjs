@@ -1,7 +1,6 @@
+import { ToasterContext } from "@/components/Toaster/provider"
+import { Toast } from "@/components/Toaster/Toast"
 import { useContext } from "react"
-import { ToasterContext } from "~/features/toaster/provider"
-import { Toast } from "~/features/toaster/Toast"
-
 export function Toaster() {
     const { toasts, dismissToast } = useContext(ToasterContext)
 
