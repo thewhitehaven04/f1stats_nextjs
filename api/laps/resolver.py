@@ -1,6 +1,6 @@
 from fastapi import logger
 from pandas import DataFrame, NamedAgg, read_sql
-from sqlalchemy import and_, null, or_, select
+from sqlalchemy import Connection, and_, null, or_, select
 from numpy.polynomial import Polynomial
 
 from repository.repository import (
@@ -12,7 +12,6 @@ from repository.repository import (
 )
 from core.models.queries import SessionIdentifier, SessionQueryFilter
 
-from core.engine import db_connection
 from laps.models.laps import DriverLapData, LapSelectionData, StintData
 
 
@@ -128,7 +127,7 @@ def _resolve_lap_data(laps: DataFrame) -> LapSelectionData:
         lap_data.append(
             DriverLapData(
                 driver=index,
-                team=current_driver_laps['team_display_name'].iloc[0],
+                team=current_driver_laps["team_display_name"].iloc[0],
                 stints=filtered_stint_groups.to_dict(orient="records"),
                 session_data=StintData(
                     total_laps=len(current_driver_laps),
@@ -160,89 +159,109 @@ async def get_laptimes(
     year: str,
     event: str,
     session_identifier: SessionIdentifier,
+    connection: Connection,
 ):
-    with db_connection as con:
-        lap_data = read_sql(
-            con=con,
-            sql=select(Laps, Teams)
-            .where(
-                and_(
-                    Laps.season_year == year,
-                    Laps.session_type_id == session_identifier,
-                    Laps.event_name == event,
-                )
+    lap_data = read_sql(
+        con=connection,
+        sql=select(Laps, Teams)
+        .where(
+            and_(
+                Laps.season_year == year,
+                Laps.session_type_id == session_identifier,
+                Laps.event_name == event,
             )
-            .join(
-                Drivers,
-                Laps.driver_id == Drivers.id,
-            )
-            .join(
-                EventSessions,
-                and_(
-                    EventSessions.event_name == event,
-                    EventSessions.season_year == year,
-                    EventSessions.session_type_id == session_identifier,
-                ),
-            )
-            .join(
-                DriverTeamChanges,
-                and_(
-                    DriverTeamChanges.driver_id == Drivers.id,
-                    DriverTeamChanges.timestamp_start <= EventSessions.start_time,
-                    or_(
-                        DriverTeamChanges.timestamp_end >= EventSessions.start_time,
-                        DriverTeamChanges.timestamp_end.is_(null()),
-                    ),
-                ),
-            )
-            .join(
-                Teams,
-                DriverTeamChanges.team_id == Teams.id,
+        )
+        .join(
+            Drivers,
+            Laps.driver_id == Drivers.id,
+        )
+        .join(
+            EventSessions,
+            and_(
+                EventSessions.event_name == event,
+                EventSessions.season_year == year,
+                EventSessions.session_type_id == session_identifier.value,
             ),
         )
+        .join(
+            DriverTeamChanges,
+            and_(
+                DriverTeamChanges.driver_id == Drivers.id,
+                DriverTeamChanges.timestamp_start <= EventSessions.start_time,
+                or_(
+                    DriverTeamChanges.timestamp_end >= EventSessions.start_time,
+                    DriverTeamChanges.timestamp_end.is_(null()),
+                ),
+            ),
+        )
+        .join(
+            Teams,
+            DriverTeamChanges.team_id == Teams.id,
+        ),
+    )
     return _resolve_lap_data(lap_data)
 
 
 async def get_laptime_comparison(
     year: str,
     event: str,
-    session_identifier: SessionIdentifier | int,
-    filter: SessionQueryFilter,
+    session_identifier: SessionIdentifier,
+    filter_: SessionQueryFilter,
+    connection: Connection,
 ):
-    with db_connection as con:
-        lap_data = read_sql(
-            con=con,
-            sql=select(Laps, Teams)
-            .where(
-                and_(
-                    Laps.season_year == year,
-                    Laps.session_type_id == session_identifier,
-                    Laps.event_name == event,
-                )
+    lap_data = read_sql(
+        con=connection,
+        sql=select(Laps, Teams)
+        .where(
+            and_(
+                Laps.season_year == year,
+                Laps.session_type_id == session_identifier.value,
+                Laps.event_name == event,
             )
-            .join(
-                Drivers,
-                Laps.driver_id == Drivers.id,
-            )
-            .join(
-                EventSessions,
-                and_(
-                    EventSessions.event_name == event,
-                    EventSessions.season_year == year,
-                    EventSessions.session_type_id == Laps.session_type_id,
-                ),
-            )
-            .join(
-                DriverTeamChanges,
-                and_(
-                    DriverTeamChanges.driver_id == Drivers.id,
-                    DriverTeamChanges.timestamp_start <= EventSessions.start_time,
-                    DriverTeamChanges.timestamp_end >= EventSessions.start_time,
-                ),
-            )
-            .join(
-                Teams,
-                DriverTeamChanges.team_id == Teams.id,
+        )
+        .join(
+            Drivers,
+            Laps.driver_id == Drivers.id,
+        )
+        .join(
+            EventSessions,
+            and_(
+                EventSessions.event_name == Laps.event_name,
+                EventSessions.season_year == Laps.season_year,
+                EventSessions.session_type_id == Laps.session_type_id,
             ),
         )
+        .join(
+            DriverTeamChanges,
+            and_(
+                DriverTeamChanges.driver_id == Drivers.id,
+                DriverTeamChanges.timestamp_start <= EventSessions.start_time,
+                or_(
+                    DriverTeamChanges.timestamp_end >= EventSessions.start_time,
+                    DriverTeamChanges.timestamp_end.is_(null())
+                )
+            ),
+        )
+        .join(
+            Teams,
+            DriverTeamChanges.team_id == Teams.id,
+        )
+        .where(
+            or_(
+                *[
+                    (
+                        and_(
+                            Laps.driver_id == fil.driver,
+                            Laps.lap_number.in_(fil.lap_filter),
+                        )
+                        if fil.lap_filter
+                        else and_(
+                            Laps.driver_id == fil.driver,
+                        )
+                    )
+                    for fil in filter_.queries
+                ]
+            )
+        )
+    )
     return _resolve_lap_data(lap_data)
