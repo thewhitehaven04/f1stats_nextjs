@@ -1,5 +1,8 @@
 import Color from "color"
 
 export function getAlternativeColor(color: string) {
-    return Color(color).isDark() ? Color(color).lighten(0.5).hex() : Color(color).darken(0.5).hex()
+    const transformedColor = `#${color}`
+    return Color(transformedColor).isDark()
+        ? Color(transformedColor).lighten(0.3).hex()
+        : Color(transformedColor).darken(0.3).hex()
 }

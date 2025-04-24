@@ -7,7 +7,7 @@ export function Tabs<T extends string>(props: ITabsProps<T>) {
     return (
         <div
             role="tablist"
-            className="tabs tabs-border"
+            className="tabs tabs-box"
             {...rest}
         >
             {tabs.map((tab) => (

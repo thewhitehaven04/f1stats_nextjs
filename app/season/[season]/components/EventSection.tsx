@@ -3,7 +3,7 @@ import { EventCard } from "./EventCard"
 
 export const EventSection = ({ events }: { events: TEventWithSessions[] }) => {
     const testingEvents = events.filter((event) => event.format === "testing")
-    const calendarEvents = events.filter((event) => event.format === "conventional")
+    const calendarEvents = events.filter((event) => event.format !== "testing")
     return (
         <section className="flex flex-col gap-4">
             <h2 className="text-lg">Pre-Season testing</h2>

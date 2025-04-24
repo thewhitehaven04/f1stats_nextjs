@@ -2,9 +2,6 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "@hey-api/client-fetch"
 import type {
-    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetData,
-    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponse,
-    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetError,
     GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostData,
     GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponse,
     GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostError,
@@ -26,33 +23,6 @@ export type Options<
      * used to access values that aren't defined as part of the SDK function.
      */
     meta?: Record<string, unknown>
-}
-
-/**
- * Get Session Laptimes
- * Retrieve lap times for a specific Formula 1 session.
- *
- * Args:
- * year (str): The year of the Formula 1 season.
- * event (str): The specific event or round number.
- * session (SessionIdentifier): The type of session (e.g., Practice 1, Sprint Qualifying, Race).
- *
- * Returns:
- * Lap times for the specified session.
- */
-export const getSessionLaptimesSeasonYearEventEventSessionSessionLapsGet = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetData, ThrowOnError>,
-) => {
-    return (options.client ?? _heyApiClient).get<
-        GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponse,
-        GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetError,
-        ThrowOnError
-    >({
-        url: "/season/{year}/event/{event}/session/{session}/laps",
-        ...options,
-    })
 }
 
 /**

@@ -3,14 +3,17 @@ import type { Compound, LapSelectionData } from "@/client/generated"
 import type { ChartData, TooltipItem } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
-import { TYRE_COLOR_MAP } from "../helpers/colorMap"
 import { formatTime } from "@/core/helpers/formatTime"
+import { TYRE_COLOR_MAP } from "../helpers/colorMap"
+import { getAlternativeColor } from "../helpers/getAlternativeColor"
 
 type TPlotData = {
     x: number
     y: number
-    compound: Compound | null
+    compound: Compound
 }
+
+const CHART_EDGE_OFFSET = 0.15
 
 export function LineLapsChart(props: {
     isOutliersShown: boolean
@@ -18,6 +21,7 @@ export function LineLapsChart(props: {
     laps: LapSelectionData
 }) {
     const { isOutliersShown, selectedStints, laps } = props
+    console.log(laps)
     const datasets = useMemo(
         () =>
             laps.driver_lap_data.map((driverData) => ({
@@ -37,14 +41,16 @@ export function LineLapsChart(props: {
                               : lap.laptime,
                         compound: lap.compound_id,
                     })),
-                color: driverData.team.color,
+                teamColor: driverData.team.color,
+                style: driverData.style,
             })),
         [laps, isOutliersShown, selectedStints],
     ) satisfies ChartData<"line", TPlotData[]>["datasets"]
 
     const maxX =
-        Math.max(...datasets.map((dataset) => dataset.data[dataset.data.length - 1].x)) + 0.15
-    const minX = Math.min(...datasets.map((dataset) => dataset.data[0].x)) - 0.15
+        Math.max(...datasets.map((dataset) => dataset.data[dataset.data.length - 1].x)) +
+        CHART_EDGE_OFFSET
+    const minX = Math.min(...datasets.map((dataset) => dataset.data[0].x)) - CHART_EDGE_OFFSET
 
     return (
         <Chart
@@ -53,19 +59,23 @@ export function LineLapsChart(props: {
             options={{
                 elements: {
                     point: {
-                        radius: 5,
-                        borderWidth: 1.5,
+                        radius: 6,
+                        borderWidth: 1,
                         backgroundColor(ctx) {
                             const data = ctx.dataset.data[ctx.dataIndex] as TPlotData
                             return TYRE_COLOR_MAP[data.compound] || "grey"
                         },
-                        // borderColor(ctx) {
-                        //     const data = ctx.dataset.data[ctx.dataIndex] as TPlotData
-                        //     return data.isAlternativeStyle ? getAlternativeColor(data.color) : data.color
-                        // },
+                        borderColor: "black",
+                        hoverRadius: 7,
+                        hoverBorderWidth: 1,
                     },
                     line: {
-                        borderWidth: 1.5,
+                        borderWidth: 2.0,
+                        borderColor({ dataset }: { dataset: (typeof datasets)[number] }) {
+                            return dataset.style === "default"
+                                ? `#${dataset.teamColor}`
+                                : getAlternativeColor(dataset.teamColor)
+                        },
                     },
                 },
                 interaction: {
@@ -79,29 +89,27 @@ export function LineLapsChart(props: {
                             text: "Lap time (s)",
                             display: true,
                         },
-                        min: isOutliersShown ? undefined : laps.low_decile * 0.95,
-                        max: isOutliersShown ? undefined : laps.high_decile * 1.05,
+                        bounds: "data",
                     },
                     x: {
                         type: "linear",
                         title: {
                             text: "Lap number",
                         },
-                        max: maxX,
-                        min: minX,
+                        ticks: {
+                            align: "center",
+                        },
+                        bounds: "data",
                     },
                 },
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label(tooltipItem: TooltipItem<"line">) {
-                                // TODO: fix typing
-                                const item = tooltipItem.dataset.data[tooltipItem.dataIndex] as {
-                                    x: number
-                                    y: number
-                                    compound: string
-                                }
-                                return `${tooltipItem.dataset.label}: ${formatTime(item.y)} (${item?.compound})`
+                                const item = tooltipItem.dataset.data[
+                                    tooltipItem.dataIndex
+                                ] as TPlotData
+                                return `${tooltipItem.dataset.label}: ${formatTime(item.y)} (${item.compound})`
                             },
                         },
                     },
@@ -110,6 +118,7 @@ export function LineLapsChart(props: {
                             x: {
                                 min: minX,
                                 max: maxX,
+                                minRange: 2,
                             },
                         },
                         zoom: {
@@ -119,12 +128,13 @@ export function LineLapsChart(props: {
                             mode: "x",
                             wheel: {
                                 enabled: true,
+                                speed: 0.01,
                             },
                         },
                     },
                 },
             }}
-            height={110}
+            height={120}
         />
     )
 }
