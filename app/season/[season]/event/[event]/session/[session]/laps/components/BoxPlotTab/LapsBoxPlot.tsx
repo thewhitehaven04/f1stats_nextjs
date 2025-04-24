@@ -1,6 +1,6 @@
-'use client'
+"use client"
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from "chart.js"
-import { use, useState } from "react"
+import { use, useMemo, useState } from "react"
 import clsx from "clsx"
 import { BoxAndWiskers, BoxPlotController } from "@sgratzl/chartjs-chart-boxplot"
 import Zoom from "chartjs-plugin-zoom"
@@ -20,27 +20,31 @@ ChartJS.register([
 
 export default function BoxPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
-    const [isOutliersShown, setIsOutliersShown] = useState(false)
 
-    const [driverStints, setDriverStints] = useState<Record<string, number | undefined>>(
-        Object.fromEntries(laps.driver_lap_data.map((lapData) => [lapData.driver, undefined])),
+    const { driver_lap_data: driverLapData } = laps
+
+    const [isOutliersShown, setIsOutliersShown] = useState(true)
+
+    const initialDriverState = useMemo(
+        () => Object.fromEntries(driverLapData.map((lap) => [lap.driver, undefined])),
+        [driverLapData],
     )
 
-    const stintData = laps.driver_lap_data.map((driverLapData) => ({
-        driver: driverLapData.driver,
-        stints: Array.from({ length: driverLapData.stints.length })
+    const [driverStints, setDriverStints] =
+        useState<Record<string, number | undefined>>(initialDriverState)
+
+    const stintData = driverLapData.map((driverLapInstance) => ({
+        driver: driverLapInstance.driver,
+        stints: Array.from({ length: driverLapInstance.stints.length })
             .map((_, index) => {
-                const laps = driverLapData.laps.filter((lap) => lap.stint === index + 1)
-                return (
-                    laps.length
-                        ? {
-                              index: laps[0].stint,
-                              text: `${laps[0].compound_id}, ${driverLapData.stints[index].total_laps || 0} laps`,
-                          }
-                        : null
-                ) as { index: number; text: string }
+                const laps = driverLapInstance.laps.filter((lap) => lap.stint === index + 1)
+                if (laps.length === 0) return false
+                return {
+                    index: laps[0].stint,
+                    text: `${laps[0].compound_id}, ${driverLapInstance.stints[index].total_laps || 0} laps`,
+                }
             })
-            .filter(Boolean),
+            .filter((val) => val !== false),
     }))
 
     return (

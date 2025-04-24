@@ -1,3 +1,4 @@
+"use client"
 import type { Compound, LapSelectionData } from "@/client/generated"
 import type { ChartData, TooltipItem } from "chart.js"
 import { useMemo } from "react"
@@ -9,8 +10,6 @@ type TPlotData = {
     x: number
     y: number
     compound: Compound | null
-    isAlternativeStyle: boolean
-    color: string
 }
 
 export function LineLapsChart(props: {
@@ -19,7 +18,7 @@ export function LineLapsChart(props: {
     laps: LapSelectionData
 }) {
     const { isOutliersShown, selectedStints, laps } = props
-    const datasets: ChartData<"line", TPlotData[]>["datasets"] = useMemo(
+    const datasets = useMemo(
         () =>
             laps.driver_lap_data.map((driverData) => ({
                 label: driverData.driver,
@@ -32,15 +31,16 @@ export function LineLapsChart(props: {
                     .map((lap, index) => ({
                         x: index,
                         y: isOutliersShown
-                            ? (lap.laptime ?? Number.NaN)
-                            : !lap.laptime || lap.laptime > (laps.high_decile || 0) * 1.02
+                            ? lap.laptime
+                            : lap.laptime > (laps.high_decile || 0) * 1.02
                               ? Number.NaN
                               : lap.laptime,
                         compound: lap.compound_id,
                     })),
+                color: driverData.team.color,
             })),
         [laps, isOutliersShown, selectedStints],
-    )
+    ) satisfies ChartData<"line", TPlotData[]>["datasets"]
 
     const maxX =
         Math.max(...datasets.map((dataset) => dataset.data[dataset.data.length - 1].x)) + 0.15

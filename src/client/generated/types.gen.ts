@@ -10,8 +10,8 @@ export type Compound =
     | "TEST_UNKNOWN"
 
 export type DriverLapData = {
+    team: TeamLapData
     driver: string
-    team: string
     session_data: StintData
     stints: Array<StintData>
     laps: Array<LapTimingData>
@@ -80,6 +80,11 @@ export type StintData = {
     median: number | null
     low_quartile: number | null
     high_quartile: number | null
+}
+
+export type TeamLapData = {
+    name: string
+    color: string
 }
 
 export type ValidationError = {

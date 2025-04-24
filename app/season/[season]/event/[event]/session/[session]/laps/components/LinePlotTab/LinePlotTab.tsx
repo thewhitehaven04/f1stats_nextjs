@@ -1,5 +1,5 @@
 "use client"
-import { use, useCallback, useMemo, useState } from "react"
+import { use, useMemo, useState } from "react"
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -48,16 +48,13 @@ export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSe
         stints: Array.from({ length: driverLapInstance.stints.length })
             .map((_, index) => {
                 const laps = driverLapInstance.laps.filter((lap) => lap.stint === index + 1)
-                return (
-                    laps.length
-                        ? {
-                              index: laps[0].stint,
-                              text: `${laps[0].compound_id}, ${driverLapInstance.stints[index].total_laps || 0} laps`,
-                          }
-                        : null
-                ) as { index: number; text: string }
+                if (laps.length === 0) return false
+                return {
+                    index: laps[0].stint,
+                    text: `${laps[0].compound_id}, ${driverLapInstance.stints[index].total_laps || 0} laps`,
+                }
             })
-            .filter(Boolean),
+            .filter((val) => val !== false),
     }))
 
     return (

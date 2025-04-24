@@ -4,6 +4,8 @@ from typing import Sequence
 from pandas.api.typing import NaTType
 from pydantic import BaseModel, ConfigDict, field_serializer
 
+from services.color_resolver.models import PlotStyle
+
 
 class Compound(StrEnum):
     SOFT = "SOFT"
@@ -14,6 +16,11 @@ class Compound(StrEnum):
     UNKNOWN = "UNKNOWN"
     TEST_UNKNOWN = "TEST_UNKNOWN"
 
+class TeamData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True) 
+
+    name: str
+    color: str
 
 class LapTimingData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -65,13 +72,15 @@ class StintData(BaseModel):
     median: float | None
     low_quartile: float | None
     high_quartile: float | None
+    deg_rate: float | None
+
 
 
 class DriverLapData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
+    team: TeamData 
     driver: str
-    team: str
+    style: PlotStyle
     session_data: StintData
     stints: Sequence[StintData]
     laps: Sequence[LapTimingData]
