@@ -114,6 +114,7 @@ class LapDataResolver:
     def _resolve_lap_data(self, laps: DataFrame):
         formatted_laps = laps[
             [
+                "id",
                 "driver_id",
                 "team_display_name",
                 "color",
@@ -208,7 +209,7 @@ class LapDataResolver:
             max_time=formatted_laps["laptime"].max(),
         )
 
-    async def get_laptime_comparison(
+    def get_laptime_comparison(
         self,
         filter_: SessionQueryFilter,
     ):

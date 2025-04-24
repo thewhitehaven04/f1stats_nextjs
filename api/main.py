@@ -8,9 +8,10 @@ from repository.engine import (
     get_connection,
     set_connection,
 )
-from services.color_resolver.ColorResolver import StyleResolver
 from services.laps.LapDataResolver import LapDataResolver
 from services.laps.models.laps import LapSelectionData
+from services.telemetry.TelemetryResolver import TelemetryResolver
+from services.telemetry.models import DriverTelemetryMeasurement
 
 
 @asynccontextmanager
@@ -46,11 +47,29 @@ async def get_session_laptimes_filtered(
         Filtered lap times for the specified session.
     """
 
-    return await LapDataResolver(
+    return LapDataResolver(
         db_connection=connection,
         season=year,
         event=event,
         session_identifier=session,
     ).get_laptime_comparison(
+        filter_=body,
+    )
+
+
+@app.post(
+    "/season/{year}/event/{event}/session/{session}/telemetry/average",
+    response_model=list[DriverTelemetryMeasurement],
+)
+async def get_averaged_telemetry(
+    year: str,
+    event: str,
+    session: SessionIdentifier,
+    body: SessionQueryFilter,
+    connection: Annotated[Connection, Depends(get_connection)],
+):
+    return TelemetryResolver(
+        db_connection=connection, season=year, event=event, session_identifier=session
+    ).get_average_telemetry(
         filter_=body,
     )

@@ -3,6 +3,7 @@ from math import isnan
 from typing import Sequence
 from pandas.api.typing import NaTType
 from pydantic import BaseModel, ConfigDict, field_serializer
+from sqlalchemy import BigInteger
 
 from services.color_resolver.models import PlotStyle
 
@@ -25,6 +26,7 @@ class TeamData(BaseModel):
 class LapTimingData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    id: int 
     laptime: float | NaTType
     is_pb: bool
     sector_1_time: float | None
