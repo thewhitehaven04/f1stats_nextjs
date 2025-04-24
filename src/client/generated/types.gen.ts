@@ -10,8 +10,9 @@ export type Compound =
     | "TEST_UNKNOWN"
 
 export type DriverLapData = {
-    team: TeamLapData
+    team: TeamData
     driver: string
+    style: PlotStyle
     session_data: StintData
     stints: Array<StintData>
     laps: Array<LapTimingData>
@@ -53,6 +54,8 @@ export type LapTimingData = {
     is_personal_best_s3: boolean
 }
 
+export type PlotStyle = "default" | "alternative"
+
 export type SessionIdentifier =
     | "Race"
     | "Qualifying"
@@ -82,7 +85,7 @@ export type StintData = {
     high_quartile: number | null
 }
 
-export type TeamLapData = {
+export type TeamData = {
     name: string
     color: string
 }
@@ -92,37 +95,6 @@ export type ValidationError = {
     msg: string
     type: string
 }
-
-export type GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetData = {
-    body?: never
-    path: {
-        year: string
-        event: string
-        session: SessionIdentifier
-    }
-    query?: never
-    url: "/season/{year}/event/{event}/session/{session}/laps"
-}
-
-export type GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError
-}
-
-export type GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetError =
-    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetErrors[keyof GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetErrors]
-
-export type GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: LapSelectionData
-}
-
-export type GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponse =
-    GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponses[keyof GetSessionLaptimesSeasonYearEventEventSessionSessionLapsGetResponses]
 
 export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostData = {
     body: SessionQueryFilter
