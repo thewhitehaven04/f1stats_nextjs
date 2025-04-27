@@ -44,3 +44,6 @@ class SessionQuery(BaseModel):
 class SessionQueryFilter(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     queries: list[SessionQuery]
+
+class LapRequestBody(BaseModel):
+    lap_ids: list[int]

@@ -38,6 +38,23 @@ class Compounds(Base):
     laps: Mapped[List["Laps"]] = relationship("Laps", back_populates="compound")
 
 
+t_driver_laps_with_analytics = Table(
+    "driver_laps_with_analytics",
+    Base.metadata,
+    Column("driver_id", String(64)),
+    Column("event_name", Text),
+    Column("session_type_id", String(32)),
+    Column("season_year", SmallInteger),
+    Column("pb_s1", REAL),
+    Column("pb_s2", REAL),
+    Column("pb_s3", REAL),
+    Column("pb_st1", SmallInteger),
+    Column("pb_st2", SmallInteger),
+    Column("pb_stfl", SmallInteger),
+    Column("pb_laptime", REAL),
+)
+
+
 class Drivers(Base):
     __tablename__ = "drivers"
     __table_args__ = (PrimaryKeyConstraint("id", name="drivers_pkey"),)
@@ -73,19 +90,19 @@ class EventFormats(Base):
     )
 
 
-t_practice_results = Table(
-    "practice_results",
+t_laps_with_analytics = Table(
+    "laps_with_analytics",
     Base.metadata,
-    Column("id", Integer),
-    Column("driver_id", String(64)),
-    Column("gap", REAL),
-    Column("laptime", REAL),
-    Column("country_alpha3", String(3)),
-    Column("driver_full_name", Text),
-    Column("team_display_name", String(64)),
     Column("event_name", Text),
-    Column("season_year", SmallInteger),
     Column("session_type_id", String(32)),
+    Column("season_year", SmallInteger),
+    Column("min_s1", REAL),
+    Column("min_s2", REAL),
+    Column("min_s3", REAL),
+    Column("best_st1", SmallInteger),
+    Column("best_st2", SmallInteger),
+    Column("best_stfl", SmallInteger),
+    Column("best_laptime", REAL),
 )
 
 
@@ -319,6 +336,14 @@ class Laps(Base):
             name="fk_session_type_id",
         ),
         PrimaryKeyConstraint("id", name="laps_pkey"),
+        UniqueConstraint(
+            "session_type_id",
+            "season_year",
+            "event_name",
+            "driver_id",
+            "lap_number",
+            name="session_type_id_event_name_season_year_driver_id_lap_number_uni",
+        ),
     )
 
     id: Mapped[int] = mapped_column(

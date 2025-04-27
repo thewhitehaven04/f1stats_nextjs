@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
-from core.models.queries import SessionIdentifier, SessionQueryFilter
+from core.models.queries import LapRequestBody, SessionIdentifier, SessionQueryFilter
 from repository.engine import (
     engine,
     get_connection,
@@ -25,7 +25,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post(
-    "/season/{year}/event/{event}/session/{session}/laps",
+    "/api/py/season/{year}/event/{event}/session/{session}/laps",
     response_model=LapSelectionData,
 )
 async def get_session_laptimes_filtered(
@@ -58,7 +58,7 @@ async def get_session_laptimes_filtered(
 
 
 @app.post(
-    "/season/{year}/event/{event}/session/{session}/telemetry/average",
+    "/api/py/season/{year}/event/{event}/session/{session}/telemetry/average",
     response_model=list[DriverTelemetryMeasurement],
 )
 async def get_averaged_telemetry(
@@ -73,3 +73,22 @@ async def get_averaged_telemetry(
     ).get_average_telemetry(
         filter_=body,
     )
+
+
+@app.post(
+    "api/py/season/{year}/event/{event}/session/{session}/telemetries",
+    response_model=list[DriverTelemetryMeasurement],
+)
+async def get_lap_telemetries(
+    year: str,
+    event: str,
+    session: SessionIdentifier,
+    body: SessionQueryFilter,
+    connection: Annotated[Connection, Depends(get_connection)],
+):
+    return TelemetryResolver(
+        db_connection=connection,
+        season=year,
+        event=event,
+        session_identifier=session,
+    ).get_telemetry(query_filter=body)
