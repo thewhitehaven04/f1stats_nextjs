@@ -1,4 +1,3 @@
-from fastapi import logger
 from pandas import DataFrame, NamedAgg, read_sql
 from sqlalchemy import Connection, and_, null, or_, select
 from numpy.polynomial import Polynomial
@@ -8,17 +7,15 @@ from repository.repository import (
     Drivers,
     EventSessions,
     Laps,
-    TeamSeasonColors,
-    Teams,
 )
 from core.models.queries import SessionIdentifier, SessionQueryFilter
 
-from services.color_resolver.ColorResolver import StyleResolver
+from services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from services.laps.models.laps import (
     DriverLapData,
     LapSelectionData,
     StintData,
-    TeamData,
+    TeamPlotStyleDto,
 )
 
 
@@ -48,7 +45,7 @@ class LapDataResolver:
         self.season = season
         self.event = event
         self.session_identifier = session_identifier
-        self.plot_style_resolver = StyleResolver(
+        self.team_plot_style_resolver = TeamPlotStyleResolver(
             db_connection, season, event, session_identifier
         )
 
@@ -116,8 +113,6 @@ class LapDataResolver:
             [
                 "id",
                 "driver_id",
-                "team_display_name",
-                "color",
                 "laptime",
                 "sector_1_time",
                 "sector_2_time",
@@ -172,16 +167,16 @@ class LapDataResolver:
                     ).coef[1],
                 ),
             )
+            driver_style = self.team_plot_style_resolver.get_driver_style(
+                driver_id=index
+            )
             lap_data.append(
                 DriverLapData(
-                    driver=index,
-                    team=TeamData(
-                        name=current_driver_laps["team_display_name"].iloc[0],
-                        color=current_driver_laps["color"].iloc[0].rstrip(),
+                    driver=driver_style.driver,
+                    team=TeamPlotStyleDto(
+                        name=driver_style.team.name, color=driver_style.color
                     ),
-                    style=self.plot_style_resolver.get_driver_style(
-                        driver_id=index,
-                    ),
+                    style=driver_style.style,
                     stints=filtered_stint_groups.to_dict(orient="records"),
                     session_data=StintData(
                         total_laps=len(current_driver_laps),
@@ -246,17 +241,6 @@ class LapDataResolver:
                     ),
                 ),
             )
-            .join(
-                Teams,
-                DriverTeamChanges.team_id == Teams.id,
-            )
-            .join(
-                TeamSeasonColors,
-                and_(
-                    TeamSeasonColors.team_id == Teams.id,
-                    TeamSeasonColors.season_year == Laps.season_year,
-                ),
-            )
             .where(
                 or_(
                     *[
@@ -273,10 +257,6 @@ class LapDataResolver:
                         for fil in filter_.queries
                     ]
                 )
-            )
-            .add_columns(
-                TeamSeasonColors.color,
-                Teams.team_display_name,
             ),
         )
         return self._resolve_lap_data(lap_data)

@@ -1,9 +1,17 @@
-from numpy import interp, linspace, mean
+from numpy import interp, linspace
 from pandas import DataFrame, read_sql, to_timedelta
 from sqlalchemy import Connection, and_, or_, select
 
-from core.models.queries import SessionIdentifier, SessionQueryFilter
-from repository.repository import Laps, SessionResults, TelemetryMeasurements
+from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
+from repository.repository import (
+    Drivers,
+    Laps,
+    SessionResults,
+    TelemetryMeasurements,
+)
+from services.color_resolver.ColorResolver import TeamPlotStyleResolver
+from services.laps.models.laps import TeamPlotStyleDto
+from services.telemetry.models import DriverTelemetryMeasurement, LapDto
 
 
 class TelemetryResolver:
@@ -19,6 +27,12 @@ class TelemetryResolver:
         self.season = season
         self.event = event
         self.session_identifier = session_identifier
+        self.plot_style_resolver = TeamPlotStyleResolver(
+            db_connection,
+            season,
+            event,
+            session_identifier,
+        )
 
     def average_telemetry_for_driver(self, resampled_telemetry: DataFrame):
         unique_lap_ids = resampled_telemetry["lap_id"].unique()
@@ -146,3 +160,51 @@ class TelemetryResolver:
             )
 
         return avg_telemetries
+
+    def get_telemetry(self, query_filter: SessionQueryFilter):
+        telemetries = []
+        for query in query_filter.queries:
+            telemetries.append(self.get_driver_telemetries(query))
+
+    def get_driver_telemetries(
+        self, query: SessionQuery
+    ) -> list[DriverTelemetryMeasurement]:
+        telemetries: list[DriverTelemetryMeasurement] = []
+
+        if isinstance(query.lap_filter, list):
+            for lap in query.lap_filter:
+                telemetry_dataframe = read_sql(
+                    con=self.db_connection,
+                    sql=select(TelemetryMeasurements)
+                    .join(
+                        Laps,
+                        and_(Laps.lap_number == lap, Laps.driver_id == query.driver),
+                    )
+                    .join(
+                        Drivers,
+                        Laps.driver_id == Drivers.id,
+                    ),
+                )
+                style = self.plot_style_resolver.get_driver_style(query.driver)
+                telemetry_dataframe["relative_distance"] = (
+                    telemetry_dataframe["distance"]
+                    / telemetry_dataframe.tail(1)["distance"].iloc[0]
+                )
+
+                telemetries.append(
+                    DriverTelemetryMeasurement(
+                        driver=query.driver,
+                        team=TeamPlotStyleDto(
+                            name=style.team.name,
+                            color=style.color,
+                        ),
+                        style=style.style,
+                        lap=LapDto(
+                            id=telemetry_dataframe[0].lap_id,
+                            lap_number=telemetry_dataframe[0].lap_number,
+                            telemetry=telemetry_dataframe.to_dict(orient="records"),
+                        ),
+                    )
+                )
+
+        raise ValueError(f"No lap filters provided for driver: {query.driver}")

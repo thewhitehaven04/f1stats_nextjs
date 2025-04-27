@@ -17,7 +17,7 @@ class Compound(StrEnum):
     UNKNOWN = "UNKNOWN"
     TEST_UNKNOWN = "TEST_UNKNOWN"
 
-class TeamData(BaseModel):
+class TeamPlotStyleDto(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True) 
 
     name: str
@@ -80,7 +80,7 @@ class StintData(BaseModel):
 
 class DriverLapData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    team: TeamData 
+    team: TeamPlotStyleDto 
     driver: str
     style: PlotStyle
     session_data: StintData
