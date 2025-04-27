@@ -1,18 +1,18 @@
 from operator import or_
 
-from fastapi import logger
 from core.models.queries import SessionIdentifier
 from repository.repository import (
     DriverTeamChanges,
     EventSessions,
     SessionResults,
+    TeamSeasonColors,
     Teams,
 )
-from services.color_resolver.models import PlotStyle
+from services.color_resolver.models import PlotStyle, TeamDto, TeamPlotData
 from sqlalchemy import Connection, and_, null, select
 
 
-class StyleResolver:
+class TeamPlotStyleResolver:
 
     def __init__(
         self,
@@ -26,15 +26,14 @@ class StyleResolver:
         self.event = event
         self.session_identifier = session_identifier
 
-    def get_driver_style(self, driver_id: int) -> PlotStyle:
+    def get_driver_style(self, driver_id: str) -> TeamPlotData:
         results = self.db_connection.execute(
             select(SessionResults)
             .where(
-                and_(
-                    SessionResults.season_year == self.season,
-                    SessionResults.event_name == self.event,
-                    SessionResults.session_type_id == self.session_identifier.value,
-                )
+                SessionResults.season_year == self.season,
+                SessionResults.event_name == self.event,
+                SessionResults.session_type_id == self.session_identifier.value,
+                SessionResults.driver_id == driver_id,
             )
             .join(
                 EventSessions,
@@ -55,19 +54,48 @@ class StyleResolver:
                     ),
                 ),
             )
-            .add_columns(Teams.id)
+            .join(
+                TeamSeasonColors,
+                and_(
+                    TeamSeasonColors.team_id == DriverTeamChanges.team_id,
+                    TeamSeasonColors.season_year == SessionResults.season_year,
+                ),
+            )
+            .join(Teams, DriverTeamChanges.team_id == Teams.id)
+            .add_columns(
+                TeamSeasonColors.color,
+                Teams.id.label("team_id"),
+                Teams.team_display_name,
+            )
         ).fetchall()
+
         team_id = None
         for result in results:
             if result.driver_id == driver_id:
-                team_id = result.teams_id
+                team_id = result.team_id
                 break
 
         for result in results:
-            if result.teams_id == team_id:
+            if result.team_id == team_id:
                 return (
-                    PlotStyle.DEFAULT
+                    TeamPlotData(
+                        style=PlotStyle.DEFAULT,
+                        driver=result.driver_id,
+                        team=TeamDto(
+                            id_=result.team_id,
+                            name=result.team_display_name,
+                        ),
+                        color=result.color,
+                    )
                     if result.driver_id == driver_id
-                    else PlotStyle.ALTERNATIVE
+                    else TeamPlotData(
+                        style=PlotStyle.ALTERNATIVE,
+                        team=TeamDto(
+                            id_=result.team_id,
+                            name=result.team_display_name,
+                        ),
+                        driver=result.driver_id,
+                        color=result.color,
+                    )
                 )
-        return PlotStyle.DEFAULT
+        raise ValueError(f"Unable to find driver style data for {driver_id}")
