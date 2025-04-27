@@ -96,11 +96,17 @@ model laps {
   session_type_id        String                   @db.VarChar(32)
   season_year            Int?                     @db.SmallInt
   laptime                Float?                   @default(dbgenerated("((sector_1_time + sector_2_time) + sector_3_time)")) @db.Real
+  pit_in_time            Float?                   @db.Real
+  pit_out_time           Float?                   @db.Real
+  is_inlap               Boolean?                 @default(dbgenerated("(pit_in_time IS NOT NULL)"))
+  is_outlap              Boolean?                 @default(dbgenerated("(pit_out_time IS NOT NULL)"))
   compounds              compounds                @relation(fields: [compound_id], references: [id], onUpdate: NoAction, map: "fk_compound_id")
   drivers                drivers                  @relation(fields: [driver_id], references: [id], onUpdate: NoAction, map: "fk_driver_id")
   events                 events?                  @relation(fields: [event_name, season_year], references: [event_name, season_year], onUpdate: NoAction, map: "fk_event_name_season_year")
   session_types          session_types            @relation(fields: [session_type_id], references: [id], onUpdate: NoAction, map: "fk_session_type_id")
   telemetry_measurements telemetry_measurements[]
+
+  @@unique([session_type_id, season_year, event_name, driver_id, lap_number], map: "session_type_id_event_name_season_year_driver_id_lap_number_uni")
 }
 
 model practice_session_results {
@@ -217,4 +223,20 @@ view practice_results {
   session_type_id   String? @db.VarChar(32)
 
   @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view laps_with_analytics {
+  event_name      String
+  session_type_id String @db.VarChar(32)
+  season_year     Int    @db.SmallInt
+  min_s1          Float  @db.Real
+  min_s2          Float  @db.Real
+  min_s3          Float  @db.Real
+  best_st1        Int    @db.SmallInt
+  best_st2        Int    @db.SmallInt
+  best_stfl       Int    @db.SmallInt
+  best_laptime    Float  @db.Real
+
+  @@unique([event_name, session_type_id, season_year])
 }

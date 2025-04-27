@@ -53,12 +53,3 @@ FROM
   )
 ORDER BY
   psr.laptime;
-
-
-SELECT laps.id, laps.lap_number, laps.stint, laps.event_name, laps.compound_id, laps.driver_id, laps.session_type_id, laps.sector_1_time, laps.sector_2_time, laps.sector_3_time, laps.speedtrap_1, laps.speedtrap_2, laps.speedtrap_fl, laps.season_year, laps.laptime, laps.pit_in_time, laps.pit_out_time, laps.is_inlap, laps.is_outlap, teams.id AS id_1, teams.team_display_name
-FROM laps 
-  JOIN drivers ON laps.driver_id = drivers.id 
-  JOIN event_sessions ON event_sessions.event_name = %(event_name_1)s AND event_sessions.season_year = %(season_year_1)s AND event_sessions.session_type_id = %(session_type_id_1)s 
-  JOIN driver_team_changes ON driver_team_changes.driver_id = drivers.id AND driver_team_changes.timestamp_start <= event_sessions.start_time AND (driver_team_changes.timestamp_end >= event_sessions.start_time OR driver_team_changes.timestamp_end IS %(timestamp_end_1)s) 
-  JOIN teams ON driver_team_changes.team_id = teams.id
-WHERE laps.season_year = %(season_year_2)s AND laps.session_type_id = %(session_type_id_2)s AND laps.event_name = %(event_name_2)s
