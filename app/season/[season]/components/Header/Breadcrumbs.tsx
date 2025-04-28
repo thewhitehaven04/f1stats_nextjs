@@ -4,9 +4,18 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const SEGMENTS = [
-    /\/season\/\d{4}/g,
-    /\/season\/\d{4}\/event\/\S+%20Grand%20Prix/g,
-    /\/season\/\d{4}\/event\/\S+\/session\/\S+/g,
+    {
+        expression: /\/season\/(\d{4})/,
+        getText: (matchArray: RegExpMatchArray | null) => (matchArray ? matchArray[1] : ""),
+    },
+    {
+        expression: /\/season\/(\d{4})\/event\/(\S+)\/session\/(\S+)\/results/,
+        getText: (matchArray: RegExpMatchArray | null) => {
+            return matchArray
+                ? `${decodeURIComponent(matchArray[2])} - ${decodeURIComponent(matchArray[3])}`
+                : ""
+        },
+    },
 ]
 
 export const Breadcrumbs = () => {
@@ -15,15 +24,12 @@ export const Breadcrumbs = () => {
         <nav className="breadcrumbs">
             <ul>
                 {SEGMENTS.map((segment, index) => {
-                    if (segment.test(pathname)) {
-                        const match = pathname.match(segment)
-                        const segments = match?.toString().split("/") || []
+                    if (segment.expression.test(pathname)) {
+                        const match = pathname.match(segment.expression)
                         return (
                             <li key={index}>
                                 {match ? (
-                                    <Link href={match.toString()}>
-                                        {decodeURIComponent(segments[segments.length - 1])}
-                                    </Link>
+                                    <Link href={match[0]}>{segment.getText(match)}</Link>
                                 ) : null}
                             </li>
                         )
