@@ -1,8 +1,23 @@
 import { dbClient } from "@/client/db"
 import { EventSection } from "./components/EventSection"
-import { cache } from "react"
 
-export const fetchEventsWithSessions = cache(async (season: number) => {
+// revalidate calendar data every 30 minutes
+export const revalidate = 1800
+
+export async function generateStaticParams() {
+    // cache every season other than the current one
+    const seasons = await dbClient.seasons.findMany({
+        orderBy: {
+            season_year: "desc",
+        },
+        skip: 1,
+    })
+    return seasons.map((season) => ({
+        season: season.season_year.toString(),
+    }))
+}
+
+export const fetchEventsWithSessions = async (season: number) => {
     return (
         await dbClient.events.findMany({
             where: {
@@ -33,7 +48,7 @@ export const fetchEventsWithSessions = cache(async (season: number) => {
         country: evt.country,
         season: evt.season_year,
     }))
-})
+}
 
 export type TEventWithSessions = Awaited<ReturnType<typeof fetchEventsWithSessions>>[number]
 

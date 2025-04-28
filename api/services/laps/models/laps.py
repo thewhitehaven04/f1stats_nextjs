@@ -107,7 +107,7 @@ class LapSelectionData(BaseModel):
         return_type=float | None,
     )
     def serialize_float(self, val):
-        return None if isnan(val) else val
+        return None if (val == None) or isnan(val) else val
 
 
 class LapIdentifier:

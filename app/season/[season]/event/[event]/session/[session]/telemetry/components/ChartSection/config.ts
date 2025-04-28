@@ -1,5 +1,5 @@
 import type { ChartProps } from "react-chartjs-2"
-import type { ISpeedTraceOptions } from "./types"
+import type { CoreInteractionOptions, TooltipItem, TooltipOptions } from "chart.js"
 
 export const BASE_CHART_OPTIONS = {
     elements: {
@@ -7,71 +7,32 @@ export const BASE_CHART_OPTIONS = {
             radius: 0,
         },
         line: {
-            borderWidth: 2,
+            borderWidth: 3,
+            cubicInterpolationMode: "default",
         },
     },
-} as const
+    font: {
+        family: '"Archivo", sans-serif',
+    },
+} satisfies ChartProps["options"]
 
-export const getSpeedTraceOptions = (
-    options: ISpeedTraceOptions,
-): ChartProps<"line">["options"] => ({
-    ...BASE_CHART_OPTIONS,
-    responsive: true,
-    elements: {
-        ...BASE_CHART_OPTIONS.elements,
-        line: {
-            ...BASE_CHART_OPTIONS.elements.line,
-            cubicInterpolationMode: "monotone",
-        },
-        point: {
-            radius: 0,
-            hitRadius: 0.5,
-        },
-    },
-    interaction: {
-        mode: "x",
-        intersect: false,
-    },
-    plugins: {
-        legend: {
-            display: true,
-            title: {
-                font: {
-                    size: 14,
-                },
-            },
-            fullSize: true,
-            align: "center",
-        },
-        tooltip: {
-            enabled: true,
-            includeInvisible: false,
-            axis: "x",
-            mode: "x",
-        },
-    },
-    scales: {
-        x: {
-            type: "linear",
-            max: options.trackLength,
-            title: {
-                text: "Distance (m)",
-                display: true,
-                font: {
-                    size: 14,
-                },
-            },
-            min: 0,
-        },
-        y: {
-            type: "linear",
-            title: {
-                text: "Speed (kph)",
-                display: true,
-                font: {
-                    size: 14,
-                },
-            },
-        },
-    },
-})
+export const TOOLTIP_CONFIG = {
+    enabled: true,
+    includeInvisible: false,
+    axis: "x",
+    mode: "nearest",
+} satisfies Partial<TooltipOptions>
+
+export const INTERACTION_CONFIG = {
+    mode: "x",
+    axis: "x",
+    intersect: false,
+} satisfies Partial<CoreInteractionOptions>
+
+export const getDistanceLabelInTooltipTitleCallback = (tooltipItems: TooltipItem<"line">[]) => {
+    return `${Math.floor(tooltipItems[0].raw.x as number).toString()} m`
+}
+
+export const getSpeedLabelInTooltipCallback = (tooltipItems: TooltipItem<"line">[]) => {
+    return `${Math.floor(tooltipItems[0].raw.y as number).toString()} kph`
+}

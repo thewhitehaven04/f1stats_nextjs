@@ -1,34 +1,20 @@
 "use client"
 import type { ChartData } from "chart.js"
 import { useMemo, type ReactNode } from "react"
-import { Chart, type ChartProps } from "react-chartjs-2"
-import {
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineController,
-    LineElement,
-    PointElement,
-    Title,
-    Tooltip,
-} from "chart.js"
-import zoom from "chartjs-plugin-zoom"
 import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
-import { getSpeedTraceOptions, BASE_CHART_OPTIONS } from "./config"
+import {
+    BASE_CHART_OPTIONS,
+    TOOLTIP_CONFIG,
+    INTERACTION_CONFIG,
+    getDistanceLabelInTooltipTitleCallback,
+} from "./config"
 import type { DriverTelemetryMeasurement } from "@/client/generated"
+import type { ChartProps } from "react-chartjs-2"
+import dynamic from "next/dynamic"
 
-ChartJS.register([
-    LineController,
-    LineElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    Tooltip,
-    Legend,
-    Title,
-    zoom,
-])
+export const Chart = dynamic(async () => (await import("./ZoomableChart")).ZoomableChart, {
+    ssr: false,
+})
 
 export default function TelemetryChartSection(props: {
     telemetryMeasurements: DriverTelemetryMeasurement[]
@@ -38,10 +24,63 @@ export default function TelemetryChartSection(props: {
     const distanceLabels = telemetryMeasurements[0].lap.telemetry.map(
         (measurement) => measurement.distance,
     )
-    const maxDistance = telemetryMeasurements[0].lap.telemetry.at(-1)?.distance || 0
+    const maxDistance = Math.floor(telemetryMeasurements[0].lap.telemetry.at(-1)?.distance || 0)
 
     const speedTraceOptions = useMemo(
-        () => getSpeedTraceOptions({ trackLength: maxDistance }),
+        () =>
+            ({
+                ...BASE_CHART_OPTIONS,
+                responsive: true,
+                elements: {
+                    ...BASE_CHART_OPTIONS.elements,
+                    point: {
+                        radius: 0,
+                    },
+                },
+                interaction: INTERACTION_CONFIG,
+                plugins: {
+                    legend: {
+                        display: true,
+                        align: "center",
+                    },
+                    tooltip: {
+                        ...TOOLTIP_CONFIG,
+                        callbacks: { title: getDistanceLabelInTooltipTitleCallback },
+                    },
+                    zoom: {
+                        limits: {
+                            x: {
+                                min: 0,
+                                max: maxDistance,
+                            },
+                        },
+                        zoom: {
+                            drag: {
+                                enabled: true,
+                            },
+                            mode: "x",
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        type: "linear",
+                        max: maxDistance,
+                        title: {
+                            text: "Distance (m)",
+                            display: true,
+                        },
+                        min: 0,
+                    },
+                    y: {
+                        type: "linear",
+                        title: {
+                            text: "Speed (kph)",
+                            display: true,
+                        },
+                    },
+                },
+            }) satisfies ChartProps<"line">["options"],
         [maxDistance],
     )
 
@@ -55,19 +94,14 @@ export default function TelemetryChartSection(props: {
                 max: maxDistance,
             },
         },
-        interaction: {
-            mode: "x",
-            intersect: false,
-        },
+        interaction: INTERACTION_CONFIG,
         plugins: {
             legend: {
                 display: false,
             },
             tooltip: {
-                enabled: true,
-                includeInvisible: false,
-                axis: "x",
-                mode: "nearest",
+                ...TOOLTIP_CONFIG,
+                callbacks: { title: getDistanceLabelInTooltipTitleCallback },
             },
             zoom: {
                 limits: {
@@ -81,9 +115,6 @@ export default function TelemetryChartSection(props: {
                         enabled: true,
                     },
                     mode: "x",
-                    wheel: {
-                        enabled: true,
-                    },
                 },
             },
         },
@@ -92,7 +123,6 @@ export default function TelemetryChartSection(props: {
     const presets = useMemo(
         () =>
             telemetryMeasurements.map((driverMeasurements) => ({
-                borderWidth: driverMeasurements.style === "alternative" ? 2.5 : 2,
                 borderColor:
                     driverMeasurements.style === "alternative"
                         ? getAlternativeColor(driverMeasurements.team.color)
@@ -155,50 +185,39 @@ export default function TelemetryChartSection(props: {
     )
 
     return (
-        <>
-            <section>
-                <h2 className="divider divider-start text-lg">Speed trace</h2>
-                <Chart
-                    type="line"
-                    data={{
-                        labels: distanceLabels,
-                        datasets: speedDatasets,
-                    }}
-                    options={speedTraceOptions}
-                    height={120}
-                />
-            </section>
+        <section>
+            <h2 className="divider divider-start text-lg">Telemetry</h2>
+            <Chart
+                type="line"
+                data={{
+                    labels: distanceLabels,
+                    datasets: speedDatasets,
+                }}
+                options={speedTraceOptions}
+                height={120}
+            />
             {props.telemetryComparisonSlot}
-            <section>
-                <h2 className="divider divider-start text-lg">RPM</h2>
-                <Chart
-                    type="line"
-                    data={{
-                        labels: distanceLabels,
-                        datasets: rpmDatasets,
-                    }}
-                    options={chartOptions}
-                    height={30}
-                />
-            </section>
-            <section>
-                <h2 className="divider divider-start text-lg">Throttle application</h2>
-                <Chart
-                    type="line"
-                    data={{ labels: distanceLabels, datasets: throttleDatasets }}
-                    options={chartOptions}
-                    height={25}
-                />
-            </section>
-            <section>
-                <h2 className="divider divider-start text-lg">Brake application</h2>
-                <Chart
-                    type="line"
-                    data={{ labels: distanceLabels, datasets: brakeDatasets }}
-                    options={chartOptions}
-                    height={25}
-                />
-            </section>
-        </>
+            <Chart
+                type="line"
+                data={{
+                    labels: distanceLabels,
+                    datasets: rpmDatasets,
+                }}
+                options={chartOptions}
+                height={30}
+            />
+            <Chart
+                type="line"
+                data={{ labels: distanceLabels, datasets: throttleDatasets }}
+                options={chartOptions}
+                height={25}
+            />
+            <Chart
+                type="line"
+                data={{ labels: distanceLabels, datasets: brakeDatasets }}
+                options={chartOptions}
+                height={25}
+            />
+        </section>
     )
 }

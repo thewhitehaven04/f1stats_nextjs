@@ -1,6 +1,6 @@
 export default function Loading() {
     return (
-        <div className="w-full flex flex-col items-center justify-center">
+        <div className="w-full h-32 flex flex-col items-center justify-center">
             <div className="loading loading-spinner loading-lg" />
         </div>
     )

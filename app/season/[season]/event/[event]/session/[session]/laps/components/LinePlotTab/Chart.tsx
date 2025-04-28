@@ -21,7 +21,6 @@ export function LineLapsChart(props: {
     laps: LapSelectionData
 }) {
     const { isOutliersShown, selectedStints, laps } = props
-    console.log(laps)
     const datasets = useMemo(
         () =>
             laps.driver_lap_data.map((driverData) => ({
@@ -73,7 +72,7 @@ export function LineLapsChart(props: {
                         borderWidth: 2.0,
                         borderColor({ dataset }: { dataset: (typeof datasets)[number] }) {
                             return dataset.style === "default"
-                                ? `#${dataset.teamColor}`
+                                ? dataset.teamColor
                                 : getAlternativeColor(dataset.teamColor)
                         },
                     },
@@ -105,11 +104,9 @@ export function LineLapsChart(props: {
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label(tooltipItem: TooltipItem<"line">) {
-                                const item = tooltipItem.dataset.data[
-                                    tooltipItem.dataIndex
-                                ] as TPlotData
-                                return `${tooltipItem.dataset.label}: ${formatTime(item.y)} (${item.compound})`
+                            label({ dataset, dataIndex }: TooltipItem<"line">) {
+                                const item = dataset.data[dataIndex] as TPlotData
+                                return `${dataset.label}: ${formatTime(item.y)} (${item.compound})`
                             },
                         },
                     },
