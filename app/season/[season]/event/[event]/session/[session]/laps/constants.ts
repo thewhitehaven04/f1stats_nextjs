@@ -7,7 +7,7 @@ export const LAP_DISPLAY_TABS: ITab<TLapDisplayTab>[] = [
         param: "table",
     },
     {
-        label: "Plot",
+        label: "Line plot",
         param: "plot",
     },
     {
@@ -15,7 +15,7 @@ export const LAP_DISPLAY_TABS: ITab<TLapDisplayTab>[] = [
         param: "box",
     },
     {
-        label: "Violin",
+        label: "Violin plot",
         param: "violin",
     },
 ]

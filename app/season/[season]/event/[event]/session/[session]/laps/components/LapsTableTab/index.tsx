@@ -14,6 +14,7 @@ import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
 
 export interface ILapData {
+    [key: `${string}.LapId`]: LapTimingData["laptime"]
     [key: `${string}.LapTime`]: LapTimingData["laptime"]
     [key: `${string}.IsPB`]: LapTimingData["is_pb"]
     [key: `${string}.Sector1Time`]: LapTimingData["sector_1_time"]

@@ -2,6 +2,7 @@ import { format } from "date-fns/format"
 import { SummaryItem } from "./components/SummaryItem"
 import { dbClient } from "@/client/db"
 import type { SessionIdentifier } from "@/client/generated"
+import type { ISessionPathnameParams } from './types'
 const fetchSessionDataWithWeather = async (
     session: SessionIdentifier,
     season: number,
@@ -44,7 +45,7 @@ export default async function Layout({
     params,
 }: {
     children: React.ReactNode
-    params: Promise<{ session: string; event: string; season: string }>
+    params: Promise<ISessionPathnameParams>
 }) {
     const { session, event, season } = await params
     const { weather, sessionData } = await fetchSessionDataWithWeather(

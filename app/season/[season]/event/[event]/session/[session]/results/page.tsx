@@ -9,6 +9,7 @@ import {
     type IQualifyingData,
     type IRaceData,
 } from "./components/types"
+import type { ISessionPathnameParams } from "../types"
 
 const fetchSessionResults = async (season: string, event: string, session: SessionIdentifier) => {
     const { start_time: sessionStartTime } = await dbClient.event_sessions.findFirstOrThrow({
@@ -66,9 +67,7 @@ const fetchSessionResults = async (season: string, event: string, session: Sessi
     })
 }
 
-export default async function Page({
-    params,
-}: { params: Promise<{ session: string; event: string; season: string }> }) {
+export default async function Page({ params }: { params: Promise<ISessionPathnameParams> }) {
     const { session, event, season } = await params
 
     const data = await fetchSessionResults(

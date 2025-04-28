@@ -45,3 +45,4 @@ api/uv.lock
 api/.vscode
 api/**/__pycache__
 api/venv
+.vscode/

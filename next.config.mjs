@@ -13,15 +13,15 @@ const nextConfig = {
                 source: "/docs",
                 destination:
                     process.env.NODE_ENV === "development"
-                        ? "http://127.0.0.1:8000/api/py/docs"
-                        : "/api/py/docs",
+                        ? "http://127.0.0.1:8000/docs"
+                        : "/docs",
             },
             {
                 source: "/openapi.json",
                 destination:
                     process.env.NODE_ENV === "development"
-                        ? "http://127.0.0.1:8000/api/py/openapi.json"
-                        : "/api/py/openapi.json",
+                        ? "http://127.0.0.1:8000/openapi.json"
+                        : "/openapi.json",
             },
         ]
     },

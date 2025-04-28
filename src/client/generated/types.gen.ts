@@ -10,7 +10,7 @@ export type Compound =
     | "TEST_UNKNOWN"
 
 export type DriverLapData = {
-    team: TeamData
+    team: TeamPlotStyleDto
     driver: string
     style: PlotStyle
     session_data: StintData
@@ -18,8 +18,21 @@ export type DriverLapData = {
     laps: Array<LapTimingData>
 }
 
+export type DriverTelemetryMeasurement = {
+    driver: string
+    team: TeamPlotStyleDto
+    lap: LapDto
+    style: PlotStyle
+}
+
 export type HttpValidationError = {
     detail?: Array<ValidationError>
+}
+
+export type LapDto = {
+    id: number
+    lap_number: number
+    telemetry: Array<TelemetryMeasurementDto>
 }
 
 export type LapSelectionData = {
@@ -31,6 +44,7 @@ export type LapSelectionData = {
 }
 
 export type LapTimingData = {
+    id: number
     laptime: number
     is_pb: boolean
     sector_1_time: number | null
@@ -83,11 +97,23 @@ export type StintData = {
     median: number | null
     low_quartile: number | null
     high_quartile: number | null
+    deg_rate: number | null
 }
 
-export type TeamData = {
+export type TeamPlotStyleDto = {
     name: string
     color: string
+}
+
+export type TelemetryMeasurementDto = {
+    speed: number
+    rpm: number
+    throttle: number
+    brake: number
+    gear: number
+    laptime_at: number
+    distance: number
+    relative_distance: number
 }
 
 export type ValidationError = {
@@ -96,7 +122,7 @@ export type ValidationError = {
     type: string
 }
 
-export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostData = {
+export type GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostData = {
     body: SessionQueryFilter
     path: {
         year: string
@@ -104,28 +130,92 @@ export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPost
         session: SessionIdentifier
     }
     query?: never
-    url: "/season/{year}/event/{event}/session/{session}/laps"
+    url: "/api/py/season/{year}/event/{event}/session/{session}/laps"
 }
 
-export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostErrors = {
+export type GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError
 }
 
-export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostError =
-    GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostErrors[keyof GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostErrors]
+export type GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostError =
+    GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostErrors[keyof GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostErrors]
 
-export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponses = {
+export type GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostResponses = {
     /**
      * Successful Response
      */
     200: LapSelectionData
 }
 
-export type GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponse =
-    GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponses[keyof GetSessionLaptimesFilteredSeasonYearEventEventSessionSessionLapsPostResponses]
+export type GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostResponse =
+    GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostResponses[keyof GetSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPostResponses]
+
+export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostData = {
+    body: SessionQueryFilter
+    path: {
+        year: string
+        event: string
+        session: SessionIdentifier
+    }
+    query?: never
+    url: "/api/py/season/{year}/event/{event}/session/{session}/telemetry/average"
+}
+
+export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostErrors =
+    {
+        /**
+         * Validation Error
+         */
+        422: HttpValidationError
+    }
+
+export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostError =
+    GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostErrors[keyof GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostErrors]
+
+export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostResponses =
+    {
+        /**
+         * Successful Response
+         */
+        200: Array<DriverTelemetryMeasurement>
+    }
+
+export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostResponse =
+    GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostResponses[keyof GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostResponses]
+
+export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostData = {
+    body: SessionQueryFilter
+    path: {
+        year: string
+        event: string
+        session: SessionIdentifier
+    }
+    query?: never
+    url: "/api/py/season/{year}/event/{event}/session/{session}/telemetries"
+}
+
+export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError
+}
+
+export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostError =
+    GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostErrors[keyof GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostErrors]
+
+export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<DriverTelemetryMeasurement>
+}
+
+export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostResponse =
+    GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostResponses[keyof GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostResponses]
 
 export type ClientOptions = {
     baseUrl: `${string}://src` | (string & {})
