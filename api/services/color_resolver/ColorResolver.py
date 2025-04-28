@@ -33,7 +33,6 @@ class TeamPlotStyleResolver:
                 SessionResults.season_year == self.season,
                 SessionResults.event_name == self.event,
                 SessionResults.session_type_id == self.session_identifier.value,
-                SessionResults.driver_id == driver_id,
             )
             .join(
                 EventSessions,
@@ -80,11 +79,11 @@ class TeamPlotStyleResolver:
                 return (
                     TeamPlotData(
                         style=PlotStyle.DEFAULT,
-                        driver=result.driver_id,
                         team=TeamDto(
                             id_=result.team_id,
                             name=result.team_display_name,
                         ),
+                        driver=driver_id,
                         color=result.color,
                     )
                     if result.driver_id == driver_id
@@ -94,7 +93,7 @@ class TeamPlotStyleResolver:
                             id_=result.team_id,
                             name=result.team_display_name,
                         ),
-                        driver=result.driver_id,
+                        driver=driver_id,
                         color=result.color,
                     )
                 )

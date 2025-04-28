@@ -4,7 +4,6 @@ from sqlalchemy import Connection, and_, or_, select
 
 from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
 from repository.repository import (
-    Drivers,
     Laps,
     SessionResults,
     TelemetryMeasurements,
@@ -162,14 +161,13 @@ class TelemetryResolver:
         return avg_telemetries
 
     def get_telemetry(self, query_filter: SessionQueryFilter):
-        telemetries = []
-        for query in query_filter.queries:
-            telemetries.append(self.get_driver_telemetries(query))
+        return [self.get_driver_telemetries(query) for query in query_filter.queries]
 
     def get_driver_telemetries(
         self, query: SessionQuery
     ) -> list[DriverTelemetryMeasurement]:
         telemetries: list[DriverTelemetryMeasurement] = []
+        style = self.plot_style_resolver.get_driver_style(query.driver)
 
         if isinstance(query.lap_filter, list):
             for lap in query.lap_filter:
@@ -178,14 +176,24 @@ class TelemetryResolver:
                     sql=select(TelemetryMeasurements)
                     .join(
                         Laps,
-                        and_(Laps.lap_number == lap, Laps.driver_id == query.driver),
+                        and_(Laps.id == TelemetryMeasurements.lap_id),
                     )
                     .join(
-                        Drivers,
-                        Laps.driver_id == Drivers.id,
+                        SessionResults,
+                        and_(
+                            Laps.season_year == SessionResults.season_year,
+                            Laps.session_type_id == SessionResults.session_type_id,
+                            Laps.event_name == SessionResults.event_name,
+                        ),
+                    )
+                    .where(
+                        SessionResults.season_year == self.season,
+                        SessionResults.session_type_id == self.session_identifier.value,
+                        SessionResults.event_name == self.event,
+                        Laps.lap_number == lap,
+                        Laps.driver_id == query.driver,
                     ),
                 )
-                style = self.plot_style_resolver.get_driver_style(query.driver)
                 telemetry_dataframe["relative_distance"] = (
                     telemetry_dataframe["distance"]
                     / telemetry_dataframe.tail(1)["distance"].iloc[0]
@@ -200,11 +208,13 @@ class TelemetryResolver:
                         ),
                         style=style.style,
                         lap=LapDto(
-                            id=telemetry_dataframe[0].lap_id,
-                            lap_number=telemetry_dataframe[0].lap_number,
+                            id=telemetry_dataframe.iloc[0].lap_id,
+                            lap_number=lap,
                             telemetry=telemetry_dataframe.to_dict(orient="records"),
                         ),
                     )
                 )
+        else:
+            raise ValueError(f"No lap filters provided for driver: {query.driver}")
 
-        raise ValueError(f"No lap filters provided for driver: {query.driver}")
+        return telemetries
