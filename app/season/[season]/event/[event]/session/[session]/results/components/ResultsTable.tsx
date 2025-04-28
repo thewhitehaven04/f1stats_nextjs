@@ -1,23 +1,17 @@
 "use client"
 
-import {
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    type RowData,
-} from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, useReactTable, type RowData } from "@tanstack/react-table"
 import type { ESessionType, IBaseResultsData } from "./types"
-import { TableCell } from "@/components/Table/Cell"
-import { TableHeader } from "@/components/Table/Header"
-import { TableHeaderCell } from "@/components/Table/Header/cell"
-import { TableWrapper } from "@/components/Table/Wrapper"
-import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from './constants'
+import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from "./constants"
+import { Table, TableCell, TableHeader } from "@/components/ui/table"
 
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
 }
 
-export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTableProps<T> & { sessionType: ESessionType }) => {
+export const ResultsTable = <T extends IBaseResultsData>(
+    props: IResultsTableProps<T> & { sessionType: ESessionType },
+) => {
     const { rows, sessionType } = props
 
     const { getRowModel, getFlatHeaders, getIsSomeRowsSelected } = useReactTable<T>({
@@ -44,16 +38,17 @@ export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTablePro
                 </button>
             )}
 
-            <TableWrapper className="border-2">
+            <Table>
                 <TableHeader>
                     <tr>
                         {getFlatHeaders().map(({ column, id, getContext }) => (
-                            <TableHeaderCell className="text-start px-1" key={id}>
+                            <TableCell className="text-start px-1" key={id}>
                                 {flexRender(column.columnDef.header, getContext())}
-                            </TableHeaderCell>
+                            </TableCell>
                         ))}
                     </tr>
                 </TableHeader>
+
                 <tbody>
                     {getRowModel().rows.map(({ id, getVisibleCells }) => (
                         <tr key={id}>
@@ -65,7 +60,7 @@ export const ResultsTable = <T extends IBaseResultsData>(props: IResultsTablePro
                         </tr>
                     ))}
                 </tbody>
-            </TableWrapper>
+            </Table>
         </div>
     )
 }

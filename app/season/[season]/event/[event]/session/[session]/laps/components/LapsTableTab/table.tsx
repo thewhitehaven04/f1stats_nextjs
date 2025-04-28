@@ -1,9 +1,4 @@
-import { TableCell } from "@/components/Table/Cell"
-import { TableContext } from "@/components/Table/context"
-import { TableHeader } from "@/components/Table/Header"
-import { TableHeaderCell } from "@/components/Table/Header/cell"
 import { ColumnVisibilityButton } from "@/components/Table/Toolbars/ColumnVisibilityButton"
-import { TableWrapper } from "@/components/Table/Wrapper"
 import {
     flexRender,
     type TableOptions,
@@ -12,6 +7,8 @@ import {
 } from "@tanstack/react-table"
 import type { ReactNode } from "react"
 import type { ILapData } from "."
+import { Table, TableCell, TableHeader } from "@/components/ui/table"
+import { TableContext } from '@/components/Table/context'
 
 export function LapsTable(
     props: Omit<TableOptions<ILapData>, "getCoreRowModel"> & { toolbar?: ReactNode },
@@ -39,12 +36,12 @@ export function LapsTable(
                     }
                 </div>
                 <div className="overflow-x-auto">
-                    <TableWrapper className="border-2">
+                    <Table>
                         <TableHeader>
                             {headerGroups.map((group) => (
                                 <tr key={group.id}>
                                     {group.headers.map((header) => (
-                                        <TableHeaderCell
+                                        <TableCell
                                             className="text-center"
                                             key={header.id}
                                             colSpan={header.colSpan}
@@ -53,7 +50,7 @@ export function LapsTable(
                                                 header.column.columnDef.header,
                                                 header.getContext(),
                                             )}
-                                        </TableHeaderCell>
+                                        </TableCell>
                                     ))}
                                 </tr>
                             ))}
@@ -72,7 +69,7 @@ export function LapsTable(
                                 </tr>
                             ))}
                         </tbody>
-                    </TableWrapper>
+                    </Table>
                 </div>
             </div>
         </TableContext.Provider>
