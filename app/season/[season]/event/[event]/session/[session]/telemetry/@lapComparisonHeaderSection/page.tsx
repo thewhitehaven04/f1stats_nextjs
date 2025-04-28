@@ -13,7 +13,7 @@ import {
 } from "@/client/generated"
 import { buildQueries } from "../../laps/helpers"
 import type { ISessionPathnameParams } from "../../types"
-import { ApiClient } from '@/client'
+import { ApiClient } from "@/client"
 
 export default async function TelemetryLaptimeSection(props: {
     params: Promise<ISessionPathnameParams>
@@ -46,26 +46,30 @@ export default async function TelemetryLaptimeSection(props: {
     return (
         <section>
             <h2 className="divider divider-start text-lg">Lap comparison</h2>
-            <div className="grid grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] gap-4">
+            <div className="flex flex-row justify-start gap-4">
                 {sessionData.map((session) => (
                     <Fragment key={session.driverId}>
                         {session.laps.map((lap) => {
                             const TyreIcon = getTyreComponentByCompound(lap.compound_id)
+                            const gapToLeader = lap.laptime - (data.min_time || 0) || undefined
+
                             return (
                                 <article
                                     key={lap.id}
-                                    className="card card-body border-2 border-solid border-neutral-100 p-4 flex flex-col justify-around card-bordered shadow-md"
+                                    className="card card-body border-2 border-solid border-neutral-100 card-sm card-bordered shadow-md"
                                 >
                                     <div className="grid grid-cols-[100px,_1fr] gap-4 items-baseline">
                                         <h3 className="text-lg font-bold">{session.driverId}</h3>
                                         <div className="grid grid-rows-2 justify-center text-lg font-bold">
                                             <div className="flex flex-row gap-2">
-                                                {formatTime(lap.laptime || 0)}
+                                                {formatTime(lap.laptime)}
                                                 {TyreIcon && <TyreIcon className="w-4" />}
                                             </div>
-                                            <div className="text-non-personal-best">
-                                                +{formatTime(lap.laptime - (data.min_time || 0))}
-                                            </div>
+                                            {gapToLeader && (
+                                                <div className="text-non-personal-best">
+                                                    + {formatTime(gapToLeader)}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <TableWrapper>

@@ -1,13 +1,13 @@
 export default async function TelemetryPage({
-    laptimeSection,
+    lapComparisonHeaderSection,
     telemetrySection,
 }: {
-    laptimeSection: React.ReactNode
+    lapComparisonHeaderSection: React.ReactNode
     telemetrySection: React.ReactNode
 }) {
     return (
         <>
-            {laptimeSection}
+            {lapComparisonHeaderSection}
             {telemetrySection}
         </>
     )

@@ -62,7 +62,7 @@ class TeamPlotStyleResolver:
             )
             .join(Teams, DriverTeamChanges.team_id == Teams.id)
             .add_columns(
-                TeamSeasonColors.color,
+                TeamSeasonColors.color.label('color'),
                 Teams.id.label("team_id"),
                 Teams.team_display_name,
             )
@@ -78,7 +78,7 @@ class TeamPlotStyleResolver:
             if result.team_id == team_id:
                 return (
                     TeamPlotData(
-                        style=PlotStyle.DEFAULT,
+                        style="default",
                         team=TeamDto(
                             id_=result.team_id,
                             name=result.team_display_name,
@@ -88,7 +88,7 @@ class TeamPlotStyleResolver:
                     )
                     if result.driver_id == driver_id
                     else TeamPlotData(
-                        style=PlotStyle.ALTERNATIVE,
+                        style="alternative",
                         team=TeamDto(
                             id_=result.team_id,
                             name=result.team_display_name,

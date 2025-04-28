@@ -1,5 +1,5 @@
 import type { ChartProps } from "react-chartjs-2"
-import type { ISpeedTraceOptions } from "~/features/session/telemetry/components/ChartSection/types"
+import type { ISpeedTraceOptions } from "./types"
 
 export const BASE_CHART_OPTIONS = {
     elements: {
@@ -12,7 +12,9 @@ export const BASE_CHART_OPTIONS = {
     },
 } as const
 
-export const getSpeedTraceOptions = (options: ISpeedTraceOptions): ChartProps<"line">["options"] => ({
+export const getSpeedTraceOptions = (
+    options: ISpeedTraceOptions,
+): ChartProps<"line">["options"] => ({
     ...BASE_CHART_OPTIONS,
     responsive: true,
     elements: {
@@ -24,10 +26,10 @@ export const getSpeedTraceOptions = (options: ISpeedTraceOptions): ChartProps<"l
         point: {
             radius: 0,
             hitRadius: 0.5,
-        }
+        },
     },
     interaction: {
-        mode: 'x',
+        mode: "x",
         intersect: false,
     },
     plugins: {

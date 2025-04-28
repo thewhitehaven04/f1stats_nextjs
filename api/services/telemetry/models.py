@@ -15,16 +15,16 @@ class TelemetryMeasurementDto(BaseModel):
     relative_distance: float
 
 
-class LapDto(BaseModel):
+class LapTelemetryDto(BaseModel):
     id: int
     lap_number: int
     telemetry: list[TelemetryMeasurementDto]
 
 
-class DriverTelemetryMeasurement(BaseModel):
+class DriverTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
     team: TeamPlotStyleDto
-    lap: LapDto
     style: PlotStyle
+    lap: LapTelemetryDto

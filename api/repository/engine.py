@@ -1,7 +1,7 @@
 from sqlalchemy import Connection, create_engine
 
 
-engine = create_engine("postgresql://germanbulavkin:postgres@localhost:5432/postgres", echo=True)
+engine = create_engine("postgresql://germanbulavkin:postgres@localhost:5432/postgres")
 
 database_connection: Connection | None = None
 

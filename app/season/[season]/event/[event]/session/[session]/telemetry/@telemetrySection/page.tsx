@@ -1,5 +1,4 @@
 import { Suspense } from "react"
-import { TelemetryChartSection } from "../components/ChartSection"
 import { TelemetryChartFallback } from "../components/ChartSection/fallback"
 import type { ISessionPathnameParams } from "../../types"
 import { buildQueries } from "../../laps/helpers"
@@ -7,24 +6,30 @@ import {
     getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost,
     type SessionIdentifier,
 } from "@/client/generated"
-import { ApiClient } from '@/client'
+import { ApiClient } from "@/client"
+import dynamic from "next/dynamic"
+
+const TelemetryChartSection = dynamic(() => import("./../components/ChartSection/index"))
 
 export default async function TelemetryPage({
     params,
     searchParams,
-}: { params: Promise<ISessionPathnameParams>; searchParams: Promise<URLSearchParams> }) {
+}: {
+    params: Promise<ISessionPathnameParams>
+    searchParams: Promise<Record<string, string | string[]>>
+}) {
     const queries = buildQueries(await searchParams)
 
     const { data: telemetryMeasurements } =
         await getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost({
             body: { queries },
             path: {
-                event: (await params).event,
-                session: (await params).session as SessionIdentifier,
+                event: decodeURIComponent((await params).event),
+                session: decodeURIComponent((await params).session) as SessionIdentifier,
                 year: (await params).season,
             },
             throwOnError: true,
-            client: ApiClient
+            client: ApiClient,
         })
 
     return (

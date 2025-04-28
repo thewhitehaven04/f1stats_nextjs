@@ -1,6 +1,5 @@
 import type { ChartData } from "chart.js"
 import { use, useMemo } from "react"
-import type { TelemetryComparison } from "~/client/generated"
 import { Chart, type ChartProps } from "react-chartjs-2"
 import {
     CategoryScale,
@@ -13,13 +12,22 @@ import {
     Title,
     Tooltip,
 } from "chart.js"
-import { BASE_CHART_OPTIONS } from "~/features/session/telemetry/components/ChartSection/config"
-import { CircuitMap } from "~/features/session/telemetry/components/CircuitMap"
-import { getAlternativeColor } from "~/core/charts/getAlternativeColor"
+import { BASE_CHART_OPTIONS } from "./config"
+import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
+import { CircuitMap } from "../CircuitMap"
 
-ChartJS.register([LineController, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Title])
+ChartJS.register([
+    LineController,
+    LineElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    Tooltip,
+    Legend,
+    Title,
+])
 
-export function TimeDeltaComparison(props: { comparison: Promise<TelemetryComparison> }) {
+export function TimeDeltaComparison(props: { comparison: Promise<unknown> }) {
     const { comparison: comparisonPromise } = props
     const comparison = use(comparisonPromise)
     const max = comparison.telemetries[0].comparison.distance.at(-1) || 0
@@ -45,7 +53,7 @@ export function TimeDeltaComparison(props: { comparison: Promise<TelemetryCompar
             },
         },
         interaction: {
-            mode: 'nearest',
+            mode: "nearest",
             intersect: false,
         },
         plugins: {
@@ -82,11 +90,16 @@ export function TimeDeltaComparison(props: { comparison: Promise<TelemetryCompar
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <section className='h-full'>
+            <section className="h-full">
                 <h2 className="divider divider-start text-lg">Time delta</h2>
-                <Chart className='h-full' type="line" data={{ labels, datasets: timeDeltaDatasets }} options={options} />
+                <Chart
+                    className="h-full"
+                    type="line"
+                    data={{ labels, datasets: timeDeltaDatasets }}
+                    options={options}
+                />
             </section>
-            <section className='h-full'>
+            <section className="h-full">
                 <h2 className="divider divider-start text-lg">Track map</h2>
                 <CircuitMap comparison={comparison} />
             </section>

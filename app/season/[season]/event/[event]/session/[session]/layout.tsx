@@ -2,7 +2,7 @@ import { format } from "date-fns/format"
 import { SummaryItem } from "./components/SummaryItem"
 import { dbClient } from "@/client/db"
 import type { SessionIdentifier } from "@/client/generated"
-import type { ISessionPathnameParams } from './types'
+import type { ISessionPathnameParams } from "./types"
 const fetchSessionDataWithWeather = async (
     session: SessionIdentifier,
     season: number,

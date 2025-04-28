@@ -10,7 +10,7 @@ from repository.repository import (
 )
 from services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from services.laps.models.laps import TeamPlotStyleDto
-from services.telemetry.models import DriverTelemetryMeasurement, LapDto
+from services.telemetry.models import DriverTelemetryPlotData, LapTelemetryDto
 
 
 class TelemetryResolver:
@@ -160,14 +160,20 @@ class TelemetryResolver:
 
         return avg_telemetries
 
-    def get_telemetry(self, query_filter: SessionQueryFilter):
-        return [self.get_driver_telemetries(query) for query in query_filter.queries]
+    def get_telemetry(
+        self, query_filter: SessionQueryFilter
+    ) -> list[DriverTelemetryPlotData]:
+        arr = []
+        for query in query_filter.queries:
+            arr.extend(self.get_driver_telemetries(query))
+
+        return arr
 
     def get_driver_telemetries(
         self, query: SessionQuery
-    ) -> list[DriverTelemetryMeasurement]:
-        telemetries: list[DriverTelemetryMeasurement] = []
-        style = self.plot_style_resolver.get_driver_style(query.driver)
+    ) -> list[DriverTelemetryPlotData]:
+        telemetries: list[DriverTelemetryPlotData] = []
+        plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
 
         if isinstance(query.lap_filter, list):
             for lap in query.lap_filter:
@@ -200,14 +206,14 @@ class TelemetryResolver:
                 )
 
                 telemetries.append(
-                    DriverTelemetryMeasurement(
+                    DriverTelemetryPlotData(
                         driver=query.driver,
                         team=TeamPlotStyleDto(
-                            name=style.team.name,
-                            color=style.color,
+                            name=plot_style_data.team.name,
+                            color=plot_style_data.color,
                         ),
-                        style=style.style,
-                        lap=LapDto(
+                        style=plot_style_data.style,
+                        lap=LapTelemetryDto(
                             id=telemetry_dataframe.iloc[0].lap_id,
                             lap_number=lap,
                             telemetry=telemetry_dataframe.to_dict(orient="records"),

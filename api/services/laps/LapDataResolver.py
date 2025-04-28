@@ -135,9 +135,9 @@ class LapDataResolver:
         formatted_laps.set_index(["driver_id"], inplace=True)
         lap_data = []
         for index in formatted_laps.index.unique():
-            current_driver_laps = formatted_laps.loc[[index]]
-            current_driver_laps = current_driver_laps[
-                current_driver_laps["is_inlap"] == False
+            non_filtered_laps = formatted_laps.loc[[index]]
+            current_driver_laps = non_filtered_laps[
+                non_filtered_laps["is_inlap"] == False
             ]
             current_driver_laps = current_driver_laps[
                 current_driver_laps["is_outlap"] == False
@@ -179,10 +179,10 @@ class LapDataResolver:
                     style=driver_style.style,
                     stints=filtered_stint_groups.to_dict(orient="records"),
                     session_data=StintData(
-                        total_laps=len(current_driver_laps),
+                        total_laps=len(non_filtered_laps),
                         avg_time=(flying_laps["laptime"].mean()),
-                        min_time=(current_driver_laps["laptime"].min()),
-                        max_time=(current_driver_laps["laptime"].max()),
+                        min_time=(non_filtered_laps["laptime"].min()),
+                        max_time=(non_filtered_laps["laptime"].max()),
                         low_quartile=(current_driver_laps["laptime"].quantile(0.25)),
                         high_quartile=(current_driver_laps["laptime"].quantile(0.75)),
                         median=(flying_laps["laptime"].median()),

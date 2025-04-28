@@ -3,7 +3,6 @@ from math import isnan
 from typing import Sequence
 from pandas.api.typing import NaTType
 from pydantic import BaseModel, ConfigDict, field_serializer
-from sqlalchemy import BigInteger
 
 from services.color_resolver.models import PlotStyle
 
@@ -17,16 +16,18 @@ class Compound(StrEnum):
     UNKNOWN = "UNKNOWN"
     TEST_UNKNOWN = "TEST_UNKNOWN"
 
+
 class TeamPlotStyleDto(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True) 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     name: str
     color: str
 
+
 class LapTimingData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    id: int 
+    id: int
     laptime: float | NaTType
     is_pb: bool
     sector_1_time: float | None
@@ -77,10 +78,9 @@ class StintData(BaseModel):
     deg_rate: float | None
 
 
-
 class DriverLapData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    team: TeamPlotStyleDto 
+    team: TeamPlotStyleDto
     driver: str
     style: PlotStyle
     session_data: StintData

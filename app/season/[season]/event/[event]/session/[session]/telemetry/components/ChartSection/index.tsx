@@ -30,7 +30,7 @@ ChartJS.register([
     zoom,
 ])
 
-export function TelemetryChartSection(props: {
+export default function TelemetryChartSection(props: {
     telemetryMeasurements: DriverTelemetryMeasurement[]
     telemetryComparisonSlot: ReactNode
 }) {
