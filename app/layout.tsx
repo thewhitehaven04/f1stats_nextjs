@@ -10,7 +10,7 @@ export const metadata = {
 const appFont = Archivo({
     subsets: ["latin"],
     variable: "--font-sans",
-    weight: ["400", "700"],
+    weight: ["400", "500", "700"],
 })
 
 export default async function RootLayout({

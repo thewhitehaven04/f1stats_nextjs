@@ -3,7 +3,15 @@
 import { flexRender, getCoreRowModel, useReactTable, type RowData } from "@tanstack/react-table"
 import type { ESessionType, IBaseResultsData } from "./types"
 import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from "./constants"
-import { Table, TableCell, TableHeader } from "@/components/ui/table"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
@@ -28,38 +36,38 @@ export const ResultsTable = <T extends IBaseResultsData>(
                     className="tooltip tooltip-left"
                     data-tip="To view detailed data, please select at least one of the laps in the table by clicking on a checkbox"
                 >
-                    <button type="submit" disabled className="btn btn-sm">
+                    <Button type="submit" disabled size="md">
                         View laps
-                    </button>
+                    </Button>
                 </div>
             ) : (
-                <button type="submit" className="btn btn-sm">
+                <Button type="submit" size="md">
                     View laps
-                </button>
+                </Button>
             )}
 
             <Table>
                 <TableHeader>
-                    <tr>
+                    <TableRow>
                         {getFlatHeaders().map(({ column, id, getContext }) => (
-                            <TableCell className="text-start px-1" key={id}>
+                            <TableHead className="text-start px-1" key={id}>
                                 {flexRender(column.columnDef.header, getContext())}
-                            </TableCell>
+                            </TableHead>
                         ))}
-                    </tr>
+                    </TableRow>
                 </TableHeader>
 
-                <tbody>
+                <TableBody>
                     {getRowModel().rows.map(({ id, getVisibleCells }) => (
-                        <tr key={id}>
+                        <TableRow key={id}>
                             {getVisibleCells().map(({ id: cellId, column, getContext }) => (
                                 <TableCell className="pl-1" key={cellId}>
                                     {flexRender(column.columnDef.cell, getContext())}
                                 </TableCell>
                             ))}
-                        </tr>
+                        </TableRow>
                     ))}
-                </tbody>
+                </TableBody>
             </Table>
         </div>
     )

@@ -11,7 +11,14 @@ import { buildQueries } from "../../laps/helpers"
 import type { ISessionPathnameParams } from "../../types"
 import { ApiClient } from "@/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableCell, TableHeader } from "@/components/ui/table"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 
 export default async function TelemetryLaptimeSection(props: {
     params: Promise<ISessionPathnameParams>
@@ -70,21 +77,21 @@ export default async function TelemetryLaptimeSection(props: {
                                         </div>
                                         <Table>
                                             <TableHeader>
-                                                <tr>
+                                                <TableRow>
                                                     <TableCell>Sector time</TableCell>
                                                     <TableCell>Speed trap</TableCell>
-                                                </tr>
+                                                </TableRow>
                                             </TableHeader>
-                                            <tbody>
-                                                <tr>
-                                                    <TableCell>
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell className="text-center">
                                                         <SectorTime
                                                             value={lap.sector_1_time}
                                                             isSessionBest={lap.is_best_s1}
                                                             isPersonalBest={lap.is_personal_best_s1}
                                                         />
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell className="text-center">
                                                         <Speedtrap
                                                             key={lap.speedtrap_1}
                                                             value={lap.speedtrap_1 || 0}
@@ -93,16 +100,16 @@ export default async function TelemetryLaptimeSection(props: {
                                                             withUnit
                                                         />
                                                     </TableCell>
-                                                </tr>
-                                                <tr>
-                                                    <TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell className="text-center">
                                                         <SectorTime
                                                             value={lap.sector_2_time}
                                                             isSessionBest={lap.is_best_s2}
                                                             isPersonalBest={lap.is_personal_best_s2}
                                                         />
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell className="text-center">
                                                         <Speedtrap
                                                             key={lap.speedtrap_2}
                                                             value={lap.speedtrap_2 || 0}
@@ -111,16 +118,16 @@ export default async function TelemetryLaptimeSection(props: {
                                                             withUnit
                                                         />
                                                     </TableCell>
-                                                </tr>
-                                                <tr>
-                                                    <TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell className="text-center">
                                                         <SectorTime
                                                             value={lap.sector_3_time}
                                                             isSessionBest={lap.is_best_s3}
                                                             isPersonalBest={lap.is_personal_best_s3}
                                                         />
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell className="text-center">
                                                         <Speedtrap
                                                             key={lap.speedtrap_fl}
                                                             value={lap.speedtrap_fl || 0}
@@ -129,8 +136,8 @@ export default async function TelemetryLaptimeSection(props: {
                                                             withUnit
                                                         />
                                                     </TableCell>
-                                                </tr>
-                                            </tbody>
+                                                </TableRow>
+                                            </TableBody>
                                         </Table>
                                     </CardContent>
                                 </Card>

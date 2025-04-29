@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table"
 import type { ReactNode } from "react"
 import type { ILapData } from "."
-import { Table, TableCell, TableHeader } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TableContext } from '@/components/Table/context'
 
 export function LapsTable(
@@ -39,9 +39,9 @@ export function LapsTable(
                     <Table>
                         <TableHeader>
                             {headerGroups.map((group) => (
-                                <tr key={group.id}>
+                                <TableRow key={group.id}>
                                     {group.headers.map((header) => (
-                                        <TableCell
+                                        <TableHead
                                             className="text-center"
                                             key={header.id}
                                             colSpan={header.colSpan}
@@ -50,14 +50,14 @@ export function LapsTable(
                                                 header.column.columnDef.header,
                                                 header.getContext(),
                                             )}
-                                        </TableCell>
+                                        </TableHead>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
                         </TableHeader>
-                        <tbody>
+                        <TableBody>
                             {rowModel.map((row) => (
-                                <tr key={row.id}>
+                                <TableRow key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell className="text-center" key={cell.id}>
                                             {flexRender(
@@ -66,9 +66,9 @@ export function LapsTable(
                                             )}
                                         </TableCell>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </tbody>
+                        </TableBody>
                     </Table>
                 </div>
             </div>

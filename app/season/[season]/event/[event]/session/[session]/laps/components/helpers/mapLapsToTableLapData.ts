@@ -10,7 +10,7 @@ export function mapLapsToTableLapData(laps: DriverLapData[]): ILapData[] {
                 flattenedLaps[index] = {}
             }
 
-            flattenedLaps[index][`${driver.driver}.LapId`] = lap
+            flattenedLaps[index][`${driver.driver}.LapId`] = lap.id
             flattenedLaps[index][`${driver.driver}.LapTime`] = lap.laptime
             flattenedLaps[index][`${driver.driver}.IsPB`] = lap.is_pb
             flattenedLaps[index][`${driver.driver}.Sector1Time`] = lap.sector_1_time
