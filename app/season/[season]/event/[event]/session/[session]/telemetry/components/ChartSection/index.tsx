@@ -24,7 +24,7 @@ export default function TelemetryChartSection(props: {
     const distanceLabels = telemetryMeasurements[0].lap.telemetry.map(
         (measurement) => measurement.distance,
     )
-    const maxDistance = Math.floor(telemetryMeasurements[0].lap.telemetry.at(-1)?.distance || 0)
+    const maxDistance = telemetryMeasurements[0].lap.telemetry.at(-1)?.distance || 0
 
     const speedTraceOptions = useMemo(
         () =>
@@ -40,8 +40,16 @@ export default function TelemetryChartSection(props: {
                 interaction: INTERACTION_CONFIG,
                 plugins: {
                     legend: {
-                        display: true,
-                        align: "center",
+                        title: {
+                            position: "center",
+                        },
+                        labels: {
+                            font: {
+                                size: 13,
+                                family: '"Archivo", sans-serif',
+                            },
+                        },
+                        position: "bottom",
                     },
                     tooltip: {
                         ...TOOLTIP_CONFIG,
@@ -69,14 +77,43 @@ export default function TelemetryChartSection(props: {
                         title: {
                             text: "Distance (m)",
                             display: true,
+                            font: {
+                                size: 13,
+                                family: '"Archivo", sans-serif',
+                            }
                         },
                         min: 0,
+                        ticks: {
+                            font: {
+                                size: 13,
+                                family: '"Archivo", sans-serif',
+                            },
+                            format: {
+                                roundingMode: "halfCeil",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                            },
+                        },
                     },
                     y: {
                         type: "linear",
                         title: {
-                            text: "Speed (kph)",
+                            text: "Speed",
                             display: true,
+                            font: {
+                                size: 13,
+                                family: '"Archivo", sans-serif',
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 13,
+                                family: '"Archivo", sans-serif',
+                            },
+                            format: {
+                                roundingMode: "halfCeil",
+                            },
+                            stepSize: 25,
                         },
                     },
                 },
@@ -92,6 +129,28 @@ export default function TelemetryChartSection(props: {
                 type: "linear",
                 min: 0,
                 max: maxDistance,
+                ticks: {
+                    font: {
+                        size: 13,
+                        family: '"Archivo", sans-serif',
+                    },
+                    format: {
+                        roundingMode: "halfCeil",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                    },
+                },
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 13,
+                        family: '"Archivo", sans-serif',
+                    },
+                    format: {
+                        roundingMode: "halfCeil",
+                    },
+                },
             },
         },
         interaction: INTERACTION_CONFIG,
@@ -204,19 +263,19 @@ export default function TelemetryChartSection(props: {
                     datasets: rpmDatasets,
                 }}
                 options={chartOptions}
-                height={30}
+                height={50}
             />
             <Chart
                 type="line"
                 data={{ labels: distanceLabels, datasets: throttleDatasets }}
                 options={chartOptions}
-                height={25}
+                height={30}
             />
             <Chart
                 type="line"
                 data={{ labels: distanceLabels, datasets: brakeDatasets }}
                 options={chartOptions}
-                height={25}
+                height={30}
             />
         </section>
     )
