@@ -7,9 +7,10 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { ChevronRightCircle, ChevronRightCircleIcon, ChevronRightSquareIcon } from "lucide-react"
+import { ChevronRightCircleIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Fragment } from "react"
 
 const SEGMENTS = [
     {
@@ -51,8 +52,8 @@ export const Breadcrumbs = () => {
                     if (segment.expression.test(pathname)) {
                         const match = pathname.match(segment.expression)
                         return (
-                            <>
-                                <BreadcrumbItem key={index}>
+                            <Fragment key={index}>
+                                <BreadcrumbItem>
                                     {match ? (
                                         <BreadcrumbLink asChild>
                                             <Link href={match[0]}>{segment.getText(match)}</Link>
@@ -64,7 +65,7 @@ export const Breadcrumbs = () => {
                                         <ChevronRightCircleIcon />
                                     </BreadcrumbSeparator>
                                 )}
-                            </>
+                            </Fragment>
                         )
                     }
                     return null
