@@ -42,8 +42,9 @@ export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectio
                     size="md"
                     variant="secondary"
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
+                    className="w-32"
                 >
-                    Show outliers
+                    {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
             </div>
             <Chart

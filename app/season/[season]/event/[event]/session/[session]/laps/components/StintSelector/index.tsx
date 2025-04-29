@@ -4,6 +4,14 @@ import { PopupCard } from "@/components/PopupCard"
 import { useState } from "react"
 import type { IStint } from "./types"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export function StintSelector(props: {
     driverStints: {
@@ -41,6 +49,7 @@ export function StintSelector(props: {
             {isStintSelectorOpen && (
                 <PopupCard
                     onClose={() => setIsStintSelectorOpen(false)}
+                    className="w-48"
                     actions={
                         <Button type="button" size="md" variant="secondary" onClick={handleReset}>
                             Reset
@@ -48,31 +57,42 @@ export function StintSelector(props: {
                     }
                     title="Stints"
                 >
-                    {driverStints.map((stintInstance) => (
-                        <label
-                            className="grid grid-cols-[48px,_128px] gap-2 items-center"
-                            key={stintInstance.driver}
-                        >
-                            <span>{stintInstance.driver}</span>
-                            <select
-                                className="select select-sm w-full text-end"
-                                onChange={(evt) =>
-                                    onChange({
-                                        driver: stintInstance.driver,
-                                        stint: Number.parseInt(evt.target.value),
-                                    })
-                                }
-                                value={selectionValues[stintInstance.driver]}
+                    <div className="flex flex-col gap-4 w-full">
+                        {driverStints.map((stintInstance) => (
+                            <Label
+                                className="flex flex-col gap-2 items-start w-full"
+                                key={stintInstance.driver}
                             >
-                                <option value={undefined}>Select stint</option>
-                                {stintInstance.stints.map(({ index, text }) => (
-                                    <option key={index} defaultValue={index} value={index}>
-                                        {index} ({text})
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                    ))}
+                                <span>{stintInstance.driver}</span>
+                                <Select
+                                    onValueChange={(value) =>
+                                        onChange({
+                                            driver: stintInstance.driver,
+                                            stint: Number.parseInt(value),
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger className='w-full'>
+                                        <SelectValue
+                                            placeholder="Select stint"
+                                            defaultValue={selectionValues[stintInstance.driver]}
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {stintInstance.stints.map(({ index, text }) => (
+                                            <SelectItem
+                                                key={index}
+                                                defaultValue={index}
+                                                value={index.toString()}
+                                            >
+                                                {index} ({text})
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </Label>
+                        ))}
+                    </div>
                 </PopupCard>
             )}
         </div>

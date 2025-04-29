@@ -81,8 +81,9 @@ export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSe
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
                     size="md"
                     variant="secondary"
+                    className='w-32'
                 >
-                    Show outliers
+                    {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
             </div>
             <LineLapsChart data={{ datasets }} />
