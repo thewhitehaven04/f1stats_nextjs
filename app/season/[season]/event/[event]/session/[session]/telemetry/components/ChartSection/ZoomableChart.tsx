@@ -2,32 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { useCallback, useRef, type ComponentProps } from "react"
-import {
-    CategoryScale,
-    Legend,
-    LinearScale,
-    LineController,
-    LineElement,
-    PointElement,
-    Title,
-    Tooltip,
-    Chart as ChartJS,
-    type Chart,
-} from "chart.js"
-import zoom from "chartjs-plugin-zoom"
+import type { Chart as ChartJS } from "chart.js"
 import { Chart as BaseChart } from "react-chartjs-2"
+import { initGlobalChartConfig } from "@/components/Chart/config"
 
-ChartJS.register([
-    LineController,
-    LineElement,
-    LinearScale,
-    CategoryScale,
-    PointElement,
-    Tooltip,
-    Legend,
-    Title,
-    zoom,
-])
+initGlobalChartConfig()
 
 export const ZoomableChart = (props: ComponentProps<typeof BaseChart>) => {
     const ref = useRef<ChartJS>(null)

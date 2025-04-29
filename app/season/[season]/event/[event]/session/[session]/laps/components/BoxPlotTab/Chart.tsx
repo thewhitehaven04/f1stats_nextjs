@@ -3,6 +3,7 @@ import { formatTime } from "@/core/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
+import { getAlternativeColor } from "../helpers/getAlternativeColor"
 
 export function LapsBoxChart({
     isOutliersShown,
@@ -47,11 +48,13 @@ export function LapsBoxChart({
                               max: driver.session_data.max_time,
                               median: driver.session_data.median,
                               mean: driver.session_data.avg_time,
-                              items: driver.laps.map((driverData) => driverData.laptime),
+                              items: driver.laps
+                                  .map((driverData) => driverData.laptime)
+                                  .filter(Boolean),
                           },
                 ],
-                borderColor: `#${driver.team.color}`,
                 style: driver.style,
+                borderColor: driver.team.color,
             })),
         }),
         [laps, selectedStints],
@@ -81,36 +84,33 @@ export function LapsBoxChart({
                 responsive: true,
                 scales: {
                     x: {
-                        ticks: {
-                            align: "center",
-                        },
                         min: selectionMin,
                         max: selectionMax,
                     },
                 },
-                interaction: {
-                    axis: "x",
-                    includeInvisible: false,
-                    intersect: false,
-                    mode: "x",
-                },
                 elements: {
                     boxandwhiskers: {
                         borderWidth: 2,
-                        itemRadius: 4,
-                        itemHitRadius: 6,
+                        itemRadius: 5,
+                        itemHitRadius: 5,
                         itemStyle: "circle",
-                        itemBorderWidth: 1,
+                        itemBorderWidth: 1.5,
                         itemBorderColor(ctx) {
-                            return typeof ctx.dataset.borderColor === "string"
-                                ? ctx.dataset.borderColor
-                                : "grey"
+                            if (typeof ctx.dataset.borderColor === "string") {
+                                return ctx.dataset.style === "default"
+                                    ? ctx.dataset.borderColor
+                                    : getAlternativeColor(ctx.dataset.borderColor)
+                            }
+                            return "grey"
                         },
                         meanStyle: "rectRot",
                         meanBorderColor(ctx) {
-                            return typeof ctx.dataset.borderColor === "string"
-                                ? ctx.dataset.borderColor
-                                : "grey"
+                            if (typeof ctx.dataset.borderColor === "string") {
+                                return ctx.dataset.style === "default"
+                                    ? ctx.dataset.borderColor
+                                    : getAlternativeColor(ctx.dataset.borderColor)
+                            }
+                            return "grey"
                         },
                         meanRadius: 10,
                     },
@@ -128,9 +128,6 @@ export function LapsBoxChart({
                                 enabled: true,
                             },
                             mode: "x",
-                            wheel: {
-                                enabled: true,
-                            },
                         },
                     },
                     tooltip: {
@@ -141,16 +138,13 @@ export function LapsBoxChart({
                             }: {
                                 dataset: (typeof sessionData)["datasets"][number]
                                 dataIndex: number
-                            }) => {
-                                return (
-                                    `Min time: ${formatTime(dataset.data[dataIndex].min)}, ` +
-                                    `Max time: ${formatTime(dataset.data[dataIndex].max)}, ` +
-                                    `25% quantile: ${formatTime(dataset.data[dataIndex].q1)}, ` +
-                                    `75% quantile: ${formatTime(dataset.data[dataIndex].q3)}, ` +
-                                    `mean: ${formatTime(dataset.data[dataIndex].mean)}, ` +
-                                    `median: ${formatTime(dataset.data[dataIndex].median)}`
-                                )
-                            },
+                            }) =>
+                                `Min time: ${formatTime(dataset.data[dataIndex].min)}, ` +
+                                `max time: ${formatTime(dataset.data[dataIndex].max)}, ` +
+                                `25% quantile: ${formatTime(dataset.data[dataIndex].q1)}, ` +
+                                `75% quantile: ${formatTime(dataset.data[dataIndex].q3)}, ` +
+                                `mean: ${formatTime(dataset.data[dataIndex].mean)}, ` +
+                                `median: ${formatTime(dataset.data[dataIndex].median)}`,
                         },
                     },
                 },

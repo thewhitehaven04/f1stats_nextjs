@@ -3,6 +3,7 @@
 import { PopupCard } from "@/components/PopupCard"
 import { useState } from "react"
 import type { IStint } from "./types"
+import { Button } from "@/components/ui/button"
 
 export function StintSelector(props: {
     driverStints: {
@@ -28,21 +29,22 @@ export function StintSelector(props: {
 
     return (
         <div className="relative">
-            <button
+            <Button
                 type="button"
-                className="btn btn-sm"
+                variant="secondary"
+                size="md"
                 onClick={() => setIsStintSelectorOpen(!isStintSelectorOpen)}
             >
                 Select stint
-            </button>
+            </Button>
 
             {isStintSelectorOpen && (
                 <PopupCard
                     onClose={() => setIsStintSelectorOpen(false)}
                     actions={
-                        <button type="button" className="btn btn-sm w-full" onClick={handleReset}>
+                        <Button type="button" size="md" variant="secondary" onClick={handleReset}>
                             Reset
-                        </button>
+                        </Button>
                     }
                     title="Stints"
                 >

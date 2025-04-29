@@ -1,28 +1,21 @@
 "use client"
-import { CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from "chart.js"
 import { use, useMemo, useState } from "react"
-import clsx from "clsx"
-import { BoxAndWiskers, BoxPlotController } from "@sgratzl/chartjs-chart-boxplot"
-import Zoom from "chartjs-plugin-zoom"
 import { StintSelector } from "../StintSelector"
-import { LapsBoxChart } from "./Chart"
-import type { LapSelectionData } from "@/client/generated"
+import { LineLapsChart } from "./Chart"
+import type { Compound, LapSelectionData } from "@/client/generated"
+import type { ChartData } from "chart.js"
+import { Button } from "@/components/ui/button"
 
-ChartJS.register([
-    BoxPlotController,
-    BoxAndWiskers,
-    LinearScale,
-    CategoryScale,
-    Legend,
-    Tooltip,
-    Zoom,
-])
+export type TLapsLinePlotDataset = {
+    x: number
+    y: number
+    compound: Compound
+}
 
-export default function BoxPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
+export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
 
     const { driver_lap_data: driverLapData } = laps
-
     const [isOutliersShown, setIsOutliersShown] = useState(true)
 
     const initialDriverState = useMemo(
@@ -47,36 +40,52 @@ export default function BoxPlotTab({ laps: lapsPromise }: { laps: Promise<LapSel
             .filter((val) => val !== false),
     }))
 
+    const datasets = useMemo(
+        () =>
+            laps.driver_lap_data.map((driverData) => ({
+                label: driverData.driver,
+                data: driverData.laps
+                    .filter((lap) =>
+                        driverStints[driverData.driver]
+                            ? lap.stint === driverStints[driverData.driver]
+                            : true,
+                    )
+                    .map((lap, index) => ({
+                        x: index,
+                        y: isOutliersShown
+                            ? lap.laptime
+                            : lap.laptime > (laps.high_decile || 0) * 1.02
+                              ? Number.NaN
+                              : lap.laptime,
+                        compound: lap.compound_id,
+                    })),
+                teamColor: driverData.team.color,
+                style: driverData.style,
+            })),
+        [laps, isOutliersShown, driverStints],
+    ) satisfies ChartData<"line", TLapsLinePlotDataset[]>["datasets"]
+
     return (
-        <div className="overflow-x-scroll flex flex-col gap-4">
+        <div className="overflow-x-scroll">
             <div className="flex flex-row justify-end gap-4">
                 <StintSelector
                     driverStints={stintData}
                     onChange={({ driver, stint }) =>
                         setDriverStints((prev) => ({ ...prev, [driver]: stint }))
                     }
-                    onReset={() =>
-                        setDriverStints(
-                            Object.fromEntries(
-                                laps.driver_lap_data.map((lapData) => [lapData.driver, undefined]),
-                            ),
-                        )
-                    }
+                    onReset={() => setDriverStints(initialDriverState)}
                     selectionValues={driverStints}
                 />
-                <button
+                <Button
                     type="button"
-                    className={clsx("btn btn-sm", isOutliersShown && "btn-active")}
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
+                    size="md"
+                    variant="secondary"
                 >
                     Show outliers
-                </button>
+                </Button>
             </div>
-            <LapsBoxChart
-                selectedStints={driverStints}
-                laps={laps}
-                isOutliersShown={isOutliersShown}
-            />
+            <LineLapsChart data={{ datasets }} />
         </div>
     )
 }

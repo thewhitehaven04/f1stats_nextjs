@@ -2,13 +2,13 @@ import {
     getSessionLaptimesFilteredApiPySeasonYearEventEventSessionSessionLapsPost,
     type SessionIdentifier,
 } from "@/client/generated"
-import { LapsSection } from "./lapsSection"
 import { ApiClient } from "@/client"
 import { LapsTableTab } from "./components/LapsTableTab"
-import LinePlotTab from "./components/LinePlotTab/LinePlotTab"
-import BoxPlotTab from "./components/BoxPlotTab/LapsBoxPlot"
+import LinePlotTab from "./components/LapsLinePlotTab/LinePlotTab"
 import { ViolinPlotTab } from "./components/ViolinPlotTab"
 import type { ILapsQueryParams, ISessionPathnameParams } from "../types"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import BoxPlotTab from "./components/BoxPlotTab"
 
 export default async function Page({
     params,
@@ -34,11 +34,30 @@ export default async function Page({
         }).then((data) => data.data)
 
     return (
-        <LapsSection
-            tableSlot={<LapsTableTab laps={lapSelectionData} />}
-            linePlotSlot={<LinePlotTab laps={lapSelectionData} />}
-            boxPlotSlot={<BoxPlotTab laps={lapSelectionData} />}
-            violinPlotSlot={<ViolinPlotTab laps={lapSelectionData} />}
-        />
+        <section className="flex flex-col gap-2 overflow-x-visible">
+            <div className="flex flex-row items-center gap-4">
+                <h2 className="divider divider-start text-lg w-full">Lap by lap comparison</h2>
+            </div>
+            <Tabs defaultValue="table" className='w-full'>
+                <TabsList className="gap-4 w-full">
+                    <TabsTrigger value="table">Table</TabsTrigger>
+                    <TabsTrigger value="lineplot">Line plot</TabsTrigger>
+                    <TabsTrigger value="boxplot">Box plot</TabsTrigger>
+                    <TabsTrigger value="violinplot">Violin plot</TabsTrigger>
+                </TabsList>
+                <TabsContent value="table">
+                    <LapsTableTab laps={lapSelectionData} />
+                </TabsContent>
+                <TabsContent value="lineplot">
+                    <LinePlotTab laps={lapSelectionData} />
+                </TabsContent>
+                <TabsContent value="boxplot">
+                    <BoxPlotTab laps={lapSelectionData} />
+                </TabsContent>
+                <TabsContent value="violinplot">
+                    <ViolinPlotTab laps={lapSelectionData} />
+                </TabsContent>
+            </Tabs>
+        </section>
     )
 }

@@ -2,15 +2,11 @@
 import type { ChartData } from "chart.js"
 import { useMemo, type ReactNode } from "react"
 import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
-import {
-    BASE_CHART_OPTIONS,
-    INTERACTION_CONFIG,
-    getDistanceLabelInTooltipTitleCallback,
-} from "./config"
+import { INTERACTION_CONFIG, getDistanceLabelInTooltipTitleCallback } from "./config"
 import type { DriverTelemetryMeasurement } from "@/client/generated"
 import type { ChartProps } from "react-chartjs-2"
 import dynamic from "next/dynamic"
-import { LEGEND_FONT_CONFIG, SCALE_FONT_CONFIG, TICKS_FONT_CONFIG, TOOLTIP_CONFIG } from "@/components/Chart/config"
+import { TICKS_FONT_CONFIG, TOOLTIP_CONFIG } from "@/components/Chart/config"
 
 export const Chart = dynamic(async () => (await import("./ZoomableChart")).ZoomableChart, {
     ssr: false,
@@ -29,10 +25,7 @@ export default function TelemetryChartSection(props: {
     const speedTraceOptions = useMemo(
         () =>
             ({
-                ...BASE_CHART_OPTIONS,
-                responsive: true,
                 elements: {
-                    ...BASE_CHART_OPTIONS.elements,
                     point: {
                         radius: 0,
                     },
@@ -40,12 +33,6 @@ export default function TelemetryChartSection(props: {
                 interaction: INTERACTION_CONFIG,
                 plugins: {
                     legend: {
-                        title: {
-                            position: "center",
-                        },
-                        labels: {
-                            font: LEGEND_FONT_CONFIG,
-                        },
                         position: "bottom",
                     },
                     tooltip: {
@@ -59,12 +46,6 @@ export default function TelemetryChartSection(props: {
                                 max: maxDistance,
                             },
                         },
-                        zoom: {
-                            drag: {
-                                enabled: true,
-                            },
-                            mode: "x",
-                        },
                     },
                 },
                 scales: {
@@ -74,11 +55,9 @@ export default function TelemetryChartSection(props: {
                         title: {
                             text: "Distance (m)",
                             display: true,
-                            font: SCALE_FONT_CONFIG,
                         },
                         min: 0,
                         ticks: {
-                            font: TICKS_FONT_CONFIG,
                             format: {
                                 roundingMode: "halfCeil",
                                 minimumFractionDigits: 0,
@@ -91,10 +70,8 @@ export default function TelemetryChartSection(props: {
                         title: {
                             text: "Speed",
                             display: true,
-                            font: SCALE_FONT_CONFIG,
                         },
                         ticks: {
-                            font: TICKS_FONT_CONFIG,
                             format: {
                                 roundingMode: "halfCeil",
                             },

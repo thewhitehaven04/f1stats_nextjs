@@ -1,4 +1,50 @@
+import { BoxAndWiskers, BoxPlotChart, BoxPlotController } from "@sgratzl/chartjs-chart-boxplot"
 import type { FontSpec, TooltipOptions } from "chart.js"
+
+import {
+    CategoryScale,
+    Legend,
+    LinearScale,
+    LineController,
+    LineElement,
+    PointElement,
+    Title,
+    Tooltip,
+    Chart,
+} from "chart.js"
+import zoom from "chartjs-plugin-zoom"
+
+Chart.register([
+    LineController,
+    LineElement,
+    LinearScale,
+    CategoryScale,
+    PointElement,
+    Tooltip,
+    Legend,
+    Title,
+    zoom,
+    BoxAndWiskers,
+    BoxPlotChart,
+    BoxPlotController,
+])
+
+export const initGlobalChartConfig = () => {
+    Chart.defaults.font.family = '"Archivo", sans-serif'
+    Chart.defaults.font.size = 13
+    Chart.defaults.font.lineHeight = 1.5
+
+    Chart.defaults.plugins.tooltip.titleFont = {
+        size: 16,
+    }
+    Chart.defaults.plugins.tooltip.cornerRadius = 12
+    Chart.defaults.plugins.tooltip.boxPadding = 4
+    Chart.defaults.plugins.tooltip.bodyFont = {
+        size: 14,
+    }
+
+    Chart.defaults.elements.line.borderWidth = 2
+}
 
 export const SCALE_FONT_CONFIG = {
     family: '"Archivo", sans-serif',

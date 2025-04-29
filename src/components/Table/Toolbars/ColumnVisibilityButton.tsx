@@ -1,6 +1,7 @@
 "use client"
 import { PopupCard } from "@/components/PopupCard"
 import { useTableContext } from "@/components/Table/context"
+import { Button } from "@/components/ui/button"
 import type { RowData } from "@tanstack/react-table"
 import { useState } from "react"
 
@@ -11,13 +12,14 @@ export function ColumnVisibilityButton() {
 
     return (
         <div className="relative z-10">
-            <button
+            <Button
                 type="button"
-                className="btn btn-sm"
                 onClick={() => setIsColumnCardVisible(!isColumnCardVisible)}
+                variant="secondary"
+                size="md"
             >
                 Columns
-            </button>
+            </Button>
             {isColumnCardVisible && (
                 <PopupCard
                     title="Columns"

@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import { createColumnHelper } from "@tanstack/react-table"
 import { use, useMemo } from "react"
 import { mapLapsToTableLapData } from "../helpers/mapLapsToTableLapData"
@@ -12,6 +12,7 @@ import { LapsTable } from "./table"
 import Form from "next/form"
 import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
+import { Button } from "@/components/ui/button"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -200,9 +201,9 @@ export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelection
                         ),
                     }}
                     toolbar={
-                        <button type="submit" className="btn btn-sm">
+                        <Button type="submit" variant="secondary" size="md">
                             View telemetry
-                        </button>
+                        </Button>
                     }
                 />
             </Form>

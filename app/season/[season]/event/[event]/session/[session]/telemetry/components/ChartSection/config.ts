@@ -1,22 +1,4 @@
-import type { ChartProps } from "react-chartjs-2"
-import type { CoreInteractionOptions, LegendOptions, TooltipItem, TooltipOptions } from "chart.js"
-
-export const BASE_CHART_OPTIONS = {
-    elements: {
-        point: {
-            radius: 0,
-        },
-        line: {
-            borderWidth: 2.5,
-            cubicInterpolationMode: "default",
-        },
-    },
-    font: {
-        family: '"Archivo", sans-serif',
-        size: 16,
-    },
-} satisfies ChartProps["options"]
-
+import type { CoreInteractionOptions, TooltipItem } from "chart.js"
 
 export const INTERACTION_CONFIG = {
     mode: "x",

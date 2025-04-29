@@ -15,8 +15,9 @@ import {
 import { BASE_CHART_OPTIONS } from "./config"
 import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
 import { CircuitMap } from "../CircuitMap"
+import { initGlobalChartConfig } from "@/components/Chart/config"
 
-ChartJS.register([
+ChartJS.register(
     LineController,
     LineElement,
     CategoryScale,
@@ -25,7 +26,8 @@ ChartJS.register([
     Tooltip,
     Legend,
     Title,
-])
+)
+initGlobalChartConfig()
 
 export function TimeDeltaComparison(props: { comparison: Promise<unknown> }) {
     const { comparison: comparisonPromise } = props

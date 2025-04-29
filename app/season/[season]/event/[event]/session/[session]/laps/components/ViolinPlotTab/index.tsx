@@ -10,10 +10,12 @@ import {
 } from "chart.js"
 import { use, useMemo, useState } from "react"
 import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
-import clsx from "clsx"
 import type { LapSelectionData } from "@/client/generated"
+import { initGlobalChartConfig } from "@/components/Chart/config"
+import { Button } from "@/components/ui/button"
 
-ChartJS.register([Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip])
+ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
+initGlobalChartConfig()
 
 export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
@@ -24,7 +26,9 @@ export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectio
             labels: ["Laptimes"],
             datasets: laps.driver_lap_data.map((driver) => ({
                 label: driver.driver,
-                data: [driver.laps.map((driverData) => driverData.laptime)],
+                data: [driver.laps.map((driverData) => driverData.laptime).filter(Boolean)],
+                borderColor: driver.team.color,
+                style: driver.style,
             })),
         }),
         [laps],
@@ -33,13 +37,14 @@ export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectio
     return (
         <div className="overflow-x-scroll">
             <div className="flex flex-row justify-end gap-4">
-                <button
+                <Button
                     type="button"
-                    className={clsx("btn btn-sm", isOutliersShown && "btn-active")}
+                    size="md"
+                    variant="secondary"
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
                 >
                     Show outliers
-                </button>
+                </Button>
             </div>
             <Chart
                 type="violin"
@@ -58,16 +63,22 @@ export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectio
                     elements: {
                         violin: {
                             borderWidth: 2,
-                            itemRadius: 3.5,
-                            itemHitRadius: 6,
+                            itemRadius: 5,
+                            itemHitRadius: 5,
                             itemStyle: "circle",
-                            itemBorderWidth: 1,
+                            itemBorderWidth: 1.5,
                             itemBorderColor(ctx) {
                                 return typeof ctx.dataset.borderColor === "string"
                                     ? ctx.dataset.borderColor
                                     : "grey"
                             },
                             meanRadius: 10,
+                            meanBorderWidth: 1.5,
+                            meanBorderColor(ctx) {
+                                return typeof ctx.dataset.borderColor === "string"
+                                    ? ctx.dataset.borderColor
+                                    : "grey"
+                            },
                         },
                     },
                 }}
