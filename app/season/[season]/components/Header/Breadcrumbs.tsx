@@ -1,5 +1,13 @@
 "use client"
 
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { ChevronRightCircle, ChevronRightCircleIcon, ChevronRightSquareIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -13,7 +21,7 @@ const SEGMENTS = [
         getText: (matchArray: RegExpMatchArray | null) => {
             return matchArray
                 ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} results`
-              : ""
+                : ""
         },
     },
     {
@@ -21,7 +29,15 @@ const SEGMENTS = [
         getText: (matchArray: RegExpMatchArray | null) => {
             return matchArray
                 ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} laps`
-              : ""
+                : ""
+        },
+    },
+    {
+        expression: /\/season\/(\d{4})\/event\/(\S+)\/session\/(\S+)\/telemetry/,
+        getText: (matchArray: RegExpMatchArray | null) => {
+            return matchArray
+                ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} telemetry`
+                : ""
         },
     },
 ]
@@ -29,22 +45,31 @@ const SEGMENTS = [
 export const Breadcrumbs = () => {
     const pathname = usePathname()
     return (
-        <nav className="breadcrumbs">
-            <ul>
+        <Breadcrumb>
+            <BreadcrumbList>
                 {SEGMENTS.map((segment, index) => {
                     if (segment.expression.test(pathname)) {
                         const match = pathname.match(segment.expression)
                         return (
-                            <li key={index}>
-                                {match ? (
-                                    <Link href={match[0]}>{segment.getText(match)}</Link>
-                                ) : null}
-                            </li>
+                            <>
+                                <BreadcrumbItem key={index}>
+                                    {match ? (
+                                        <BreadcrumbLink asChild>
+                                            <Link href={match[0]}>{segment.getText(match)}</Link>
+                                        </BreadcrumbLink>
+                                    ) : null}
+                                </BreadcrumbItem>
+                                {index < SEGMENTS.length - 1 && (
+                                    <BreadcrumbSeparator>
+                                        <ChevronRightCircleIcon />
+                                    </BreadcrumbSeparator>
+                                )}
+                            </>
                         )
                     }
                     return null
                 })}
-            </ul>
-        </nav>
+            </BreadcrumbList>
+        </Breadcrumb>
     )
 }
