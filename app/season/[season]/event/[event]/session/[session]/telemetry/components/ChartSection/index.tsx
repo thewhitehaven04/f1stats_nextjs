@@ -4,13 +4,13 @@ import { useMemo, type ReactNode } from "react"
 import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
 import {
     BASE_CHART_OPTIONS,
-    TOOLTIP_CONFIG,
     INTERACTION_CONFIG,
     getDistanceLabelInTooltipTitleCallback,
 } from "./config"
 import type { DriverTelemetryMeasurement } from "@/client/generated"
 import type { ChartProps } from "react-chartjs-2"
 import dynamic from "next/dynamic"
+import { LEGEND_FONT_CONFIG, SCALE_FONT_CONFIG, TICKS_FONT_CONFIG, TOOLTIP_CONFIG } from "@/components/Chart/config"
 
 export const Chart = dynamic(async () => (await import("./ZoomableChart")).ZoomableChart, {
     ssr: false,
@@ -44,10 +44,7 @@ export default function TelemetryChartSection(props: {
                             position: "center",
                         },
                         labels: {
-                            font: {
-                                size: 13,
-                                family: '"Archivo", sans-serif',
-                            },
+                            font: LEGEND_FONT_CONFIG,
                         },
                         position: "bottom",
                     },
@@ -77,17 +74,11 @@ export default function TelemetryChartSection(props: {
                         title: {
                             text: "Distance (m)",
                             display: true,
-                            font: {
-                                size: 13,
-                                family: '"Archivo", sans-serif',
-                            }
+                            font: SCALE_FONT_CONFIG,
                         },
                         min: 0,
                         ticks: {
-                            font: {
-                                size: 13,
-                                family: '"Archivo", sans-serif',
-                            },
+                            font: TICKS_FONT_CONFIG,
                             format: {
                                 roundingMode: "halfCeil",
                                 minimumFractionDigits: 0,
@@ -100,16 +91,10 @@ export default function TelemetryChartSection(props: {
                         title: {
                             text: "Speed",
                             display: true,
-                            font: {
-                                size: 13,
-                                family: '"Archivo", sans-serif',
-                            }
+                            font: SCALE_FONT_CONFIG,
                         },
                         ticks: {
-                            font: {
-                                size: 13,
-                                family: '"Archivo", sans-serif',
-                            },
+                            font: TICKS_FONT_CONFIG,
                             format: {
                                 roundingMode: "halfCeil",
                             },
@@ -130,10 +115,7 @@ export default function TelemetryChartSection(props: {
                 min: 0,
                 max: maxDistance,
                 ticks: {
-                    font: {
-                        size: 13,
-                        family: '"Archivo", sans-serif',
-                    },
+                    font: TICKS_FONT_CONFIG,
                     format: {
                         roundingMode: "halfCeil",
                         minimumFractionDigits: 0,
@@ -143,10 +125,7 @@ export default function TelemetryChartSection(props: {
             },
             y: {
                 ticks: {
-                    font: {
-                        size: 13,
-                        family: '"Archivo", sans-serif',
-                    },
+                    font: TICKS_FONT_CONFIG,
                     format: {
                         roundingMode: "halfCeil",
                     },
@@ -236,7 +215,7 @@ export default function TelemetryChartSection(props: {
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
-                    y: measurement.throttle,
+                    y: measurement.brake,
                 })),
                 ...presets[index],
             })),

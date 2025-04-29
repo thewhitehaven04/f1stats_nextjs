@@ -17,25 +17,6 @@ export const BASE_CHART_OPTIONS = {
     },
 } satisfies ChartProps["options"]
 
-export const TOOLTIP_CONFIG = {
-    enabled: true,
-    includeInvisible: false,
-    axis: "x",
-    mode: "nearest",
-    intersect: false,
-    titleFont: {
-        size: 16,
-        family: '"Archivo", sans-serif',
-    },
-    bodyFont: {
-        size: 14,
-        family: '"Archivo", sans-serif',
-    },
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    cornerRadius: 8,
-    boxPadding: 2,
-    bodySpacing: 4,
-} satisfies Partial<TooltipOptions>
 
 export const INTERACTION_CONFIG = {
     mode: "x",
