@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
-from core.models.queries import LapRequestBody, SessionIdentifier, SessionQueryFilter
+from core.models.queries import SessionIdentifier, SessionQueryFilter
 from repository.engine import (
     engine,
     get_connection,
@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
     with engine.connect() as pg_con:
         set_connection(pg_con)
         yield
+        pg_con.close()
 
 
 app = FastAPI(lifespan=lifespan)

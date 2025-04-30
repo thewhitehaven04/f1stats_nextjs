@@ -3,16 +3,15 @@ import { createColumnHelper } from "@tanstack/react-table"
 import { use, useMemo } from "react"
 import { mapLapsToTableLapData } from "../helpers/mapLapsToTableLapData"
 import type { LapSelectionData, LapTimingData } from "@/client/generated"
-import { useToaster } from "@/components/Toaster/hooks/useToaster"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
 import { getTyreComponentByCompound } from "../helpers/getTyreIconByCompound"
 import { NaLabel } from "@/components/ValueOrNa"
 import { LapsTable } from "./table"
-import Form from "next/form"
 import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -39,7 +38,6 @@ export const columnHelper = createColumnHelper<ILapData>()
 
 export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
-    const toast = useToaster()
 
     const flattenedLaps = mapLapsToTableLapData(laps.driver_lap_data)
 
@@ -65,9 +63,7 @@ export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelection
                             cell: (cell) => {
                                 const lap = cell.row.index + 1
                                 return (
-                                    <input
-                                        className="checkbox align-middle"
-                                        type="checkbox"
+                                    <Checkbox
                                         name={driverName}
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
@@ -174,39 +170,46 @@ export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelection
         [laps],
     )
 
-    const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
-        const isEmptySubmission = new FormData(evt.currentTarget).values().next().done
-        if (isEmptySubmission) {
-            evt.preventDefault()
-            toast("Please, select at least one lap to view telemetry")
-        }
-    }
-
     return (
         <>
-            <Form action="telemetry" onSubmit={handleSubmit}>
-                <LapsTable
-                    columns={tableColumns}
-                    data={flattenedLaps}
-                    initialState={{
-                        columnVisibility: laps.driver_lap_data.reduce<Record<string, boolean>>(
-                            (curr, { driver }) => {
-                                curr[`${driver}.ST1`] = false
-                                curr[`${driver}.ST2`] = false
-                                curr[`${driver}.ST3`] = false
+            <LapsTable
+                columns={tableColumns}
+                data={flattenedLaps}
+                initialState={{
+                    columnVisibility: laps.driver_lap_data.reduce<Record<string, boolean>>(
+                        (curr, { driver }) => {
+                            curr[`${driver}.ST1`] = false
+                            curr[`${driver}.ST2`] = false
+                            curr[`${driver}.ST3`] = false
 
-                                return curr
-                            },
-                            {},
-                        ),
-                    }}
-                    toolbar={
-                        <Button type="submit" variant="secondary" size="md">
+                            return curr
+                        },
+                        {},
+                    ),
+                }}
+                toolbar={
+                    <>
+                        <Button
+                            type="submit"
+                            variant="secondary"
+                            size="md"
+                            name="intent"
+                            value="lapTelemetry"
+                        >
                             View telemetry
                         </Button>
-                    }
-                />
-            </Form>
+                        <Button
+                            type="submit"
+                            variant="secondary"
+                            size="md"
+                            name="intent"
+                            value="avgTelemetryComparison"
+                        >
+                            View average telemetry
+                        </Button>
+                    </>
+                }
+            />
             <LapsTableTelemetryTutorial />
         </>
     )

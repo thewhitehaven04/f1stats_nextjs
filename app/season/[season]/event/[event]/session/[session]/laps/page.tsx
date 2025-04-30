@@ -3,12 +3,12 @@ import {
     type SessionIdentifier,
 } from "@/client/generated"
 import { ApiClient } from "@/client"
-import { LapsTableTab } from "./components/LapsTableTab"
 import LinePlotTab from "./components/LapsLinePlotTab/LinePlotTab"
 import { ViolinPlotTab } from "./components/ViolinPlotTab"
 import type { ILapsQueryParams, ISessionPathnameParams } from "../types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import BoxPlotTab from "./components/BoxPlotTab"
+import { AnalysisTab } from "./components/AnalysisTab"
 
 export default async function Page({
     params,
@@ -38,15 +38,15 @@ export default async function Page({
             <div className="flex flex-row items-center gap-4">
                 <h2 className="divider divider-start text-lg w-full">Lap by lap comparison</h2>
             </div>
-            <Tabs defaultValue="table" className='w-full'>
+            <Tabs defaultValue="analysis" className="w-full">
                 <TabsList className="gap-4 w-full">
-                    <TabsTrigger value="table">Table</TabsTrigger>
+                    <TabsTrigger value="analysis">Analysis</TabsTrigger>
                     <TabsTrigger value="lineplot">Line plot</TabsTrigger>
                     <TabsTrigger value="boxplot">Box plot</TabsTrigger>
                     <TabsTrigger value="violinplot">Violin plot</TabsTrigger>
                 </TabsList>
-                <TabsContent value="table">
-                    <LapsTableTab laps={lapSelectionData} />
+                <TabsContent value="analysis">
+                    <AnalysisTab laps={lapSelectionData} />
                 </TabsContent>
                 <TabsContent value="lineplot">
                     <LinePlotTab laps={lapSelectionData} />
