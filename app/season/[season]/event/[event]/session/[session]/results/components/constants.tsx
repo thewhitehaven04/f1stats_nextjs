@@ -10,6 +10,7 @@ import {
     type IQualifyingData,
     type IRaceData,
 } from "./types"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()
 const practiceHelper = createColumnHelper<IPracticeData>()
@@ -20,16 +21,12 @@ const BASE_COLUMNS = [
     baseColumnHelper.display({
         id: "selector",
         cell: ({ row }) => (
-            <div className="flex flex-row items-center py-1 justify-center">
-                <input
-                    className="checkbox"
-                    type="checkbox"
-                    name={"driver"}
-                    value={row.getValue("driver").id}
-                    checked={row.getIsSelected()}
-                    onChange={row.getToggleSelectedHandler()}
-                />
-            </div>
+            <Checkbox
+                name="driver"
+                value={row.getValue("driver").id}
+                onCheckedChange={row.getToggleSelectedHandler()}
+                checked={row.getIsSelected()}
+            />
         ),
     }),
     baseColumnHelper.display({

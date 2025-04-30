@@ -31,6 +31,7 @@ export default async function Page({
             },
             body: { queries },
             throwOnError: true,
+            cache: 'force-cache',
         }).then((data) => data.data)
 
     return (
@@ -40,7 +41,7 @@ export default async function Page({
             </div>
             <Tabs defaultValue="analysis" className="w-full">
                 <TabsList className="gap-4 w-full">
-                    <TabsTrigger value="analysis">Analysis</TabsTrigger>
+                    <TabsTrigger value="analysis">Lap analysis</TabsTrigger>
                     <TabsTrigger value="lineplot">Line plot</TabsTrigger>
                     <TabsTrigger value="boxplot">Box plot</TabsTrigger>
                     <TabsTrigger value="violinplot">Violin plot</TabsTrigger>

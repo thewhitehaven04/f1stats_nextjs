@@ -1,17 +1,17 @@
 "use client"
 import { createColumnHelper } from "@tanstack/react-table"
 import { use, useMemo } from "react"
-import { mapLapsToTableLapData } from "../helpers/mapLapsToTableLapData"
 import type { LapSelectionData, LapTimingData } from "@/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
-import { getTyreComponentByCompound } from "../helpers/getTyreIconByCompound"
 import { NaLabel } from "@/components/ValueOrNa"
 import { LapsTable } from "./table"
 import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { getTyreComponentByCompound } from "../../helpers/getTyreIconByCompound"
+import { mapLapsToTableLapData } from "../../helpers/mapLapsToTableLapData"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -36,7 +36,7 @@ export interface ILapData {
 }
 export const columnHelper = createColumnHelper<ILapData>()
 
-export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
+export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
 
     const flattenedLaps = mapLapsToTableLapData(laps.driver_lap_data)
@@ -82,7 +82,7 @@ export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelection
                                         info.row.original[`${driverName}.IsPB`] === true ||
                                         undefined
                                     }
-                                    className="py-2 h-full"
+                                    className="h-full"
                                 />
                             ),
                         }),
@@ -156,7 +156,7 @@ export function LapsTableTab({ laps: lapsPromise }: { laps: Promise<LapSelection
                                 const Icon = getTyreComponentByCompound(info.getValue())
                                 return Icon ? (
                                     <div className="w-full flex flex-row justify-center">
-                                        <Icon className="w-8" />
+                                        <Icon className="w-6 py-0" />
                                     </div>
                                 ) : (
                                     <NaLabel />

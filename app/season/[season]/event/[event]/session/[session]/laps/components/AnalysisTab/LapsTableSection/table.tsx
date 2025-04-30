@@ -59,7 +59,7 @@ export function LapsTable(
                             {rowModel.map((row) => (
                                 <TableRow key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell className="text-center" key={cell.id}>
+                                        <TableCell className="text-center"  key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),

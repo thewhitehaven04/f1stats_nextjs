@@ -1,6 +1,6 @@
-from numpy import interp, linspace, trunc 
+from numpy import interp, linspace, trunc
 from pandas import DataFrame, read_sql, to_timedelta
-from sqlalchemy import Connection, and_, or_, select
+from sqlalchemy import Connection, and_, select
 
 from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
 from repository.repository import (
@@ -99,9 +99,9 @@ class TelemetryResolver:
                     for resampled_telemetry in resampled_telemetries
                 ]
             ) / len(resampled_telemetries)
-        
-        avg_dataframe['gear'] = trunc(avg_dataframe['gear'].to_numpy())
-        avg_dataframe['brake'] = trunc(avg_dataframe['brake'].to_numpy())
+
+        avg_dataframe["gear"] = trunc(avg_dataframe["gear"].to_numpy())
+        avg_dataframe["brake"] = trunc(avg_dataframe["brake"].to_numpy())
 
         return avg_dataframe
 

@@ -12,27 +12,21 @@ export type Compound =
 export type DriverLapData = {
     team: TeamPlotStyleDto
     driver: string
-    style: PlotStyle
+    style: "default" | "alternative"
     session_data: StintData
     stints: Array<StintData>
     laps: Array<LapTimingData>
 }
 
-export type DriverTelemetryMeasurement = {
+export type DriverTelemetryPlotData = {
     driver: string
     team: TeamPlotStyleDto
-    lap: LapDto
-    style: PlotStyle
+    style: "default" | "alternative"
+    lap: LapTelemetryDto
 }
 
 export type HttpValidationError = {
     detail?: Array<ValidationError>
-}
-
-export type LapDto = {
-    id: number
-    lap_number: number
-    telemetry: Array<TelemetryMeasurementDto>
 }
 
 export type LapSelectionData = {
@@ -41,6 +35,12 @@ export type LapSelectionData = {
     high_decile: number | null
     min_time: number | null
     max_time: number | null
+}
+
+export type LapTelemetryDto = {
+    id: number
+    lap_number: number
+    telemetry: Array<TelemetryMeasurementDto>
 }
 
 export type LapTimingData = {
@@ -67,8 +67,6 @@ export type LapTimingData = {
     is_personal_best_s2: boolean
     is_personal_best_s3: boolean
 }
-
-export type PlotStyle = "default" | "alternative"
 
 export type SessionIdentifier =
     | "Race"
@@ -114,6 +112,13 @@ export type TelemetryMeasurementDto = {
     laptime_at: number
     distance: number
     relative_distance: number
+}
+
+export type TelemetryPlotData = {
+    driver: string
+    team: TeamPlotStyleDto
+    style: "default" | "alternative"
+    telemetry: Array<TelemetryMeasurementDto>
 }
 
 export type ValidationError = {
@@ -180,7 +185,7 @@ export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetry
         /**
          * Successful Response
          */
-        200: Array<DriverTelemetryMeasurement>
+        200: Array<TelemetryPlotData>
     }
 
 export type GetAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePostResponse =
@@ -211,7 +216,7 @@ export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesP
     /**
      * Successful Response
      */
-    200: Array<DriverTelemetryMeasurement>
+    200: Array<DriverTelemetryPlotData>
 }
 
 export type GetLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPostResponse =
