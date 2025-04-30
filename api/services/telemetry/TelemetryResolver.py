@@ -1,4 +1,4 @@
-from numpy import interp, linspace
+from numpy import interp, linspace, trunc 
 from pandas import DataFrame, read_sql, to_timedelta
 from sqlalchemy import Connection, and_, or_, select
 
@@ -10,7 +10,11 @@ from repository.repository import (
 )
 from services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from services.laps.models.laps import TeamPlotStyleDto
-from services.telemetry.models import DriverTelemetryPlotData, LapTelemetryDto
+from services.telemetry.models import (
+    DriverTelemetryPlotData,
+    LapTelemetryDto,
+    TelemetryPlotData,
+)
 
 
 class TelemetryResolver:
@@ -46,6 +50,7 @@ class TelemetryResolver:
             "gear",
             "laptime_at",
             "distance",
+            "relative_distance",
         ]
         for lap_id in unique_lap_ids:
             interpolated_df = DataFrame(columns=columns, index=lattice)
@@ -76,6 +81,10 @@ class TelemetryResolver:
             interpolated_df["distance"] = interp(
                 lattice, xp, lap_telemetry["distance"].to_numpy()
             )
+            interpolated_df["relative_distance"] = (
+                interpolated_df["distance"]
+                / interpolated_df.tail(1)["distance"].iloc[0]
+            )
             resampled_telemetries.append(interpolated_df)
 
         avg_dataframe = DataFrame(
@@ -90,52 +99,38 @@ class TelemetryResolver:
                     for resampled_telemetry in resampled_telemetries
                 ]
             ) / len(resampled_telemetries)
+        
+        avg_dataframe['gear'] = trunc(avg_dataframe['gear'].to_numpy())
+        avg_dataframe['brake'] = trunc(avg_dataframe['brake'].to_numpy())
 
         return avg_dataframe
 
-    def get_average_telemetry(self, filter_: SessionQueryFilter):
-        lap_ids = [
-            lap_tuple[0]
-            for lap_tuple in self.db_connection.execute(
-                select(Laps.id).where(
-                    and_(
-                        Laps.season_year == self.season,
-                        Laps.session_type_id == self.session_identifier.value,
-                        Laps.event_name == self.event,
-                    ),
-                    or_(
-                        *[
-                            (
-                                and_(
-                                    Laps.driver_id == fil.driver,
-                                    Laps.lap_number.in_(fil.lap_filter),
-                                )
-                                if fil.lap_filter
-                                else and_(
-                                    Laps.driver_id == fil.driver,
-                                )
-                            )
-                            for fil in filter_.queries
-                        ]
-                    ),
-                )
-            ).fetchall()
-        ]
-        driver_ids = [
-            driver[0]
-            for driver in self.db_connection.execute(
-                select(SessionResults.driver_id).where(
-                    and_(
-                        SessionResults.season_year == self.season,
-                        SessionResults.session_type_id == self.session_identifier.value,
-                        SessionResults.event_name == self.event,
-                    )
-                )
-            ).fetchall()
+    def get_average_telemetry(
+        self, filter_: SessionQueryFilter
+    ) -> list[DriverTelemetryPlotData]:
+        driver_lap_id_entries = [
+            [
+                query.driver,
+                [
+                    lap_tuple[0]
+                    for lap_tuple in self.db_connection.execute(
+                        select(Laps.id).where(
+                            and_(
+                                Laps.season_year == self.season,
+                                Laps.session_type_id == self.session_identifier.value,
+                                Laps.event_name == self.event,
+                                Laps.driver_id == query.driver,
+                                Laps.lap_number.in_(query.lap_filter or []),
+                            ),
+                        )
+                    ).fetchall()
+                ],
+            ]
+            for query in filter_.queries
         ]
 
         avg_telemetries = []
-        for driver_id in driver_ids:
+        for driver_id, lap_ids in driver_lap_id_entries:
             telemetry_data = read_sql(
                 con=self.db_connection,
                 sql=select(TelemetryMeasurements).where(
@@ -145,17 +140,18 @@ class TelemetryResolver:
             telemetry_data.laptime_at = to_timedelta(
                 telemetry_data.laptime_at, unit="s"
             )
+            style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
             avg_telemetries.append(
-                {
-                    "telemetry": (
+                TelemetryPlotData(
+                    telemetry=(
                         self.average_telemetry_for_driver(telemetry_data).to_dict(
                             orient="records"
                         )
-                        if not telemetry_data.empty
-                        else None
                     ),
-                    "driver": driver_id,
-                }
+                    driver=driver_id,
+                    team=TeamPlotStyleDto(name=style.team.name, color=style.color),
+                    style=style.style,
+                )
             )
 
         return avg_telemetries

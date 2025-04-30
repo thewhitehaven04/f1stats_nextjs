@@ -21,6 +21,15 @@ class LapTelemetryDto(BaseModel):
     telemetry: list[TelemetryMeasurementDto]
 
 
+class TelemetryPlotData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    driver: str
+    team: TeamPlotStyleDto
+    style: PlotStyle
+    telemetry: list[TelemetryMeasurementDto]
+
+
 class DriverTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
