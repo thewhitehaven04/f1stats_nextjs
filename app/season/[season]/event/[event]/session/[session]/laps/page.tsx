@@ -31,34 +31,29 @@ export default async function Page({
             },
             body: { queries },
             throwOnError: true,
-            cache: 'force-cache',
+            cache: "force-cache",
         }).then((data) => data.data)
 
     return (
-        <section className="flex flex-col gap-2 overflow-x-visible">
-            <div className="flex flex-row items-center gap-4">
-                <h2 className="divider divider-start text-lg w-full">Lap by lap comparison</h2>
-            </div>
-            <Tabs defaultValue="analysis" className="w-full">
-                <TabsList className="gap-4 w-full">
-                    <TabsTrigger value="analysis">Lap analysis</TabsTrigger>
-                    <TabsTrigger value="lineplot">Line plot</TabsTrigger>
-                    <TabsTrigger value="boxplot">Box plot</TabsTrigger>
-                    <TabsTrigger value="violinplot">Violin plot</TabsTrigger>
-                </TabsList>
-                <TabsContent value="analysis">
-                    <AnalysisTab laps={lapSelectionData} />
-                </TabsContent>
-                <TabsContent value="lineplot">
-                    <LinePlotTab laps={lapSelectionData} />
-                </TabsContent>
-                <TabsContent value="boxplot">
-                    <BoxPlotTab laps={lapSelectionData} />
-                </TabsContent>
-                <TabsContent value="violinplot">
-                    <ViolinPlotTab laps={lapSelectionData} />
-                </TabsContent>
-            </Tabs>
-        </section>
+        <Tabs defaultValue="analysis">
+            <TabsList className="gap-4 min-w-md">
+                <TabsTrigger value="analysis">Lap analysis</TabsTrigger>
+                <TabsTrigger value="lineplot">Line plot</TabsTrigger>
+                <TabsTrigger value="boxplot">Box plot</TabsTrigger>
+                <TabsTrigger value="violinplot">Violin plot</TabsTrigger>
+            </TabsList>
+            <TabsContent value="analysis">
+                <AnalysisTab laps={lapSelectionData} />
+            </TabsContent>
+            <TabsContent value="lineplot">
+                <LinePlotTab laps={lapSelectionData} />
+            </TabsContent>
+            <TabsContent value="boxplot">
+                <BoxPlotTab laps={lapSelectionData} />
+            </TabsContent>
+            <TabsContent value="violinplot">
+                <ViolinPlotTab laps={lapSelectionData} />
+            </TabsContent>
+        </Tabs>
     )
 }

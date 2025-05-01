@@ -1,5 +1,4 @@
 import type { TelemetryPlotData } from "@/client/generated"
-import { getDistanceLabelInTooltipTitleCallback } from "../../../../telemetry/components/ChartSection/config"
 import type { ChartData } from "chart.js"
 import { useMemo, type RefObject } from "react"
 import type { ChartProps } from "react-chartjs-2"
@@ -20,9 +19,6 @@ export const AverageTelemetrySection = ({
         () =>
             ({
                 plugins: {
-                    tooltip: {
-                        callbacks: { title: getDistanceLabelInTooltipTitleCallback },
-                    },
                     zoom: {
                         limits: {
                             x: {
@@ -38,14 +34,6 @@ export const AverageTelemetrySection = ({
             }) satisfies ChartProps<"line">["options"],
         [maxDistance],
     )
-
-    const chartOptions = {
-        plugins: {
-            tooltip: {
-                callbacks: { title: getDistanceLabelInTooltipTitleCallback },
-            },
-        },
-    } satisfies ChartProps<"line">["options"]
 
     const presets = useMemo(
         () =>
@@ -126,27 +114,24 @@ export const AverageTelemetrySection = ({
                     labels: distanceLabels || [],
                     datasets: rpmDatasets,
                 }}
-                height={60}
+                height={40}
                 options={{
-                    ...chartOptions,
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
                 options={{
-                    ...chartOptions,
                     scales: { y: { title: { display: true, text: "Throttle" } } },
                 }}
-                height={45}
+                height={35}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
                 options={{
-                    ...chartOptions,
                     scales: { y: { title: { display: true, text: "Brake" } } },
                 }}
-                height={45}
+                height={35}
             />
         </section>
     )

@@ -196,7 +196,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                             name="intent"
                             value="lapTelemetry"
                         >
-                            View telemetry
+                            Compare per-lap telemetry
                         </Button>
                         <Button
                             type="submit"
@@ -205,7 +205,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                             name="intent"
                             value="avgTelemetryComparison"
                         >
-                            View average telemetry
+                            Compare average telemetry per driver
                         </Button>
                     </>
                 }

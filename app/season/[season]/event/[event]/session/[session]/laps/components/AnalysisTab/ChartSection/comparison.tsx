@@ -12,8 +12,7 @@ import {
     Title,
     Tooltip,
 } from "chart.js"
-import { BASE_CHART_OPTIONS } from "./config"
-import { getAlternativeColor } from "../../../laps/components/helpers/getAlternativeColor"
+import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import { CircuitMap } from "../CircuitMap"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 
@@ -36,7 +35,6 @@ export function TimeDeltaComparison(props: { comparison: Promise<unknown> }) {
 
     const labels = comparison.telemetries[0].comparison.distance
     const options = {
-        ...BASE_CHART_OPTIONS,
         scales: {
             x: {
                 type: "linear",

@@ -3,6 +3,7 @@ import { SummaryItem } from "./components/SummaryItem"
 import { dbClient } from "@/client/db"
 import type { SessionIdentifier } from "@/client/generated"
 import type { ISessionPathnameParams } from "./types"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 const fetchSessionDataWithWeather = async (
     session: SessionIdentifier,
     season: number,
@@ -55,12 +56,14 @@ export default async function Layout({
     )
     return (
         <>
-            <section className="w-full">
-                <h1 className="card-title text-lg text-neutral-700">
-                    {sessionData.eventName} - {sessionData.sessionType}
-                </h1>
-                <h2 className="divider divider-start text-lg">Track conditions</h2>
-                <div className="flex flex-col p-0 gap-2">
+            <Card className='mb-4'>
+                <CardHeader>
+                    <CardTitle>
+                        {sessionData.eventName} - {sessionData.sessionType}
+                    </CardTitle>
+                    <CardDescription>Track conditions</CardDescription>
+                </CardHeader>
+                <CardContent>
                     <div className="grid grid-cols-2 gap-4">
                         <SummaryItem
                             label="Session run time"
@@ -82,8 +85,8 @@ export default async function Layout({
                             value={`${weather.humidityStart} - ${weather.humidityEnd}%`}
                         />
                     </div>
-                </div>
-            </section>
+                </CardContent>
+            </Card>
             {children}
         </>
     )

@@ -9,8 +9,8 @@ export function SummaryItem(props: ISummaryItemProps) {
     const { label, value } = props
 
     return (
-        <div className="flex flex-col justify-center">
-            <span className="font-medium text-neutral-600">{label}</span>
+        <div className="flex flex-col justify-center text-card-foreground">
+            <span className='font-medium'>{label}</span>
             <span>{value}</span>
         </div>
     )
