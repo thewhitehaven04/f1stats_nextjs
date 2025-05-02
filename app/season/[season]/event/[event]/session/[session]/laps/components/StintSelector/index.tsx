@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export function StintSelector(props: {
     driverStints: {
@@ -29,72 +30,50 @@ export function StintSelector(props: {
     selectionValues: Record<string, number | undefined>
 }) {
     const { driverStints, onChange, onReset, selectionValues } = props
-    const [isStintSelectorOpen, setIsStintSelectorOpen] = useState(false)
-    const handleReset = () => {
-        onReset()
-        setIsStintSelectorOpen(false)
-    }
 
     return (
-        <div className="relative">
-            <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                onClick={() => setIsStintSelectorOpen(!isStintSelectorOpen)}
-            >
-                Select stint
-            </Button>
-
-            {isStintSelectorOpen && (
-                <PopupCard
-                    onClose={() => setIsStintSelectorOpen(false)}
-                    className="w-48"
-                    actions={
-                        <Button type="button" size="md" variant="secondary" onClick={handleReset}>
-                            Reset
-                        </Button>
-                    }
-                    title="Stints"
-                >
-                    <div className="flex flex-col gap-4 w-full">
-                        {driverStints.map((stintInstance) => (
-                            <Label
-                                className="flex flex-col gap-2 items-start w-full"
-                                key={stintInstance.driver}
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button type="button" variant="secondary" size="md">
+                    Select stint
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-min'>
+                <div className="flex flex-col gap-4 w-full">
+                    {driverStints.map((stintInstance) => (
+                        <Label
+                            className="flex flex-col gap-2 items-start w-full"
+                            key={stintInstance.driver}
+                        >
+                            <span>{stintInstance.driver}</span>
+                            <Select
+                                onValueChange={(value) =>
+                                    onChange({
+                                        driver: stintInstance.driver,
+                                        stint: Number.parseInt(value),
+                                    })
+                                }
+                                value={selectionValues[stintInstance.driver]?.toString()}
                             >
-                                <span>{stintInstance.driver}</span>
-                                <Select
-                                    onValueChange={(value) =>
-                                        onChange({
-                                            driver: stintInstance.driver,
-                                            stint: Number.parseInt(value),
-                                        })
-                                    }
-                                >
-                                    <SelectTrigger className='w-full'>
-                                        <SelectValue
-                                            placeholder="Select stint"
-                                            defaultValue={selectionValues[stintInstance.driver]}
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {stintInstance.stints.map(({ index, text }) => (
-                                            <SelectItem
-                                                key={index}
-                                                defaultValue={index}
-                                                value={index.toString()}
-                                            >
-                                                {index} ({text})
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </Label>
-                        ))}
-                    </div>
-                </PopupCard>
-            )}
-        </div>
+                                <SelectTrigger size="default" className='w-max'>
+                                    <SelectValue placeholder="Select stint" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {stintInstance.stints.map(({ index, text }) => (
+                                        <SelectItem
+                                            key={index}
+                                            defaultValue={index}
+                                            value={index.toString()}
+                                        >
+                                            {index} ({text})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </Label>
+                    ))}
+                </div>
+            </PopoverContent>
+        </Popover>
     )
 }
