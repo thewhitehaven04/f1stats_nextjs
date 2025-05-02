@@ -4,6 +4,8 @@ import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
 import { getAlternativeColor } from "../helpers/getAlternativeColor"
+import { initGlobalChartConfig } from "@/components/Chart/config"
+initGlobalChartConfig()
 
 export function LapsBoxChart({
     isOutliersShown,
@@ -91,6 +93,15 @@ export function LapsBoxChart({
                 elements: {
                     boxandwhiskers: {
                         borderWidth: 2,
+                        borderColor(ctx) {
+                            if (typeof ctx.dataset.borderColor === "string") {
+                                return ctx.dataset.style === "default"
+                                    ? ctx.dataset.borderColor
+                                    : getAlternativeColor(ctx.dataset.borderColor)
+                            }
+                            return "grey"
+                        },
+                        backgroundColor: "rgba(190, 190, 190, 0.12)",
                         itemRadius: 5,
                         itemHitRadius: 5,
                         itemStyle: "circle",
@@ -112,6 +123,7 @@ export function LapsBoxChart({
                             }
                             return "grey"
                         },
+                        meanBorderWidth: 1.5,
                         meanRadius: 10,
                     },
                 },

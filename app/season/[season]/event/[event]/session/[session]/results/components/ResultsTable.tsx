@@ -28,6 +28,7 @@ export const ResultsTable = <T extends IBaseResultsData>(
         getRowId: (row) => row.driver.name,
         getCoreRowModel: getCoreRowModel(),
     })
+    console.log('row model: ', getRowModel())
 
     return (
         <div className="w-full flex flex-col items-end gap-2">
