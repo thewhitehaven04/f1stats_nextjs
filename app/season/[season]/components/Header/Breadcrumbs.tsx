@@ -7,7 +7,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { ChevronRightCircleIcon } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Fragment } from "react"
@@ -45,31 +45,32 @@ const SEGMENTS = [
 
 export const Breadcrumbs = () => {
     const pathname = usePathname()
+
+    const crumbs = SEGMENTS.map((segment) => {
+        if (segment.expression.test(pathname)) {
+            const match = pathname.match(segment.expression)
+            return match ? (
+                <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                        <Link href={match[0]}>{segment.getText(match)}</Link>
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+            ) : null
+        }
+        return null
+    }).filter(Boolean)
     return (
         <Breadcrumb>
             <BreadcrumbList>
-                {SEGMENTS.map((segment, index) => {
-                    if (segment.expression.test(pathname)) {
-                        const match = pathname.match(segment.expression)
-                        return (
-                            <Fragment key={index}>
-                                <BreadcrumbItem>
-                                    {match ? (
-                                        <BreadcrumbLink asChild>
-                                            <Link href={match[0]}>{segment.getText(match)}</Link>
-                                        </BreadcrumbLink>
-                                    ) : null}
-                                </BreadcrumbItem>
-                                {index < SEGMENTS.length - 1 && (
-                                    <BreadcrumbSeparator>
-                                        <ChevronRightCircleIcon />
-                                    </BreadcrumbSeparator>
-                                )}
-                            </Fragment>
-                        )
-                    }
-                    return null
-                })}
+                {crumbs.slice(0, -1).map((crumb, index) => (
+                    <Fragment key={index}>
+                        {crumb}
+                        <BreadcrumbSeparator>
+                            <ChevronRight size={24}/>
+                        </BreadcrumbSeparator>
+                    </Fragment>
+                ))}
+                {crumbs.length > 1 && crumbs.at(-1)}
             </BreadcrumbList>
         </Breadcrumb>
     )
