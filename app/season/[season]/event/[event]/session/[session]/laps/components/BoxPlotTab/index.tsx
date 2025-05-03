@@ -1,6 +1,5 @@
 "use client"
 import { use, useMemo, useState } from "react"
-import clsx from "clsx"
 import { StintSelector } from "../StintSelector"
 import { LapsBoxChart } from "./Chart"
 import type { LapSelectionData } from "@/client/generated"

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
 import type { TEventWithSessions } from "../../page"
+import { Input } from '@/components/ui/input'
 
 const THROTTLE_TIMEOUT = 300
 
@@ -45,9 +46,8 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
 
     return (
         <div className="relative">
-            <input
+            <Input
                 type="text"
-                className="input input-bordered input-sm"
                 onChange={(evt) => handleChangeThrottled(evt.target.value)}
                 placeholder="Search"
             />

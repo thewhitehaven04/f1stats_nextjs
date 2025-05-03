@@ -10,9 +10,10 @@ import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 export function TelemetryChartSection(props: {
     telemetryMeasurements: DriverTelemetryPlotData[] | null
     telemetryComparisonSlot: ReactNode
-    ref: RefObject<HTMLElement> | null
+    ref: RefObject<HTMLElement | null>
 }) {
     const { telemetryMeasurements, ref } = props
+    console.log(telemetryMeasurements)
     const distanceLabels = telemetryMeasurements
         ? telemetryMeasurements[0].lap.telemetry.map((measurement) => measurement.distance)
         : []
