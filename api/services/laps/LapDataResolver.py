@@ -142,12 +142,7 @@ class LapDataResolver:
             current_driver_laps = current_driver_laps[
                 current_driver_laps["is_outlap"] == False
             ]
-            best_time = current_driver_laps["laptime"].min()
-            # take laps within 107% of the best time
-            flying_laps = current_driver_laps[
-                current_driver_laps["laptime"] < best_time * 1.07
-            ]
-            stint_groups = flying_laps.groupby("stint")
+            stint_groups = current_driver_laps.groupby("stint")
             filtered_stint_groups = stint_groups.agg(
                 avg_time=NamedAgg(column="laptime", aggfunc="mean"),
                 min_time=NamedAgg(column="laptime", aggfunc="min"),
@@ -180,15 +175,15 @@ class LapDataResolver:
                     stints=filtered_stint_groups.to_dict(orient="records"),
                     session_data=StintData(
                         total_laps=len(non_filtered_laps),
-                        avg_time=(flying_laps["laptime"].mean()),
+                        avg_time=(current_driver_laps["laptime"].mean()),
                         min_time=(non_filtered_laps["laptime"].min()),
                         max_time=(non_filtered_laps["laptime"].max()),
                         low_quartile=(current_driver_laps["laptime"].quantile(0.25)),
                         high_quartile=(current_driver_laps["laptime"].quantile(0.75)),
-                        median=(flying_laps["laptime"].median()),
+                        median=(current_driver_laps["laptime"].median()),
                         deg_rate=None,
                     ),
-                    laps=(current_driver_laps.to_dict(orient="records")),
+                    laps=(non_filtered_laps.to_dict(orient="records")),
                 )
             )
 
