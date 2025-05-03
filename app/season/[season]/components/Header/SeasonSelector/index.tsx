@@ -1,20 +1,34 @@
 "use client"
-import Form from "next/form"
-import { useParams } from "next/navigation"
-import { action } from "./action"
-const SUPPORTED_SEASONS = ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
+import { useParams, useRouter } from "next/navigation"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+const SUPPORTED_SEASONS = ["2024", "2025"]
 
 export const SeasonSelector = () => {
     const { season } = useParams<{ season: string }>()
+    const router = useRouter()
     return (
-        <Form action={action}>
-            <select name="year" className="select select-sm w-max" defaultValue={season}>
+        <Select
+            name="year"
+            onValueChange={(val) => {
+                router.push(`/season/${val}`)
+            }}
+        >
+            <SelectTrigger>
+                <SelectValue placeholder="Season" defaultValue={season} />
+            </SelectTrigger>
+            <SelectContent>
                 {SUPPORTED_SEASONS.map((season) => (
-                    <option key={season} value={season}>
+                    <SelectItem key={season} value={season}>
                         {season}
-                    </option>
+                    </SelectItem>
                 ))}
-            </select>
-        </Form>
+            </SelectContent>
+        </Select>
     )
 }
