@@ -1,6 +1,7 @@
-from numpy import interp, linspace, trunc
-from pandas import DataFrame, read_sql, to_timedelta
-from sqlalchemy import Connection, and_, select
+from typing import Tuple
+from numpy import concatenate, interp, linspace, trunc
+from pandas import DataFrame, Series, read_sql, to_timedelta
+from sqlalchemy import Connection, Row, and_, or_, select
 
 from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
 from repository.repository import (
@@ -11,6 +12,7 @@ from repository.repository import (
 from services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from services.laps.models.laps import TeamPlotStyleDto
 from services.telemetry.models import (
+    DriverTelemetryDelta,
     DriverTelemetryPlotData,
     LapTelemetryDto,
     TelemetryPlotData,
@@ -156,50 +158,132 @@ class TelemetryResolver:
 
         return avg_telemetries
 
+    def _get_reference_lap(self, query_filter: SessionQueryFilter):
+        laps = self.db_connection.execute(
+            select(Laps.id, Laps.lap_number, Laps.driver_id)
+            .join(
+                SessionResults,
+                and_(
+                    Laps.event_name == SessionResults.event_name,
+                    Laps.session_type_id == SessionResults.session_type_id,
+                    Laps.season_year == SessionResults.season_year,
+                ),
+            )
+            .where(
+                or_(
+                    *[
+                        and_(
+                            Laps.driver_id == query.driver,
+                            Laps.lap_number.in_(query.lap_filter or []),
+                        )
+                        for query in query_filter.queries
+                    ]
+                )
+            )
+            .order_by(Laps.laptime.asc())
+            .limit(1)
+        )
+        return laps.fetchone()
+
+    def _get_reference_data(self, query_filter: SessionQueryFilter):
+        ref_lap = self._get_reference_lap(query_filter)
+        telemetry_data = read_sql(
+            con=self.db_connection,
+            sql=select(TelemetryMeasurements).where(
+                TelemetryMeasurements.lap_id == ref_lap.id
+            ),
+        )
+        telemetry_data["relative_distance"] = (
+            telemetry_data["distance"] / telemetry_data["distance"].tail(1).iloc[0]
+        )
+        if ref_lap:
+            return telemetry_data, ref_lap
+        raise ValueError("No reference lap found")
+
     def get_telemetry(
         self, query_filter: SessionQueryFilter
     ) -> list[DriverTelemetryPlotData]:
         arr = []
+        ref_telemetry, ref_lap = self._get_reference_data(query_filter)
         for query in query_filter.queries:
-            arr.extend(self.get_driver_telemetries(query))
+            arr.extend(self.get_driver_telemetries(query, ref_lap, ref_telemetry))
 
         return arr
 
+    def _get_telemetry(self, lap_number: int, driver: str):
+        telemetry_dataframe = read_sql(
+            con=self.db_connection,
+            sql=select(TelemetryMeasurements)
+            .join(
+                Laps,
+                and_(Laps.id == TelemetryMeasurements.lap_id),
+            )
+            .join(
+                SessionResults,
+                and_(
+                    Laps.season_year == SessionResults.season_year,
+                    Laps.session_type_id == SessionResults.session_type_id,
+                    Laps.event_name == SessionResults.event_name,
+                ),
+            )
+            .where(
+                SessionResults.season_year == self.season,
+                SessionResults.session_type_id == self.session_identifier.value,
+                SessionResults.event_name == self.event,
+                Laps.lap_number == lap_number,
+                Laps.driver_id == driver,
+            ),
+        )
+        telemetry_dataframe["relative_distance"] = (
+            telemetry_dataframe["distance"]
+            / telemetry_dataframe.tail(1)["distance"].iloc[0]
+        )
+        return telemetry_dataframe
+
+    def interpolated_boundaries(self, series: Series):
+        channel_start = series[1] - series[0]
+        channel_end = series[-1] - series[-2]
+        return concatenate(
+            [[series[0] - channel_start], series, [series[-1] + channel_end]]
+        )
+
+    def _get_delta(self, reference_telemetry: DataFrame, target_telemetry: DataFrame):
+        lattice_x = reference_telemetry["relative_distance"].to_numpy()
+        time_fp = target_telemetry["laptime_at"].to_numpy()
+        relative_distance_xp = target_telemetry["relative_distance"].to_numpy()
+        time_x = interp(lattice_x, relative_distance_xp, time_fp)
+
+        delta_df = DataFrame(columns=["distance", "relative_distance", "gap"])
+        delta_df["gap"] = reference_telemetry["laptime_at"] - time_x
+        delta_df["relative_distance"] = lattice_x
+        delta_df["distance"] = reference_telemetry["relative_distance"]
+
+        return delta_df
+
     def get_driver_telemetries(
-        self, query: SessionQuery
+        self,
+        query: SessionQuery,
+        reference_lap: Row[Tuple[int, int, str]],
+        reference_telemetry: DataFrame,
     ) -> list[DriverTelemetryPlotData]:
         telemetries: list[DriverTelemetryPlotData] = []
         plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
 
         if isinstance(query.lap_filter, list):
             for lap in query.lap_filter:
-                telemetry_dataframe = read_sql(
-                    con=self.db_connection,
-                    sql=select(TelemetryMeasurements)
-                    .join(
-                        Laps,
-                        and_(Laps.id == TelemetryMeasurements.lap_id),
+                telemetry_dataframe = self._get_telemetry(lap, query.driver)
+
+                delta = None
+                if (
+                    lap != reference_lap.lap_number
+                    and query.driver != reference_lap.driver_id
+                ):
+                    delta = DriverTelemetryDelta(
+                        reference=reference_lap.driver_id,
+                        delta=self._get_delta(
+                            telemetry_dataframe, reference_telemetry
+                        ).to_dict(orient="records"),
                     )
-                    .join(
-                        SessionResults,
-                        and_(
-                            Laps.season_year == SessionResults.season_year,
-                            Laps.session_type_id == SessionResults.session_type_id,
-                            Laps.event_name == SessionResults.event_name,
-                        ),
-                    )
-                    .where(
-                        SessionResults.season_year == self.season,
-                        SessionResults.session_type_id == self.session_identifier.value,
-                        SessionResults.event_name == self.event,
-                        Laps.lap_number == lap,
-                        Laps.driver_id == query.driver,
-                    ),
-                )
-                telemetry_dataframe["relative_distance"] = (
-                    telemetry_dataframe["distance"]
-                    / telemetry_dataframe.tail(1)["distance"].iloc[0]
-                )
 
                 telemetries.append(
                     DriverTelemetryPlotData(
@@ -214,6 +298,7 @@ class TelemetryResolver:
                             lap_number=lap,
                             telemetry=telemetry_dataframe.to_dict(orient="records"),
                         ),
+                        delta=delta,
                     )
                 )
         else:

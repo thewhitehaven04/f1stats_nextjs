@@ -30,6 +30,19 @@ class TelemetryPlotData(BaseModel):
     telemetry: list[TelemetryMeasurementDto]
 
 
+class DeltaInstance(BaseModel):
+    relative_distance: float
+    distance: float
+    gap: float
+
+
+class DriverTelemetryDelta(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    reference: str
+    delta: list[DeltaInstance]
+
+
 class DriverTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -37,3 +50,4 @@ class DriverTelemetryPlotData(BaseModel):
     team: TeamPlotStyleDto
     style: PlotStyle
     lap: LapTelemetryDto
+    delta: DriverTelemetryDelta | None
