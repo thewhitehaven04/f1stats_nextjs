@@ -27,34 +27,40 @@ export const EventCard = (props: TEventWithSessions) => {
                     <div className="flex flex-row gap-2 justify-start">
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[0].type}/results`}
-                                    >
-                                        {sessions[0].type}
-                                    </Link>
-                                </Button>
+                                {sessions[0] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[0].type}/results`}
+                                        >
+                                            {sessions[0].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[1].type}/results`}
-                                    >
-                                        {sessions[1].type}
-                                    </Link>
-                                </Button>
+                                {sessions[1] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[1].type}/results`}
+                                        >
+                                            {sessions[1].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[2].type}/results`}
-                                    >
-                                        {sessions[2].type}
-                                    </Link>
-                                </Button>
+                                {sessions[2] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[2].type}/results`}
+                                        >
+                                            {sessions[2].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="flex flex-col">
@@ -88,34 +94,40 @@ export const EventCard = (props: TEventWithSessions) => {
                     <div className="flex flex-row gap-0 justify-start">
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[0].type}/results`}
-                                    >
-                                        {sessions[0].type}
-                                    </Link>
-                                </Button>
+                                {sessions[0] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[0].type}/results`}
+                                        >
+                                            {sessions[0].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[1].type}/results`}
-                                    >
-                                        {sessions[1].type}
-                                    </Link>
-                                </Button>
+                                {sessions[1] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[1].type}/results`}
+                                        >
+                                            {sessions[1].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[2].type}/results`}
-                                    >
-                                        {sessions[2].type}
-                                    </Link>
-                                </Button>
+                                {sessions[2] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[2].type}/results`}
+                                        >
+                                            {sessions[2].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -123,58 +135,68 @@ export const EventCard = (props: TEventWithSessions) => {
                     <div className="flex flex-row gap-0">
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[0].type}/results`}
-                                    >
-                                        {sessions[0].type}
-                                    </Link>
-                                </Button>
+                                {sessions[0] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[0].type}/results`}
+                                        >
+                                            {sessions[0].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[2].type}/results`}
-                                    >
-                                        {sessions[2].type}
-                                    </Link>
-                                </Button>
+                                {sessions[2] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[2].type}/results`}
+                                        >
+                                            {sessions[2].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[3].type}/results`}
-                                    >
-                                        {sessions[3].type}
-                                    </Link>
-                                </Button>
+                                {sessions[3] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[3].type}/results`}
+                                        >
+                                            {sessions[3].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[1].type}/results`}
-                                    >
-                                        {sessions[1].type}
-                                    </Link>
-                                </Button>
+                                {sessions[1] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[1].type}/results`}
+                                        >
+                                            {sessions[1].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[4].type}/results`}
-                                    >
-                                        {sessions[4].type}
-                                    </Link>
-                                </Button>
+                                {sessions[4] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[4].type}/results`}
+                                        >
+                                            {sessions[4].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -182,58 +204,68 @@ export const EventCard = (props: TEventWithSessions) => {
                     <div className="flex flex-row gap-0">
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[0].type}/results`}
-                                    >
-                                        {sessions[0].type}
-                                    </Link>
-                                </Button>
+                                {sessions[0] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[0].type}/results`}
+                                        >
+                                            {sessions[0].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[1].type}/results`}
-                                    >
-                                        {sessions[1].type}
-                                    </Link>
-                                </Button>
+                                {sessions[1] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[1].type}/results`}
+                                        >
+                                            {sessions[1].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[2].type}/results`}
-                                    >
-                                        {sessions[2].type}
-                                    </Link>
-                                </Button>
+                                {sessions[2] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[2].type}/results`}
+                                        >
+                                            {sessions[2].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[3].type}/results`}
-                                    >
-                                        {sessions[3].type}
-                                    </Link>
-                                </Button>
+                                {sessions[3] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[3].type}/results`}
+                                        >
+                                            {sessions[3].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[4].type}/results`}
-                                    >
-                                        {sessions[4].type}
-                                    </Link>
-                                </Button>
+                                {sessions[4] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[4].type}/results`}
+                                        >
+                                            {sessions[4].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -241,58 +273,68 @@ export const EventCard = (props: TEventWithSessions) => {
                     <div className="flex flex-row gap-0">
                         <ul className="flex flex-col gap-2">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[0].type}/results`}
-                                    >
-                                        {sessions[0].type}
-                                    </Link>
-                                </Button>
+                                {sessions[0] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[0].type}/results`}
+                                        >
+                                            {sessions[0].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[2].type}/results`}
-                                    >
-                                        {sessions[2].type}
-                                    </Link>
-                                </Button>
-                            </li>
-                        </ul>
-                        <ul className="flex flex-col gap-2">
-                            <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[1].type}/results`}
-                                    >
-                                        {sessions[1].type}
-                                    </Link>
-                                </Button>
-                            </li>
-                            <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[3].type}/results`}
-                                    >
-                                        {sessions[3].type}
-                                    </Link>
-                                </Button>
+                                {sessions[2] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[2].type}/results`}
+                                        >
+                                            {sessions[2].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                         <ul className="flex flex-col gap-2">
                             <li>
-                                <Button type="button" variant="ghost">
-                                    <Link
-                                        className="link-hover"
-                                        href={`${season}/event/${name}/session/${sessions[4].type}/results`}
-                                    >
-                                        {sessions[4].type}
-                                    </Link>
-                                </Button>
+                                {sessions[1] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[1].type}/results`}
+                                        >
+                                            {sessions[1].type}
+                                        </Link>
+                                    </Button>
+                                )}
+                            </li>
+                            <li>
+                                {sessions[3] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[3].type}/results`}
+                                        >
+                                            {sessions[3].type}
+                                        </Link>
+                                    </Button>
+                                )}
+                            </li>
+                        </ul>
+                        <ul className="flex flex-col gap-2">
+                            <li>
+                                {sessions[4] && (
+                                    <Button type="button" variant="ghost">
+                                        <Link
+                                            className="link-hover"
+                                            href={`${season}/event/${name}/session/${sessions[4].type}/results`}
+                                        >
+                                            {sessions[4].type}
+                                        </Link>
+                                    </Button>
+                                )}
                             </li>
                         </ul>
                     </div>
