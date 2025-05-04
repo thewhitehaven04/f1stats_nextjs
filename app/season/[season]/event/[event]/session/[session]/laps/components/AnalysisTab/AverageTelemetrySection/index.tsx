@@ -1,15 +1,15 @@
-import type { TelemetryPlotData } from "@/client/generated"
 import type { ChartData } from "chart.js"
 import { useMemo, type RefObject } from "react"
 import type { ChartProps } from "react-chartjs-2"
 import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
+import type { AverageTelemetryPlotData } from '@/client/generated'
 
 export const AverageTelemetrySection = ({
     averageTelemetry,
     ref,
-}: { averageTelemetry: TelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
+}: { averageTelemetry: AverageTelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
     const distanceLabels =
         averageTelemetry?.length &&
         averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
@@ -49,9 +49,9 @@ export const AverageTelemetrySection = ({
 
     const speedDatasets: ChartData<"line">["datasets"] = useMemo(
         () =>
-            averageTelemetry?.map((lap, index) => ({
-                label: lap.driver,
-                data: lap.telemetry.map((measurement) => ({
+            averageTelemetry?.map((stint, index) => ({
+                label: `${stint.driver}, ${stint.stint_length} laps`,
+                data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.speed,
                 })),
@@ -62,9 +62,9 @@ export const AverageTelemetrySection = ({
 
     const rpmDatasets: ChartData<"line">["datasets"] = useMemo(
         () =>
-            averageTelemetry?.map((lap, index) => ({
-                label: lap.driver,
-                data: lap.telemetry.map((measurement) => ({
+            averageTelemetry?.map((stint, index) => ({
+                label: stint.driver,
+                data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.rpm,
                 })),
@@ -75,9 +75,9 @@ export const AverageTelemetrySection = ({
 
     const throttleDatasets: ChartData<"line">["datasets"] = useMemo(
         () =>
-            averageTelemetry?.map((lap, index) => ({
-                label: lap.driver,
-                data: lap.telemetry.map((measurement) => ({
+            averageTelemetry?.map((stint, index) => ({
+                label: stint.driver,
+                data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.throttle,
                 })),
@@ -88,9 +88,9 @@ export const AverageTelemetrySection = ({
 
     const brakeDatasets: ChartData<"line">["datasets"] = useMemo(
         () =>
-            averageTelemetry?.map((lap, index) => ({
-                label: lap.driver,
-                data: lap.telemetry.map((measurement) => ({
+            averageTelemetry?.map((stint, index) => ({
+                label: stint.driver,
+                data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.brake,
                 })),
@@ -107,14 +107,14 @@ export const AverageTelemetrySection = ({
                     datasets: speedDatasets,
                 }}
                 options={speedTraceOptions}
-                height={120}
+                height={150}
             />
             <TelemetryPresetChart
                 data={{
                     labels: distanceLabels || [],
                     datasets: rpmDatasets,
                 }}
-                height={40}
+                height={45}
                 options={{
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
@@ -124,14 +124,14 @@ export const AverageTelemetrySection = ({
                 options={{
                     scales: { y: { title: { display: true, text: "Throttle application, %" } } },
                 }}
-                height={35}
+                height={30}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
                 options={{
                     scales: { y: { title: { display: true, text: "Brake application, %" } } },
                 }}
-                height={35}
+                height={30}
             />
         </section>
     )

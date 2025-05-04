@@ -11,7 +11,7 @@ from repository.engine import (
 from services.laps.LapDataResolver import LapDataResolver
 from services.laps.models.laps import LapSelectionData
 from services.telemetry.TelemetryResolver import TelemetryResolver
-from services.telemetry.models import DriverTelemetryPlotData, TelemetryPlotData
+from services.telemetry.models import DriverTelemetryPlotData, AverageTelemetryPlotData
 
 
 @asynccontextmanager
@@ -60,7 +60,7 @@ async def get_session_laptimes_filtered(
 
 @app.post(
     "/api/py/season/{year}/event/{event}/session/{session}/telemetry/average",
-    response_model=list[TelemetryPlotData],
+    response_model=list[AverageTelemetryPlotData],
 )
 async def get_averaged_telemetry(
     year: str,

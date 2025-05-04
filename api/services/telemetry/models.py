@@ -19,14 +19,16 @@ class LapTelemetryDto(BaseModel):
     id: int
     lap_number: int
     telemetry: list[TelemetryMeasurementDto]
+    lap_distance: int 
 
 
-class TelemetryPlotData(BaseModel):
+class AverageTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
     team: TeamPlotStyleDto
     style: PlotStyle
+    stint_length: int
     telemetry: list[TelemetryMeasurementDto]
 
 

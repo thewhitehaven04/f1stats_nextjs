@@ -15,7 +15,7 @@ from services.telemetry.models import (
     DriverTelemetryDelta,
     DriverTelemetryPlotData,
     LapTelemetryDto,
-    TelemetryPlotData,
+    AverageTelemetryPlotData,
 )
 
 
@@ -144,7 +144,7 @@ class TelemetryResolver:
             )
             style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
             avg_telemetries.append(
-                TelemetryPlotData(
+                AverageTelemetryPlotData(
                     telemetry=(
                         self.average_telemetry_for_driver(telemetry_data).to_dict(
                             orient="records"
@@ -153,6 +153,7 @@ class TelemetryResolver:
                     driver=driver_id,
                     team=TeamPlotStyleDto(name=style.team.name, color=style.color),
                     style=style.style,
+                    stint_length=len(lap_ids)
                 )
             )
 
@@ -284,7 +285,7 @@ class TelemetryResolver:
                             telemetry_dataframe, reference_telemetry
                         ).to_dict(orient="records"),
                     )
-
+                lap_distance = int(telemetry_dataframe["distance"].tail(1).iloc[0])
                 telemetries.append(
                     DriverTelemetryPlotData(
                         driver=query.driver,
@@ -297,6 +298,7 @@ class TelemetryResolver:
                             id=telemetry_dataframe.iloc[0].lap_id,
                             lap_number=lap,
                             telemetry=telemetry_dataframe.to_dict(orient="records"),
+                            lap_distance=lap_distance,
                         ),
                         delta=delta,
                     )

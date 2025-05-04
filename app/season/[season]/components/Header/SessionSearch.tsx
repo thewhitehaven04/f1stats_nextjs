@@ -53,49 +53,60 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
                         <ul className="menu">
                             <li className="text-lg font-medium">{result.name}</li>
                             <ul>
-                                <li>
-                                    <Link
-                                        className="link-hover"
-                                        href={`/season/${season}/event/${result.name}/session/${result.sessions[0].type}/results`}
-                                    >
-                                        {result.sessions[0].type}
-                                    </Link>
-                                </li>
+                                {result.sessions[0] && (
+                                    <li>
+                                        <Link
+                                            className="link-hover"
+                                            href={`/season/${season}/event/${result.name}/session/${result.sessions[0].type}/results`}
+                                        >
+                                            {result.sessions[0].type}
+                                        </Link>
+                                    </li>
+                                )}
 
-                                <li>
-                                    <Link
-                                        className="link-hover"
-                                        href={`/season/${season}/event/${result.name}/session/${result.sessions[1].type}/results`}
-                                    >
-                                        {result.sessions[1].type}
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        className="link-hover"
-                                        href={`/season/${season}/event/${result.name}/session/${result.sessions[2].type}/results`}
-                                    >
-                                        {result.sessions[2].type}
-                                    </Link>
-                                </li>
+                                {result.sessions[1] && (
+                                    <li>
+                                        <Link
+                                            className="link-hover"
+                                            href={`/season/${season}/event/${result.name}/session/${result.sessions[1].type}/results`}
+                                        >
+                                            {result.sessions[1].type}
+                                        </Link>
+                                    </li>
+                                )}
 
-                                <li>
-                                    <Link
-                                        className="link-hover"
-                                        href={`/season/${season}/event/${result.name}/session/${result.sessions[3].type}/results`}
-                                    >
-                                        {result.sessions[3].type}
-                                    </Link>
-                                </li>
+                                {result.sessions[2] && (
+                                    <li>
+                                        <Link
+                                            className="link-hover"
+                                            href={`/season/${season}/event/${result.name}/session/${result.sessions[2].type}/results`}
+                                        >
+                                            {result.sessions[2].type}
+                                        </Link>
+                                    </li>
+                                )}
 
-                                <li>
-                                    <Link
-                                        className="link-hover"
-                                        href={`/season/${season}/event/${result.name}/session/${result.sessions[4].type}/results`}
-                                    >
-                                        {result.sessions[4].type}
-                                    </Link>
-                                </li>
+                                {result.sessions[3] && (
+                                    <li>
+                                        <Link
+                                            className="link-hover"
+                                            href={`/season/${season}/event/${result.name}/session/${result.sessions[3].type}/results`}
+                                        >
+                                            {result.sessions[3].type}
+                                        </Link>
+                                    </li>
+                                )}
+
+                                {result.sessions[4] && (
+                                    <li>
+                                        <Link
+                                            className="link-hover"
+                                            href={`/season/${season}/event/${result.name}/session/${result.sessions[4].type}/results`}
+                                        >
+                                            {result.sessions[4].type}
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </ul>
                     </div>
