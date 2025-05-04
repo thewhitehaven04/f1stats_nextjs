@@ -9,6 +9,12 @@ export type Compound =
     | "UNKNOWN"
     | "TEST_UNKNOWN"
 
+export type DeltaInstance = {
+    relative_distance: number
+    distance: number
+    gap: number
+}
+
 export type DriverLapData = {
     team: TeamPlotStyleDto
     driver: string
@@ -18,11 +24,17 @@ export type DriverLapData = {
     laps: Array<LapTimingData>
 }
 
+export type DriverTelemetryDelta = {
+    reference: string
+    delta: Array<DeltaInstance>
+}
+
 export type DriverTelemetryPlotData = {
     driver: string
     team: TeamPlotStyleDto
     style: "default" | "alternative"
     lap: LapTelemetryDto
+    delta: DriverTelemetryDelta | null
 }
 
 export type HttpValidationError = {

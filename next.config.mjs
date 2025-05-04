@@ -12,9 +12,7 @@ const nextConfig = {
             {
                 source: "/docs",
                 destination:
-                    process.env.NODE_ENV === "development"
-                        ? "http://127.0.0.1:8000/docs"
-                        : "/docs",
+                    process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/docs" : "/docs",
             },
             {
                 source: "/openapi.json",
@@ -24,6 +22,11 @@ const nextConfig = {
                         : "/openapi.json",
             },
         ]
+    },
+    experimental: {
+        serverActions: {
+            bodySizeLimit: "2mb",
+        },
     },
 }
 

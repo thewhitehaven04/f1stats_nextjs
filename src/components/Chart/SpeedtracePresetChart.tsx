@@ -17,6 +17,12 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
                 axis: "x",
                 intersect: false,
             },
+            layout: {
+                autoPadding: false,
+                padding: {
+                    left: -28 
+                }
+            },
             plugins: {
                 legend: {
                     position: "bottom",

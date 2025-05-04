@@ -48,11 +48,7 @@ export const AnalysisTab = ({ laps }: { laps: Promise<LapSelectionData> }) => {
                 }
             >
                 {state?.tab === "telemetry" && (
-                    <TelemetryChartSection
-                        telemetryMeasurements={state?.data}
-                        telemetryComparisonSlot={null}
-                        ref={ref}
-                    />
+                    <TelemetryChartSection telemetryMeasurements={state?.data} ref={ref} />
                 )}
                 {state?.tab === "averageTelemetry" && (
                     <AverageTelemetrySection averageTelemetry={state?.data || null} ref={ref} />

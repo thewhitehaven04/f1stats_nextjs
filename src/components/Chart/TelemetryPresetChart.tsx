@@ -22,6 +22,12 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
                     },
                 },
             },
+            layout: {
+                autoPadding: false,
+                padding: {
+                    left: -28
+                }
+            },
             interaction: {
                 mode: "x",
                 axis: "x",

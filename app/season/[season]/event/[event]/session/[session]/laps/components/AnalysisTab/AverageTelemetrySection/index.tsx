@@ -122,14 +122,14 @@ export const AverageTelemetrySection = ({
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
                 options={{
-                    scales: { y: { title: { display: true, text: "Throttle" } } },
+                    scales: { y: { title: { display: true, text: "Throttle application, %" } } },
                 }}
                 height={35}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
                 options={{
-                    scales: { y: { title: { display: true, text: "Brake" } } },
+                    scales: { y: { title: { display: true, text: "Brake application, %" } } },
                 }}
                 height={35}
             />

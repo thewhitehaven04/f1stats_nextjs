@@ -9,17 +9,17 @@ import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 
 export function TelemetryChartSection(props: {
     telemetryMeasurements: DriverTelemetryPlotData[] | null
-    telemetryComparisonSlot: ReactNode
     ref: RefObject<HTMLElement | null>
 }) {
     const { telemetryMeasurements, ref } = props
-    console.log(telemetryMeasurements)
     const distanceLabels = telemetryMeasurements
         ? telemetryMeasurements[0].lap.telemetry.map((measurement) => measurement.distance)
         : []
+
     const maxDistance = telemetryMeasurements
         ? telemetryMeasurements[0].lap.telemetry.at(-1)?.distance
         : 0
+
     const speedTraceOptions = useMemo(
         () =>
             ({
@@ -47,7 +47,6 @@ export function TelemetryChartSection(props: {
                     driverMeasurements.style === "alternative"
                         ? getAlternativeColor(driverMeasurements.team.color)
                         : driverMeasurements.team.color,
-                borderDash: driverMeasurements.style === "alternative" ? [6, 1.5] : undefined,
             })) || [],
         [telemetryMeasurements],
     )
@@ -97,15 +96,29 @@ export function TelemetryChartSection(props: {
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
-                    y: measurement.brake,
+                    y: measurement.brake * 100,
                 })),
                 ...presets[index],
             })) || [],
         [telemetryMeasurements, presets],
     )
 
+    const timeDeltaDatasets: ChartData<"line">["datasets"] = useMemo(
+        () =>
+            telemetryMeasurements?.map((comp, index) => ({
+                label: `${comp.driver} vs ${comp.delta?.reference}`,
+                data:
+                    comp.delta?.delta.map((measurement) => ({
+                        x: measurement.distance,
+                        y: measurement.gap,
+                    })) || [],
+                ...presets[index],
+            })) || [],
+        [telemetryMeasurements, presets],
+    )
+
     return (
-        <section ref={ref} className="flex flex-col gap-4">
+        <section ref={ref} className="flex flex-col gap-2">
             <SpeedtracePresetChart
                 data={{
                     labels: distanceLabels,
@@ -115,18 +128,66 @@ export function TelemetryChartSection(props: {
                 height={120}
             />
             <TelemetryPresetChart
+                data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
+                options={{
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: "Time delta, s",
+                            },
+                        },
+                    },
+                }}
+                height={60}
+            />
+            <TelemetryPresetChart
                 data={{
                     labels: distanceLabels,
                     datasets: rpmDatasets,
+                }}
+                options={{
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: "RPM",
+                            },
+                        },
+                    },
                 }}
                 height={60}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: throttleDatasets }}
+                options={{
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: "Throttle application, %",
+                            },
+                            min: 0,
+                            max: 100,
+                        },
+                    },
+                }}
                 height={45}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: brakeDatasets }}
+                options={{
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: "Brake application, %",
+                            },
+                            min: 0,
+                            max: 100,
+                        },
+                    },
+                }}
                 height={45}
             />
         </section>

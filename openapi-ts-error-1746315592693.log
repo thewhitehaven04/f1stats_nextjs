@@ -1,0 +1,12 @@
+Error opening file "/Users/germanbulavkin/Projects/f1stats/src/client/apiGenerator/generated/openapi.json" 
+ENOENT: no such file or directory, open '/Users/germanbulavkin/Projects/f1stats/src/client/apiGenerator/generated/openapi.json'
+ResolverError: Error opening file "/Users/germanbulavkin/Projects/f1stats/src/client/apiGenerator/generated/openapi.json" 
+ENOENT: no such file or directory, open '/Users/germanbulavkin/Projects/f1stats/src/client/apiGenerator/generated/openapi.json'
+    at Object.handler (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.2/node_modules/@hey-api/json-schema-ref-parser/dist/lib/resolvers/file.js:58:19)
+    at async $RefParser.parse (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.2/node_modules/@hey-api/json-schema-ref-parser/dist/lib/index.js:185:17)
+    at async $RefParser.bundle (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.2/node_modules/@hey-api/json-schema-ref-parser/dist/lib/index.js:120:9)
+    at async Zs (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+openapi-ts@0.64.8_typescript@5.6.3/node_modules/@hey-api/openapi-ts/dist/index.cjs:12:1428)
+    at async lo (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+openapi-ts@0.64.8_typescript@5.6.3/node_modules/@hey-api/openapi-ts/dist/index.cjs:14:88353)
+    at async Promise.all (index 0)
+    at async oj (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+openapi-ts@0.64.8_typescript@5.6.3/node_modules/@hey-api/openapi-ts/dist/index.cjs:1311:4468)
+    at async start (/Users/germanbulavkin/Projects/f1stats/node_modules/.pnpm/@hey-api+openapi-ts@0.64.8_typescript@5.6.3/node_modules/@hey-api/openapi-ts/bin/index.cjs:120:21)

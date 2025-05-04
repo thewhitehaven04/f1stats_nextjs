@@ -20,7 +20,7 @@ export const SeasonSelector = () => {
             }}
         >
             <SelectTrigger>
-                <SelectValue placeholder="Season" defaultValue={season} />
+                <SelectValue placeholder={season} defaultValue={season} />
             </SelectTrigger>
             <SelectContent>
                 {SUPPORTED_SEASONS.map((season) => (
