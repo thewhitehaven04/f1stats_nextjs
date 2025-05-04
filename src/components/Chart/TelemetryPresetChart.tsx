@@ -1,9 +1,11 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
+import clsx from "clsx"
 import { type ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 initGlobalChartConfig()
 
 export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) => {
+    const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "line",
         options: {
@@ -25,8 +27,8 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
             layout: {
                 autoPadding: false,
                 padding: {
-                    left: -28
-                }
+                    left: -28,
+                },
             },
             interaction: {
                 mode: "x",
@@ -66,5 +68,11 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
         },
     } satisfies Partial<ChartProps<"line">>
 
-    return <Chart {...merge(baseChartProps, props)} />
+    return (
+        <div className="relative">
+            <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
+            <h1 className='absolute z-10 h-full w-full text-center top-12'>No laps selected</h1>
+            <Chart {...merge(baseChartProps, props)} />
+        </div>
+    )
 }

@@ -1,9 +1,11 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
+import clsx from "clsx"
 import { type ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 initGlobalChartConfig()
 
 export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) => {
+    const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "line",
         options: {
@@ -20,8 +22,8 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
             layout: {
                 autoPadding: false,
                 padding: {
-                    left: -28 
-                }
+                    left: -28,
+                },
             },
             plugins: {
                 legend: {
@@ -84,5 +86,10 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
     } satisfies Partial<ChartProps<"line">>
 
     const mergedProps = merge(baseChartProps, props)
-    return <Chart {...mergedProps} />
+    return (
+        <div className="relative">
+            <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
+            <Chart {...mergedProps} className={clsx(mergedProps.className, "z-0")} />
+        </div>
+    )
 }
