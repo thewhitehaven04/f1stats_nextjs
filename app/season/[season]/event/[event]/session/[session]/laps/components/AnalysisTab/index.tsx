@@ -2,7 +2,7 @@
 
 import type { LapSelectionData } from "@/client/generated"
 import Form from "next/form"
-import { Suspense, useActionState, useRef } from "react"
+import { useActionState, useRef } from "react"
 import { getTelemetry } from "./action"
 import { useParams } from "next/navigation"
 import { LapsTableSection } from "./LapsTableSection"
@@ -40,20 +40,12 @@ export const AnalysisTab = ({ laps }: { laps: Promise<LapSelectionData> }) => {
                 value={decodeURIComponent(params.session as string)}
             />
             <LapsTableSection laps={laps} />
-            <Suspense
-                fallback={
-                    <div className="flex flex-col items-center justify-center h-8 w-full">
-                        Loading
-                    </div>
-                }
-            >
-                {state?.tab === "telemetry" && (
-                    <TelemetryChartSection telemetryMeasurements={state?.data} ref={ref} />
-                )}
-                {state?.tab === "averageTelemetry" && (
-                    <AverageTelemetrySection averageTelemetry={state?.data || null} ref={ref} />
-                )}
-            </Suspense>
+            {state?.tab === "telemetry" && (
+                <TelemetryChartSection telemetryMeasurements={state?.data} ref={ref} />
+            )}
+            {state?.tab === "averageTelemetry" && (
+                <AverageTelemetrySection averageTelemetry={state?.data || null} ref={ref} />
+            )}
         </Form>
     )
 }

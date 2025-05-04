@@ -12,8 +12,8 @@ import {
 
 export async function getTelemetry(
     state:
-        | { data: DriverTelemetryPlotData[] | null; tab: "telemetry" }
-        | { data: TelemetryPlotData[] | null; tab: "telemetry" },
+        | { data: DriverTelemetryPlotData[] | null; tab: "telemetry"; message: null }
+        | { data: TelemetryPlotData[] | null; tab: "telemetry"; message: null },
     formData: FormData,
 ) {
     const intent = formData.get("intent")
