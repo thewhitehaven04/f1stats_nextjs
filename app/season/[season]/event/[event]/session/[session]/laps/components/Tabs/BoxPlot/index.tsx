@@ -1,6 +1,6 @@
 "use client"
 import { use, useMemo, useState } from "react"
-import { StintSelector } from "../StintSelector"
+import { StintSelector } from "../../StintSelector"
 import { LapsBoxChart } from "./Chart"
 import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"

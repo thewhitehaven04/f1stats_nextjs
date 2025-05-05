@@ -1,5 +1,5 @@
 import type { DriverLapData } from "@/client/generated"
-import type { ILapData } from '../AnalysisTab/LapsTableSection'
+import type { ILapData } from '../Tabs/Analysis/LapsTableSection'
 
 export function mapLapsToTableLapData(laps: DriverLapData[]): ILapData[] {
     const flattenedLaps: ILapData[] = []

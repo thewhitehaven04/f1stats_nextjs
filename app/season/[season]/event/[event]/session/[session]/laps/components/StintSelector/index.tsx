@@ -29,7 +29,7 @@ export function StintSelector(props: {
     onReset: () => void
     selectionValues: Record<string, number | undefined>
 }) {
-    const { driverStints, onChange, onReset, selectionValues } = props
+    const { driverStints, onChange, selectionValues } = props
 
     return (
         <Popover>

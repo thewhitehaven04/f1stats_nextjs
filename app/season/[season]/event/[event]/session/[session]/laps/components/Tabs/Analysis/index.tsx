@@ -9,12 +9,12 @@ import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"
 
 const AverageTelemetrySection = dynamic(
-    async () => (await import("./AverageTelemetrySection")).AverageTelemetrySection,
+    async () => (await import("./AverageTelemetrySection/index")).AverageTelemetrySection,
     { ssr: false },
 )
 
 const TelemetryChartSection = dynamic(
-    async () => (await import("./ChartSection")).TelemetryChartSection,
+    async () => (await import("./ChartSection/index")).TelemetryChartSection,
     { ssr: false },
 )
 

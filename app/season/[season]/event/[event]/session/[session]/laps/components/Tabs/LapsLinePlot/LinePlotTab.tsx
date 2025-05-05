@@ -1,10 +1,10 @@
 "use client"
 import { use, useMemo, useState } from "react"
-import { StintSelector } from "../StintSelector"
 import { LineLapsChart } from "./Chart"
 import type { Compound, LapSelectionData } from "@/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
+import { StintSelector } from '../../StintSelector'
 
 export type TLapsLinePlotDataset = {
     x: number

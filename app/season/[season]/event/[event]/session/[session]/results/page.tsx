@@ -140,7 +140,6 @@ export default async function Page({ params }: { params: Promise<ISessionPathnam
     }
     return (
         <section className="flex flex-col gap-2 w-full overflow-x-visible">
-            <h2 className="divider divider-start text-lg">Results</h2>
             <Form action="laps" className="w-full flex flex-col items-end gap-2">
                 <ResultsTable {...tableData} />
             </Form>

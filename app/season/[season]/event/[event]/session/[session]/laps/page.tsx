@@ -3,12 +3,12 @@ import {
     type SessionIdentifier,
 } from "@/client/generated"
 import { ApiClient } from "@/client"
-import LinePlotTab from "./components/LapsLinePlotTab/LinePlotTab"
-import { ViolinPlotTab } from "./components/ViolinPlotTab"
+import { ViolinPlotTab } from "./components/Tabs/ViolinPlot"
 import type { ILapsQueryParams, ISessionPathnameParams } from "../types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import BoxPlotTab from "./components/BoxPlotTab"
-import { AnalysisTab } from "./components/AnalysisTab"
+import BoxPlotTab from "./components/Tabs/BoxPlot"
+import { AnalysisTab } from "./components/Tabs/Analysis"
+import LinePlotTab from './components/Tabs/LapsLinePlot/LinePlotTab'
 
 export default async function Page({
     params,

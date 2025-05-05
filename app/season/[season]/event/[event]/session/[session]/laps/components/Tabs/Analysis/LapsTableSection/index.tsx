@@ -8,10 +8,12 @@ import { NaLabel } from "@/components/ValueOrNa"
 import { LapsTable } from "./table"
 import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getTyreComponentByCompound } from "../../helpers/getTyreIconByCompound"
-import { mapLapsToTableLapData } from "../../helpers/mapLapsToTableLapData"
+import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
+import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
+import { useLapSelection } from "./hooks/useLapSelection"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { TooltipButton } from "./components/TooltipButton"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -40,6 +42,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
     const laps = use(lapsPromise)
 
     const flattenedLaps = mapLapsToTableLapData(laps.driver_lap_data)
+    const { hasSelected, updateSelection } = useLapSelection()
 
     const tableColumns = useMemo(
         () => [
@@ -67,6 +70,13 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                                         name={driverName}
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
+                                        onCheckedChange={(checked) =>
+                                            updateSelection({
+                                                state: !!checked,
+                                                driver: driverName,
+                                                lap,
+                                            })
+                                        }
                                     />
                                 )
                             },
@@ -167,7 +177,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                 }),
             ),
         ],
-        [laps],
+        [laps, updateSelection],
     )
 
     return (
@@ -188,26 +198,30 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                     ),
                 }}
                 toolbar={
-                    <>
-                        <Button
+                    <TooltipProvider>
+                        <TooltipButton
                             type="submit"
                             variant="secondary"
                             size="md"
                             name="intent"
                             value="lapTelemetry"
+                            disabled={!hasSelected}
+                            tooltipText="You must select at least one lap to compare telemetry"
                         >
                             Compare per-lap telemetry
-                        </Button>
-                        <Button
+                        </TooltipButton>
+                        <TooltipButton
                             type="submit"
                             variant="secondary"
                             size="md"
                             name="intent"
                             value="avgTelemetryComparison"
+                            disabled={!hasSelected}
+                            tooltipText="You must select at least one lap to compare telemetry"
                         >
                             Compare average telemetry per driver
-                        </Button>
-                    </>
+                        </TooltipButton>
+                    </TooltipProvider>
                 }
             />
             <LapsTableTelemetryTutorial />

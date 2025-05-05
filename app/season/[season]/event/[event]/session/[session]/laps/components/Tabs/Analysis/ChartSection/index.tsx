@@ -1,7 +1,7 @@
 "use client"
 import type { ChartData } from "chart.js"
 import { useMemo, type RefObject } from "react"
-import { getAlternativeColor } from "../../helpers/getAlternativeColor"
+import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import type { ChartProps } from "react-chartjs-2"
 import type { DriverTelemetryPlotData } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
@@ -13,10 +13,8 @@ export function TelemetryChartSection(props: {
 }) {
     const { telemetryMeasurements, ref } = props
     const distanceLabels = telemetryMeasurements
-        ? telemetryMeasurements[0].lap.telemetry.map((measurement) =>
-              Math.trunc(measurement.distance),
-          )
-        : []
+        ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => measurement.distance))
+        .sort((a, b) => a - b)
 
     const maxDistance = Math.max(
         ...(telemetryMeasurements?.map((lap) => lap.lap.lap_distance) || []),

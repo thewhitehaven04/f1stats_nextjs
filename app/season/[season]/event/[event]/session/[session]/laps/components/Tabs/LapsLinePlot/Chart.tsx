@@ -3,11 +3,10 @@ import type { TooltipItem } from "chart.js"
 import type { ComponentProps } from "react"
 import { Chart, type ChartProps } from "react-chartjs-2"
 import { formatTime } from "@/core/helpers/formatTime"
-import { TYRE_COLOR_MAP } from "../helpers/colorMap"
-import { getAlternativeColor } from "../helpers/getAlternativeColor"
 import type { TLapsLinePlotDataset } from "./LinePlotTab"
 import { merge } from "ts-deepmerge"
 import { initGlobalChartConfig } from "@/components/Chart/config"
+import { TYRE_COLOR_MAP } from '../../helpers/colorMap'
 
 initGlobalChartConfig()
 
