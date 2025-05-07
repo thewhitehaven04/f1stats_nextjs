@@ -22,7 +22,7 @@ export default async function RootLayout({
         <html lang="en">
             <body className={appFont.className}>
                 <div className="flex flex-col gap-8 items-center overflow-y-scroll min-h-screen">
-                    <Providers>{children}</Providers>
+                    {children}
                 </div>
             </body>
         </html>
