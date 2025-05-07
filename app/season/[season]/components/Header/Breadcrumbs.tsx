@@ -16,12 +16,20 @@ const SEGMENTS = [
     {
         expression: /\/season\/(\d{4})/,
         getText: (matchArray: RegExpMatchArray | null) => (matchArray ? matchArray[1] : ""),
+        getHref: (matchArray: RegExpMatchArray | null) => {
+            return matchArray ? `/season/${matchArray[1]}` : ""
+        },
     },
     {
-        expression: /\/season\/(\d{4})\/event\/(\S+)\/session\/(\S+)\/results/,
+        expression: /\/season\/(\d{4})\/event\/(\S+)\/session\/(\w+)/,
         getText: (matchArray: RegExpMatchArray | null) => {
             return matchArray
                 ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} results`
+                : ""
+        },
+        getHref: (matchArray: RegExpMatchArray | null) => {
+            return matchArray
+                ? `/season/${matchArray[1]}/event/${matchArray[2]}/session/${matchArray[3]}/results`
                 : ""
         },
     },
@@ -32,12 +40,9 @@ const SEGMENTS = [
                 ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} laps`
                 : ""
         },
-    },
-    {
-        expression: /\/season\/(\d{4})\/event\/(\S+)\/session\/(\S+)\/telemetry/,
-        getText: (matchArray: RegExpMatchArray | null) => {
+        getHref: (matchArray: RegExpMatchArray | null) => {
             return matchArray
-                ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} telemetry`
+                ? `/season/${matchArray[1]}/event/${matchArray[2]}/session/${matchArray[3]}/laps`
                 : ""
         },
     },
@@ -49,10 +54,11 @@ export const Breadcrumbs = () => {
     const crumbs = SEGMENTS.map((segment) => {
         if (segment.expression.test(pathname)) {
             const match = pathname.match(segment.expression)
+            console.log(match)
             return match ? (
                 <BreadcrumbItem>
                     <BreadcrumbLink asChild>
-                        <Link href={match[0]}>{segment.getText(match)}</Link>
+                        <Link href={segment.getHref(match)}>{segment.getText(match)}</Link>
                     </BreadcrumbLink>
                 </BreadcrumbItem>
             ) : null
@@ -66,7 +72,7 @@ export const Breadcrumbs = () => {
                     <Fragment key={index}>
                         {crumb}
                         <BreadcrumbSeparator>
-                            <ChevronRight size={24}/>
+                            <ChevronRight size={24} />
                         </BreadcrumbSeparator>
                     </Fragment>
                 ))}
