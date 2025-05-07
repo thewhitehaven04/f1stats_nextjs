@@ -5,10 +5,10 @@ import {
 import { ApiClient } from "@/client"
 import { ViolinPlotTab } from "./components/Tabs/ViolinPlot"
 import type { ILapsQueryParams, ISessionPathnameParams } from "../types"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import BoxPlotTab from "./components/Tabs/BoxPlot"
 import { AnalysisTab } from "./components/Tabs/Analysis"
-import LinePlotTab from './components/Tabs/LapsLinePlot/LinePlotTab'
+import LinePlotTab from "./components/Tabs/LapsLinePlot/LinePlotTab"
+import { LapsTabs } from "./components/Tabs/tabs"
 
 export default async function Page({
     params,
@@ -35,25 +35,11 @@ export default async function Page({
         }).then((data) => data.data)
 
     return (
-        <Tabs defaultValue="analysis">
-            <TabsList className="gap-4 min-w-md">
-                <TabsTrigger value="analysis">Lap analysis</TabsTrigger>
-                <TabsTrigger value="lineplot">Line plot</TabsTrigger>
-                <TabsTrigger value="boxplot">Box plot</TabsTrigger>
-                <TabsTrigger value="violinplot">Violin plot</TabsTrigger>
-            </TabsList>
-            <TabsContent value="analysis">
-                <AnalysisTab laps={lapSelectionData} />
-            </TabsContent>
-            <TabsContent value="lineplot">
-                <LinePlotTab laps={lapSelectionData} />
-            </TabsContent>
-            <TabsContent value="boxplot">
-                <BoxPlotTab laps={lapSelectionData} />
-            </TabsContent>
-            <TabsContent value="violinplot">
-                <ViolinPlotTab laps={lapSelectionData} />
-            </TabsContent>
-        </Tabs>
+        <LapsTabs
+            analysisSlot={<AnalysisTab laps={lapSelectionData} />}
+            linePlotSlot={<LinePlotTab laps={lapSelectionData} />}
+            boxPlotSlot={<BoxPlotTab laps={lapSelectionData} />}
+            violinPlotSlot={<ViolinPlotTab laps={lapSelectionData} />}
+        />
     )
 }
