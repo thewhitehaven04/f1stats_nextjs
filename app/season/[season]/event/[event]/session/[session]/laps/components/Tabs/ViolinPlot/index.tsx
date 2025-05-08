@@ -13,6 +13,7 @@ import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
 import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
+import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
@@ -27,8 +28,11 @@ export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectio
             datasets: laps.driver_lap_data.map((driver) => ({
                 label: driver.driver,
                 data: [driver.laps.map((driverData) => driverData.laptime).filter(Boolean)],
-                borderColor: driver.team.color,
-                style: driver.style,
+                tyreCompound: driver.laps.map((driverData) => driverData.compound_id),
+                borderColor:
+                    driver.style === "alternative"
+                        ? getAlternativeColor(driver.team.color)
+                        : driver.team.color,
             })),
         }),
         [laps],

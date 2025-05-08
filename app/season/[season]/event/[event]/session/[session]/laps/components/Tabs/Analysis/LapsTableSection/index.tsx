@@ -13,6 +13,7 @@ import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompou
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { TooltipButton } from "./components/TooltipButton"
+import { useLapSelection } from "./hooks/useLapSelection"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -40,8 +41,8 @@ export const columnHelper = createColumnHelper<ILapData>()
 export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
     const laps = use(lapsPromise)
 
-    const flattenedLaps = mapLapsToTableLapData(laps.driver_lap_data)
-    // const { hasSelected, updateSelection } = useLapSelection()
+    const flattenedLaps = useMemo(() => mapLapsToTableLapData(laps.driver_lap_data), [laps])
+    const { hasSelected, updateSelection } = useLapSelection()
 
     const tableColumns = useMemo(
         () => [
@@ -69,6 +70,13 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                                         name={driverName}
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
+                                        onCheckedChange={(checked) =>
+                                            updateSelection({
+                                                driver: driverName,
+                                                lap: lap,
+                                                state: !!checked,
+                                            })
+                                        }
                                     />
                                 )
                             },
@@ -169,51 +177,54 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                 }),
             ),
         ],
+        [laps, updateSelection],
+    )
+
+    const initialState = useMemo(
+        () => ({
+            columnVisibility: laps.driver_lap_data.reduce<Record<string, boolean>>(
+                (curr, { driver }) => {
+                    curr[`${driver}.ST1`] = false
+                    curr[`${driver}.ST2`] = false
+                    curr[`${driver}.ST3`] = false
+
+                    return curr
+                },
+                {},
+            ),
+        }),
         [laps],
     )
 
     return (
         <>
-            <LapsTable
-                columns={tableColumns}
-                data={flattenedLaps}
-                initialState={{
-                    columnVisibility: laps.driver_lap_data.reduce<Record<string, boolean>>(
-                        (curr, { driver }) => {
-                            curr[`${driver}.ST1`] = false
-                            curr[`${driver}.ST2`] = false
-                            curr[`${driver}.ST3`] = false
-
-                            return curr
-                        },
-                        {},
-                    ),
-                }}
-                toolbar={
-                    <TooltipProvider>
-                        <TooltipButton
-                            type="submit"
-                            variant="secondary"
-                            size="md"
-                            name="intent"
-                            value="lapTelemetry"
-                            tooltipText="You must select at least one lap to compare telemetry"
-                        >
-                            Compare per-lap telemetry
-                        </TooltipButton>
-                        <TooltipButton
-                            type="submit"
-                            variant="secondary"
-                            size="md"
-                            name="intent"
-                            value="avgTelemetryComparison"
-                            tooltipText="You must select at least one lap to compare telemetry"
-                        >
-                            Compare average telemetry per driver
-                        </TooltipButton>
-                    </TooltipProvider>
-                }
-            />
+            <div className="flex flex-row gap-4 justify-end">
+                <TooltipProvider>
+                    <TooltipButton
+                        type="submit"
+                        variant="secondary"
+                        size="md"
+                        name="intent"
+                        value="lapTelemetry"
+                        tooltipText="You must select at least one lap to compare telemetry"
+                        disabled={!hasSelected}
+                    >
+                        Compare per-lap telemetry
+                    </TooltipButton>
+                    <TooltipButton
+                        type="submit"
+                        variant="secondary"
+                        size="md"
+                        name="intent"
+                        value="avgTelemetryComparison"
+                        tooltipText="You must select at least one lap to compare telemetry"
+                        disabled={!hasSelected}
+                    >
+                        Compare average telemetry per driver
+                    </TooltipButton>
+                </TooltipProvider>
+            </div>
+            <LapsTable columns={tableColumns} data={flattenedLaps} initialState={initialState} />
             <LapsTableTelemetryTutorial />
         </>
     )

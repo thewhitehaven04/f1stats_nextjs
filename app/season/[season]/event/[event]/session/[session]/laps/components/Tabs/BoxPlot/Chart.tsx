@@ -59,6 +59,7 @@ export function LapsBoxChart({
                     driver.style === "alternative"
                         ? getAlternativeColor(driver.team.color)
                         : driver.team.color,
+                tyreCompounds: driver.laps.map(lap => lap.compound_id),
             })),
         }),
         [laps, selectedStints],
@@ -141,12 +142,12 @@ export function LapsBoxChart({
                                 dataset: (typeof sessionData)["datasets"][number]
                                 dataIndex: number
                             }) =>
-                                `Min time: ${formatTime(dataset.data[dataIndex].min)}, ` +
-                                `max time: ${formatTime(dataset.data[dataIndex].max)}, ` +
-                                `25% quantile: ${formatTime(dataset.data[dataIndex].q1)}, ` +
-                                `75% quantile: ${formatTime(dataset.data[dataIndex].q3)}, ` +
-                                `mean: ${formatTime(dataset.data[dataIndex].mean)}, ` +
-                                `median: ${formatTime(dataset.data[dataIndex].median)}`,
+                                `Min time: ${formatTime(dataset.data[dataIndex].min || 0)}, ` +
+                                `max time: ${formatTime(dataset.data[dataIndex].max || 0)}, ` +
+                                `25% quantile: ${formatTime(dataset.data[dataIndex].q1 || 0)}, ` +
+                                `75% quantile: ${formatTime(dataset.data[dataIndex].q3 || 0)}, ` +
+                                `mean: ${formatTime(dataset.data[dataIndex].mean || 0)}, ` +
+                                `median: ${formatTime(dataset.data[dataIndex].median || 0)}`,
                         },
                     },
                 },
