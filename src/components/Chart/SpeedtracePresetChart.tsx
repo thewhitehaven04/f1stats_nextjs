@@ -31,8 +31,8 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
                     axis: "x",
                     mode: "nearest",
                     intersect: false,
-                    yAlign: 'top',
-                    xAlign: 'center',
+                    yAlign: "top",
+                    xAlign: "center",
                     callbacks: {
                         title(tooltipItem) {
                             return `${Math.trunc(tooltipItem[0].raw?.x as number).toString()} m`
@@ -91,6 +91,9 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
     return (
         <div className="relative">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
+            {!hasData && (
+                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">No laps selected</h1>
+            )}
             <Chart {...mergedProps} className={clsx(mergedProps.className, "z-0")} />
         </div>
     )

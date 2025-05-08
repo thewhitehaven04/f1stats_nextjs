@@ -69,7 +69,7 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
         <div className="relative">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
-                <h1 className="absolute z-10 h-full w-full text-center top-12">No laps selected</h1>
+                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">No laps selected</h1>
             )}
             <Chart {...merge(baseChartProps, props)} />
         </div>
