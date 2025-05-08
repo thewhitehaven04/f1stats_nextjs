@@ -1,5 +1,4 @@
 import "./globals.css"
-import { Providers } from "./providers"
 import { Archivo } from "next/font/google"
 
 export const metadata = {

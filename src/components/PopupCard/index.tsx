@@ -8,7 +8,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import clsx from "clsx"
-import { LucideX } from "lucide-react"
+import { X } from "lucide-react"
 
 export const PopupCard = (
     props: {
@@ -21,12 +21,12 @@ export const PopupCard = (
     const { className, children, actions, title, onClose, ...rest } = props
     return (
         <Card className={clsx("absolute left-0 top-10 min-w-40 py-4", className)} {...rest}>
-            <div className="flex flex-row justify-between items-center px-2">
+            <div className="flex flex-row justify-between items-baseline px-2">
                 <CardHeader>
-                    <CardTitle>{title}</CardTitle>
+                    <CardTitle className='text-xl'>{title}</CardTitle>
                 </CardHeader>
-                <Button type="button" size="sm" onClick={onClose}>
-                    <LucideX />
+                <Button type="button" variant='ghost' size="sm" onClick={onClose}>
+                    <X />
                 </Button>
             </div>
             <CardContent>{children}</CardContent>

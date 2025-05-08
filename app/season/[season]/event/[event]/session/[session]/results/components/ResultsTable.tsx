@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { TooltipButton } from "../../laps/components/Tabs/Analysis/LapsTableSection/components/TooltipButton"
 
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
@@ -30,21 +30,15 @@ export const ResultsTable = <T extends IBaseResultsData>(
     })
     return (
         <div className="w-full flex flex-col items-end gap-2">
-            {!getIsSomeRowsSelected() ? (
-                <div
-                    className="tooltip tooltip-left"
-                    data-tip="To view detailed data, please select at least one of the laps in the table by clicking on a checkbox"
-                >
-                    <Button type="submit" disabled size="md">
-                        View laps
-                    </Button>
-                </div>
-            ) : (
-                <Button type="submit" size="md">
-                    View laps
-                </Button>
-            )}
-
+            <TooltipButton
+                type="submit"
+                disabled={!getIsSomeRowsSelected()}
+                tooltipText="You need to select at least one result"
+                size="md"
+                variant="secondary"
+            >
+                View lap information
+            </TooltipButton>
             <Table>
                 <TableHeader>
                     <TableRow>

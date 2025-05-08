@@ -6,7 +6,8 @@ import { formatTime } from "@/core/helpers/formatTime"
 import type { TLapsLinePlotDataset } from "./LinePlotTab"
 import { merge } from "ts-deepmerge"
 import { initGlobalChartConfig } from "@/components/Chart/config"
-import { TYRE_COLOR_MAP } from '../../helpers/colorMap'
+import { TYRE_COLOR_MAP } from "../../helpers/colorMap"
+import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 
 initGlobalChartConfig()
 
@@ -83,9 +84,18 @@ export const LineLapsChart = (props: Omit<ComponentProps<typeof Chart>, "type">)
                                         const item = dataset.data[dataIndex] as TLapsLinePlotDataset
                                         return `${dataset.label}: ${formatTime(item.y)} (${item.compound})`
                                     },
+                                    title(tooltipItems: TooltipItem<'line'>[]) {
+                                        return `Lap ${tooltipItems[0].dataIndex}`
+                                    }
                                 },
                             },
                             zoom: {
+                                zoom: {
+                                    mode: 'x',
+                                    drag: {
+                                        enabled: true
+                                    }
+                                },
                                 limits: {
                                     x: {
                                         minRange: 2,
@@ -94,7 +104,7 @@ export const LineLapsChart = (props: Omit<ComponentProps<typeof Chart>, "type">)
                             },
                         },
                     },
-                } satisfies ChartProps<"line">,
+                } satisfies Omit<ChartProps<"line">, "data">,
                 props,
             )}
         />

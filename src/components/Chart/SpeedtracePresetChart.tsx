@@ -31,7 +31,12 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
                     axis: "x",
                     mode: "nearest",
                     intersect: false,
+                    yAlign: 'top',
+                    xAlign: 'center',
                     callbacks: {
+                        title(tooltipItem) {
+                            return `${Math.trunc(tooltipItem[0].raw?.x as number).toString()} m`
+                        },
                         label(tooltipItem) {
                             return `${tooltipItem.dataset.label}: ${Math.trunc(tooltipItem.raw?.y as number).toString()} kph`
                         },

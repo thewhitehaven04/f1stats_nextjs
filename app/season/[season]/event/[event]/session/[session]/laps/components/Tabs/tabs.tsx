@@ -24,7 +24,7 @@ export const LapsTabs = ({
 
     return (
         <Tabs value={search.get("tab") ?? "analysis"}>
-            <TabsList className="gap-4 min-w-md">
+            <TabsList className="gap-4 w-full">
                 <TabsTrigger value="analysis" asChild>
                     <Link
                         href={{

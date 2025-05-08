@@ -4,16 +4,16 @@ import { ApiClient } from "@/client"
 import {
     getAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePost,
     getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost,
+    type AverageTelemetryPlotData,
     type DriverTelemetryPlotData,
     type SessionIdentifier,
     type SessionQueryFilter,
-    type TelemetryPlotData,
 } from "@/client/generated"
 
 export async function getTelemetry(
-    state:
-        | { data: DriverTelemetryPlotData[] | null; tab: "telemetry"; message: null }
-        | { data: TelemetryPlotData[] | null; tab: "telemetry"; message: null },
+    _:
+        | { data: DriverTelemetryPlotData[] | null; tab: "telemetry" }
+        | { data: AverageTelemetryPlotData[] | null; tab: "telemetry" },
     formData: FormData,
 ) {
     const intent = formData.get("intent")
@@ -23,6 +23,7 @@ export async function getTelemetry(
         event: formData.get("event") as string,
         session: formData.get("session") as SessionIdentifier,
     }
+    // horrific crutch
     const queries = entries
         .filter(
             ([key]) =>
