@@ -1,10 +1,9 @@
 import type { ChartData } from "chart.js"
 import { useMemo, type RefObject } from "react"
-import type { ChartProps } from "react-chartjs-2"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import type { AverageTelemetryPlotData } from '@/client/generated'
+import type { AverageTelemetryPlotData } from "@/client/generated"
 
 export const AverageTelemetrySection = ({
     averageTelemetry,
@@ -13,27 +12,6 @@ export const AverageTelemetrySection = ({
     const distanceLabels =
         averageTelemetry?.length &&
         averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
-    const maxDistance = averageTelemetry?.length && averageTelemetry[0].telemetry.at(-1)?.distance
-
-    const speedTraceOptions = useMemo(
-        () =>
-            ({
-                plugins: {
-                    zoom: {
-                        limits: {
-                            x: {
-                                min: 0,
-                                max: maxDistance,
-                            },
-                        },
-                    },
-                },
-                scales: {
-                    x: { max: maxDistance },
-                },
-            }) satisfies ChartProps<"line">["options"],
-        [maxDistance],
-    )
 
     const presets = useMemo(
         () =>
@@ -106,7 +84,6 @@ export const AverageTelemetrySection = ({
                     labels: distanceLabels || [],
                     datasets: speedDatasets,
                 }}
-                options={speedTraceOptions}
                 height={150}
             />
             <TelemetryPresetChart

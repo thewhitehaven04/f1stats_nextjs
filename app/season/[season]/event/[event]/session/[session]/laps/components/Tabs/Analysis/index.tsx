@@ -21,8 +21,8 @@ const TelemetryChartSection = dynamic(
 export const AnalysisTab = ({ laps }: { laps: Promise<LapSelectionData> }) => {
     const params = useParams()
     const [state, formAction] = useActionState(getTelemetry, {
+        data: [],
         tab: "telemetry",
-        data: null,
     })
 
     const ref = useRef<HTMLElement>(null)

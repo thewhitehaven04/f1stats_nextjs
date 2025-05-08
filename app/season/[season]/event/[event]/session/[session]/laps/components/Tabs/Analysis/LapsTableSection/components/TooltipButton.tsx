@@ -8,7 +8,7 @@ export const TooltipButton = (props: ComponentProps<typeof Button> & { tooltipTe
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button {...buttonProps} />
+                <Button {...buttonProps} disabled={disabled} />
             </TooltipTrigger>
             {disabled && (
                 <TooltipContent>

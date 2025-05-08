@@ -10,12 +10,7 @@ import {
     type SessionQueryFilter,
 } from "@/client/generated"
 
-export async function getTelemetry(
-    _:
-        | { data: DriverTelemetryPlotData[] | null; tab: "telemetry" }
-        | { data: AverageTelemetryPlotData[] | null; tab: "telemetry" },
-    formData: FormData,
-) {
+export async function getTelemetry(state: unknown, formData: FormData) {
     const intent = formData.get("intent")
     const entries = formData.entries()
     const path = {
@@ -51,9 +46,9 @@ export async function getTelemetry(
                 await getAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePost(
                     {
                         client: ApiClient,
-                        path,
                         body: { queries },
-                        throwOnError: false,
+                        path,
+                        throwOnError: true,
                     },
                 )
             ).data,
@@ -64,10 +59,10 @@ export async function getTelemetry(
     return {
         data: (
             await getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost({
+                client: ApiClient,
                 body: { queries },
                 path,
                 throwOnError: true,
-                client: ApiClient,
             })
         ).data,
         tab: "telemetry",

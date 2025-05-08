@@ -1,10 +1,12 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
+import { Button } from "@/components/ui/button"
 import clsx from "clsx"
+import { useRef, type ComponentProps } from "react"
 import { type ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 initGlobalChartConfig()
 
-export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) => {
+export const SpeedtracePresetChart = (props: Omit<ComponentProps<typeof Chart>, "type">) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "line",
@@ -88,13 +90,36 @@ export const SpeedtracePresetChart = (props: Omit<ChartProps<"line">, "type">) =
     } satisfies Partial<ChartProps<"line">>
 
     const mergedProps = merge(baseChartProps, props)
+
+    const speedChartRef = useRef<ComponentProps<typeof Chart>["ref"]>(null)
     return (
         <div className="relative">
+            <div className="flex flex-row justify-end">
+                <Button
+                    type="button"
+                    size="md"
+                    variant="secondary"
+                    onClick={() => {
+                        if (speedChartRef.current) {
+                            /** @ts-ignore the react-chartjs-2 has poor typing support when it comes to refs */
+                            speedChartRef.current.resetZoom()
+                        }
+                    }}
+                >
+                    Reset zoom
+                </Button>
+            </div>
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
-                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">No laps selected</h1>
+                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">
+                    No laps selected
+                </h1>
             )}
-            <Chart {...mergedProps} className={clsx(mergedProps.className, "z-0")} />
+            <Chart
+                {...mergedProps}
+                className={clsx(mergedProps.className, "z-0")}
+                ref={speedChartRef}
+            />
         </div>
     )
 }
