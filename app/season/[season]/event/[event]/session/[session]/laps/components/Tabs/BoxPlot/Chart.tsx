@@ -55,8 +55,10 @@ export function LapsBoxChart({
                                   .filter(Boolean),
                           },
                 ],
-                style: driver.style,
-                borderColor: driver.team.color,
+                borderColor:
+                    driver.style === "alternative"
+                        ? getAlternativeColor(driver.team.color)
+                        : driver.team.color,
             })),
         }),
         [laps, selectedStints],
@@ -93,14 +95,6 @@ export function LapsBoxChart({
                 elements: {
                     boxandwhiskers: {
                         borderWidth: 2,
-                        borderColor(ctx) {
-                            if (typeof ctx.dataset.borderColor === "string") {
-                                return ctx.dataset.style === "default"
-                                    ? ctx.dataset.borderColor
-                                    : getAlternativeColor(ctx.dataset.borderColor)
-                            }
-                            return "grey"
-                        },
                         backgroundColor: "rgba(190, 190, 190, 0.12)",
                         itemRadius: 5,
                         itemHitRadius: 5,
@@ -108,18 +102,14 @@ export function LapsBoxChart({
                         itemBorderWidth: 1.5,
                         itemBorderColor(ctx) {
                             if (typeof ctx.dataset.borderColor === "string") {
-                                return ctx.dataset.style === "default"
-                                    ? ctx.dataset.borderColor
-                                    : getAlternativeColor(ctx.dataset.borderColor)
+                                return ctx.dataset.borderColor
                             }
                             return "grey"
                         },
                         meanStyle: "rectRot",
                         meanBorderColor(ctx) {
                             if (typeof ctx.dataset.borderColor === "string") {
-                                return ctx.dataset.style === "default"
-                                    ? ctx.dataset.borderColor
-                                    : getAlternativeColor(ctx.dataset.borderColor)
+                                return ctx.dataset.borderColor
                             }
                             return "grey"
                         },
