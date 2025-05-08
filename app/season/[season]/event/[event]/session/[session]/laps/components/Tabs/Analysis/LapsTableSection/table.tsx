@@ -7,15 +7,9 @@ import {
 } from "@tanstack/react-table"
 import { memo, type ReactNode } from "react"
 import type { ILapData } from "."
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TableContext } from "@/components/Table/context"
+import clsx from "clsx"
 
 function lapsTable(
     props: Omit<TableOptions<ILapData>, "getCoreRowModel"> & { children?: ReactNode },
@@ -23,6 +17,12 @@ function lapsTable(
     const { children, ...options } = props
     const table = useReactTable<ILapData>({
         ...options,
+        initialState: {
+            ...options.initialState,
+            columnPinning: {
+                left: ["lap"],
+            },
+        },
         getCoreRowModel: getCoreRowModel(),
     })
 
@@ -37,41 +37,56 @@ function lapsTable(
                 <div className="flex flex-row justify-end gap-4">
                     <ColumnVisibilityButton />
                 </div>
-                <div className="overflow-x-auto">
-                    <Table>
+                <div className="overflow-auto max-h-[640px]">
+                    <table data-slot="table" className="w-full caption-bottom text-sm">
                         <TableHeader>
                             {headerGroups.map((group) => (
-                                <TableRow key={group.id}>
-                                    {group.headers.map((header) => (
-                                        <TableHead
-                                            className="text-center"
-                                            key={header.id}
-                                            colSpan={header.colSpan}
-                                        >
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext(),
-                                            )}
-                                        </TableHead>
-                                    ))}
+                                <TableRow key={group.id} className='border-collapse border-b-0!'>
+                                    {group.headers.map((header) => {
+                                        return (
+                                            <TableHead
+                                                className={clsx(
+                                                    "text-center sticky z-20 bg-white",
+                                                    group.depth === 0 ? "top-0" : "top-10",
+                                                )}
+                                                key={header.id}
+                                                colSpan={header.colSpan}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext(),
+                                                )}
+                                            </TableHead>
+                                        )
+                                    })}
                                 </TableRow>
                             ))}
                         </TableHeader>
-                        <TableBody>
+                        <TableBody className="relative">
                             {rowModel.map((row) => (
                                 <TableRow key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell className="text-center" key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </TableCell>
-                                    ))}
+                                    {row.getVisibleCells().map((cell) => {
+                                        return (
+                                            <TableCell
+                                                className={clsx(
+                                                    "text-center",
+                                                    cell.column.getIsPinned() === "left"
+                                                        ? "sticky left-0 border-r-[1px] border-zinc-200 bg-white"
+                                                        : "",
+                                                )}
+                                                key={cell.id}
+                                            >
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext(),
+                                                )}
+                                            </TableCell>
+                                        )
+                                    })}
                                 </TableRow>
                             ))}
                         </TableBody>
-                    </Table>
+                    </table>
                 </div>
             </div>
         </TableContext.Provider>
