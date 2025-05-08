@@ -2,7 +2,7 @@ import Link from "next/link"
 import { SiGithub, SiGmail, SiTelegram } from "react-icons/si"
 
 export const Footer = () => (
-    <footer className="w-screen footer bg-base-200 py-4 px-12 flex flex-col items-center text-gray-500 font-medium">
+    <footer className="w-screen bg-zinc-100 py-4 px-12 flex flex-col items-center text-gray-500 font-medium">
         <div className="flex flex-row justify-between w-full">
             <div className="flex flex-col">
                 <p>

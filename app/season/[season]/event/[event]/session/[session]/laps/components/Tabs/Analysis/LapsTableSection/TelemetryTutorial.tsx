@@ -1,4 +1,5 @@
 "use client"
+import { Card, CardContent } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 
 const HAS_COMPLETED_TUTORIAL_KEY = "hasCompletedTelemetryTutorial"
@@ -20,11 +21,11 @@ export function LapsTableTelemetryTutorial() {
     }
 
     return !hasCompletedTutorial && isTutorialShown ? (
-        <div className="toast toast-start toast-middle cursor-pointer" onClick={handleDismiss}>
-            <div className="alert w-[300px] text-wrap shadow-md shadow-gray-400">
+        <Card className="fixed bottom-8 right-8 max-w-80 cursor-pointer shadow-md" onClick={handleDismiss}>
+            <CardContent className="shadow-zinc-200">
                 In order to plot telemetry data, select the desired laps from the table and then
                 click on the "View telemetry" button
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     ) : null
 }
