@@ -4,8 +4,6 @@ import { ApiClient } from "@/client"
 import {
     getAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePost,
     getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost,
-    type AverageTelemetryPlotData,
-    type DriverTelemetryPlotData,
     type SessionIdentifier,
     type SessionQueryFilter,
 } from "@/client/generated"

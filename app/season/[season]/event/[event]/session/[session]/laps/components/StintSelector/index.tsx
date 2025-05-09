@@ -1,7 +1,5 @@
 "use client"
 
-import { PopupCard } from "@/components/PopupCard"
-import { useState } from "react"
 import type { IStint } from "./types"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"

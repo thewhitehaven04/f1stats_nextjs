@@ -13,32 +13,8 @@ export function TelemetryChartSection(props: {
 }) {
     const { telemetryMeasurements, ref } = props
     const distanceLabels = telemetryMeasurements
-        ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => measurement.distance))
+        ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)))
         .sort((a, b) => a - b)
-
-    const maxDistance = Math.max(
-        ...(telemetryMeasurements?.map((lap) => lap.lap.lap_distance) || []),
-    )
-
-    const speedTraceOptions = useMemo(
-        () =>
-            ({
-                plugins: {
-                    zoom: {
-                        limits: {
-                            x: {
-                                min: 0,
-                                max: maxDistance,
-                            },
-                        },
-                    },
-                },
-                scales: {
-                    x: { max: maxDistance },
-                },
-            }) satisfies ChartProps<"line">["options"],
-        [maxDistance],
-    )
 
     const presets = useMemo(
         () =>
@@ -124,7 +100,6 @@ export function TelemetryChartSection(props: {
                     labels: distanceLabels,
                     datasets: speedDatasets,
                 }}
-                options={speedTraceOptions}
                 height={150}
             />
             <TelemetryPresetChart
