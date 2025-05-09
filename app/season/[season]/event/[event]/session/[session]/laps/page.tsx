@@ -9,7 +9,6 @@ import BoxPlotTab from "./components/Tabs/BoxPlot"
 import { AnalysisTab } from "./components/Tabs/Analysis"
 import LinePlotTab from "./components/Tabs/LapsLinePlot/LinePlotTab"
 import { LapsTabs } from "./components/Tabs/tabs"
-import { Suspense } from "react"
 
 export default async function Page({
     params,

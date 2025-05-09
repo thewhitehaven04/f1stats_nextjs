@@ -4,16 +4,15 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
 import type { TEventWithSessions } from "../../page"
-import { Input } from '@/components/ui/input'
+import { Input } from "@/components/ui/input"
+import { useDebouncedState } from '@/core/hooks/useDebouncedState'
 
-
-const THROTTLE_TIMEOUT = 300
 
 export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
     const { season } = useParams<{ season: string }>()
 
-    const [searchQuery, setSearchQuery] = useState<string>("")
-    const [showResults, setShowResults] = useState(false)
+    const [searchQuery, setSearchQuery] = useDebouncedState("")
+    const [showResults, setShowResults] = useState<boolean>(false)
 
     // this isn't really a proper search engine, just having a little bit of fun
     const results = useMemo(() => {
@@ -32,13 +31,9 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
             : []
     }, [searchQuery, events])
 
-    let currentTimeoutId: NodeJS.Timeout
-    const handleChangeThrottled = (value: string) => {
-        clearTimeout(currentTimeoutId)
-        currentTimeoutId = setTimeout(() => {
-            setSearchQuery(value)
-            setShowResults(true)
-        }, THROTTLE_TIMEOUT)
+    const handleChange = (value: string) => {
+        setSearchQuery(value)
+        setShowResults(true)
     }
 
     const onLinkClick = () => {
@@ -49,7 +44,7 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
         <div className="relative">
             <Input
                 type="text"
-                onChange={(evt) => handleChangeThrottled(evt.target.value)}
+                onChange={(evt) => handleChange(evt.target.value)}
                 placeholder="Search"
             />
             {showResults && (
@@ -121,6 +116,5 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
                 </PopupCard>
             )}
         </div>
-
     )
 }
