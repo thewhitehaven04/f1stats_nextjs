@@ -41,7 +41,7 @@ function lapsTable(
                     <table data-slot="table" className="w-full caption-bottom text-sm">
                         <TableHeader>
                             {headerGroups.map((group) => (
-                                <TableRow key={group.id} className='border-collapse border-b-0!'>
+                                <TableRow key={group.id} className="border-collapse border-b-0!">
                                     {group.headers.map((header) => {
                                         return (
                                             <TableHead

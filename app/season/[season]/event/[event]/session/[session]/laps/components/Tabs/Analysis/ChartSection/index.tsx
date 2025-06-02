@@ -2,7 +2,6 @@
 import type { ChartData } from "chart.js"
 import { useMemo, type RefObject } from "react"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
-import type { ChartProps } from "react-chartjs-2"
 import type { DriverTelemetryPlotData } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"

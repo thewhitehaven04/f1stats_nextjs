@@ -211,6 +211,8 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                     >
                         Compare per-lap telemetry
                     </TooltipButton>
+                </TooltipProvider>
+                <TooltipProvider>
                     <TooltipButton
                         type="submit"
                         variant="secondary"

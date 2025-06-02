@@ -12,7 +12,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { TooltipButton } from "../../laps/components/Tabs/Analysis/LapsTableSection/components/TooltipButton"
-
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
 }
