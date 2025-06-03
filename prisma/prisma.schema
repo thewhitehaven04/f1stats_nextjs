@@ -210,22 +210,6 @@ model telemetry_measurements {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view practice_results {
-  id                Int?
-  driver_id         String? @db.VarChar(64)
-  gap               Float?  @db.Real
-  laptime           Float?  @db.Real
-  country_alpha3    String? @db.VarChar(3)
-  driver_full_name  String?
-  team_display_name String? @db.VarChar(64)
-  event_name        String?
-  season_year       Int?    @db.SmallInt
-  session_type_id   String? @db.VarChar(32)
-
-  @@ignore
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view laps_with_analytics {
   event_name      String
   session_type_id String @db.VarChar(32)
@@ -239,4 +223,21 @@ view laps_with_analytics {
   best_laptime    Float  @db.Real
 
   @@unique([event_name, session_type_id, season_year])
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view driver_laps_with_analytics {
+  driver_id       String? @db.VarChar(64)
+  event_name      String?
+  session_type_id String? @db.VarChar(32)
+  season_year     Int?    @db.SmallInt
+  pb_s1           Float?  @db.Real
+  pb_s2           Float?  @db.Real
+  pb_s3           Float?  @db.Real
+  pb_st1          Int?    @db.SmallInt
+  pb_st2          Int?    @db.SmallInt
+  pb_stfl         Int?    @db.SmallInt
+  pb_laptime      Float?  @db.Real
+
+  @@ignore
 }
