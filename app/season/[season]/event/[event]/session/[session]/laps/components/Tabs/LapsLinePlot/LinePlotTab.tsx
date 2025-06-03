@@ -4,12 +4,20 @@ import { LineLapsChart } from "./Chart"
 import type { Compound, LapSelectionData } from "@/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
-import { StintSelector } from '../../StintSelector'
+import { StintSelector } from "../../StintSelector"
 
 export type TLapsLinePlotDataset = {
     x: number
     y: number
     compound: Compound
+}
+
+export type TLinePlotTabBoxChartDataset = ChartData<
+    "line",
+    TLapsLinePlotDataset[]
+>["datasets"][number] & {
+    teamColor: string
+    style: "default" | "alternative"
 }
 
 export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
@@ -40,7 +48,7 @@ export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSe
             .filter((val) => val !== false),
     }))
 
-    const datasets = useMemo(
+    const datasets: TLinePlotTabBoxChartDataset[] = useMemo(
         () =>
             laps.driver_lap_data.map((driverData) => ({
                 label: driverData.driver,
@@ -63,7 +71,7 @@ export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSe
                 style: driverData.style,
             })),
         [laps, isOutliersShown, driverStints],
-    ) satisfies ChartData<"line", TLapsLinePlotDataset[]>["datasets"]
+    )
 
     return (
         <div className="overflow-x-scroll">
@@ -81,7 +89,7 @@ export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSe
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
                     size="md"
                     variant="secondary"
-                    className='w-32'
+                    className="w-32"
                 >
                     {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
