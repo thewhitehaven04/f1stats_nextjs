@@ -8,7 +8,7 @@ from repository.repository import (
     TeamSeasonColors,
     Teams,
 )
-from services.color_resolver.models import PlotStyle, TeamDto, TeamPlotData
+from services.color_resolver.models import TeamDto, TeamPlotData
 from sqlalchemy import Connection, and_, null, select
 
 
