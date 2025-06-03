@@ -9,7 +9,7 @@
         "lint": "next lint",
         "fetch-api": "node ./src/client/apiGenerator/saveSpec.mjs",
         "update-api": "openapi-ts",
-        "build": "concurrently \"uv run uvicorn api/main:app\"  \"next build\""
+        "build": "concurrently \"cd api && python3 -m pip install -r requirements.txt && python3 -m uvicorn main:app\"  \"next build\""
     },
     "dependencies": {
         "@prisma/client": "6.6.0",
