@@ -4,6 +4,7 @@ import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData } from "@/client/generated"
+import type { TSpeedDataset } from '../ChartSection'
 
 export const AverageTelemetrySection = ({
     averageTelemetry,
@@ -25,7 +26,7 @@ export const AverageTelemetrySection = ({
         [averageTelemetry],
     )
 
-    const speedDatasets: ChartData<"line">["datasets"] = useMemo(
+    const speedDatasets: TSpeedDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: `${stint.driver}, ${stint.stint_length} laps`,

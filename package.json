@@ -9,7 +9,7 @@
         "lint": "next lint",
         "fetch-api": "node ./src/client/apiGenerator/saveSpec.mjs",
         "update-api": "openapi-ts",
-        "build": "next build"
+        "build": "cd api/ && python3 -m pip install -r requirements.txt && cd .. && concurrently \"cd api/ && python3 -m fastapi run main.py\" \"next build\""
     },
     "dependencies": {
         "@prisma/client": "6.6.0",

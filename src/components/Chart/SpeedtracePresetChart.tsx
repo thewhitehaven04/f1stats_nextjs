@@ -4,9 +4,14 @@ import clsx from "clsx"
 import { useRef, type ComponentProps } from "react"
 import { type ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
+import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
+import type { Chart as ChartJS } from "chart.js"
+
 initGlobalChartConfig()
 
-export const SpeedtracePresetChart = (props: Omit<ComponentProps<typeof Chart>, "type">) => {
+export const SpeedtracePresetChart = (
+    props: Omit<ComponentProps<typeof Chart>, "type"> & { data: { datasets: TSpeedDataset } },
+) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "line",
@@ -37,10 +42,12 @@ export const SpeedtracePresetChart = (props: Omit<ComponentProps<typeof Chart>, 
                     xAlign: "center",
                     callbacks: {
                         title(tooltipItem) {
-                            return `${Math.trunc(tooltipItem[0].raw?.x as number).toString()} m`
+                            const raw = tooltipItem[0].raw as TSpeedDataset[number]["data"][number]
+                            return `${Math.trunc(raw.x).toString()} m`
                         },
                         label(tooltipItem) {
-                            return `${tooltipItem.dataset.label}: ${Math.trunc(tooltipItem.raw?.y as number).toString()} kph`
+                            const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
+                            return `${tooltipItem.dataset.label}: ${Math.trunc(raw?.y as number).toString()} kph`
                         },
                     },
                 },
@@ -91,7 +98,7 @@ export const SpeedtracePresetChart = (props: Omit<ComponentProps<typeof Chart>, 
 
     const mergedProps = merge(baseChartProps, props)
 
-    const speedChartRef = useRef<ComponentProps<typeof Chart>["ref"]>(null)
+    const speedChartRef = useRef<ChartJS>(null)
     return (
         <div className="relative">
             <div className="flex flex-row justify-end">
@@ -101,7 +108,6 @@ export const SpeedtracePresetChart = (props: Omit<ComponentProps<typeof Chart>, 
                     variant="secondary"
                     onClick={() => {
                         if (speedChartRef.current) {
-                            /** @ts-ignore the react-chartjs-2 has poor typing support when it comes to refs */
                             speedChartRef.current.resetZoom()
                         }
                     }}

@@ -1,10 +1,18 @@
 "use client"
-import type { ChartData } from "chart.js"
+import type { ChartData, ChartDataset } from "chart.js"
 import { useMemo, type RefObject } from "react"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import type { DriverTelemetryPlotData } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
+
+export type TSpeedDataset = ChartDataset<
+    "line",
+    {
+        x: number
+        y: number
+    }[]
+>[]
 
 export function TelemetryChartSection(props: {
     telemetryMeasurements: DriverTelemetryPlotData[] | null
@@ -26,7 +34,7 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements],
     )
 
-    const speedDatasets: ChartData<"line">["datasets"] = useMemo(
+    const speedDatasets: TSpeedDataset = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,

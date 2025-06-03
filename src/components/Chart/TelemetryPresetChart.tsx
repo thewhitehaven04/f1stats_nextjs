@@ -2,6 +2,7 @@ import { initGlobalChartConfig } from "@/components/Chart/config"
 import clsx from "clsx"
 import { type ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
+import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 initGlobalChartConfig()
 
 export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) => {
@@ -43,7 +44,8 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
                     intersect: false,
                     callbacks: {
                         label(tooltipItem) {
-                            return `${tooltipItem.dataset.label}: ${Math.trunc(tooltipItem.raw?.y as number).toString()}`
+                            const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
+                            return `${tooltipItem.dataset.label}: ${Math.trunc(raw.y as number).toString()}`
                         },
                     },
                 },
@@ -69,7 +71,9 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"line">, "type">) =>
         <div className="relative">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
-                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">No laps selected</h1>
+                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">
+                    No laps selected
+                </h1>
             )}
             <Chart {...merge(baseChartProps, props)} />
         </div>
