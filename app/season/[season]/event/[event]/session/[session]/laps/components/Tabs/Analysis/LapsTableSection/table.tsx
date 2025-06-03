@@ -37,28 +37,26 @@ function lapsTable(
                 <div className="flex flex-row justify-end gap-4">
                     <ColumnVisibilityButton />
                 </div>
-                <div className="overflow-auto max-h-[640px]">
+                <div className="overflow-auto max-h-[720px]">
                     <table data-slot="table" className="w-full caption-bottom text-sm">
-                        <TableHeader>
+                        <TableHeader className="border-b-[1px]">
                             {headerGroups.map((group) => (
                                 <TableRow key={group.id} className="border-collapse border-b-0!">
-                                    {group.headers.map((header) => {
-                                        return (
-                                            <TableHead
-                                                className={clsx(
-                                                    "text-center sticky z-20 bg-white",
-                                                    group.depth === 0 ? "top-0" : "top-10",
-                                                )}
-                                                key={header.id}
-                                                colSpan={header.colSpan}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext(),
-                                                )}
-                                            </TableHead>
-                                        )
-                                    })}
+                                    {group.headers.map((header) => (
+                                        <TableHead
+                                            className={clsx(
+                                                "text-center sticky z-20 bg-white",
+                                                group.depth === 0 ? "top-0" : "top-10",
+                                            )}
+                                            key={header.id}
+                                            colSpan={header.colSpan}
+                                        >
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
+                                        </TableHead>
+                                    ))}
                                 </TableRow>
                             ))}
                         </TableHeader>

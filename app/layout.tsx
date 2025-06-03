@@ -20,7 +20,7 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={appFont.className}>
-                <div className="flex flex-col gap-8 items-center overflow-y-scroll min-h-screen">
+                <div className="grid grid-cols-1 grid-rows-[min-content] overflow-y-scroll min-h-screen">
                     {children}
                 </div>
             </body>

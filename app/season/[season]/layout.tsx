@@ -11,7 +11,7 @@ export default async function Layout({
     return (
         <>
             <Header sessionSearchSlot={<SessionSearch events={events} />} />
-            <main className="w-[calc(100vw-36px)] xl:w-[1200px]">{children}</main>
+            <main className="mt-8 w-[calc(100vw-36px)] xl:w-[1200px] justify-self-center self-start">{children}</main>
             <div className="flex flex-col justify-end h-full">
                 <Footer />
             </div>
