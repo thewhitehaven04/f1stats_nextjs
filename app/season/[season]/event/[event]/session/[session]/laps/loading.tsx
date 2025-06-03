@@ -1,5 +1,5 @@
 import { SectionLoadingSpinner } from '@/components/SectionLoadingSpinner'
 
-export default function LoadingResults() {
+export default function LoadingLaps() {
     return <SectionLoadingSpinner />
 }

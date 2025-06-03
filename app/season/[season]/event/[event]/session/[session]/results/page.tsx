@@ -11,15 +11,6 @@ import {
 } from "./components/types"
 import type { ISessionPathnameParams } from "../types"
 
-export function generateStaticParams() {
-    return [
-        { season: "2024", event: "Bahrain Grand Prix", session: "Practice 1" },
-        { season: "2024", event: "Saudi Arabian Grand Prix", session: "Practice 1" },
-        { season: "2024", event: "Chinese Grand Prix", session: "Practice 1" },
-        { season: "2024", event: "Japanese Grand Prix", session: "Practice 1" },
-    ]
-}
-
 const fetchSessionResults = async (season: string, event: string, session: SessionIdentifier) => {
     const { start_time: sessionStartTime } = await dbClient.event_sessions.findFirstOrThrow({
         where: {

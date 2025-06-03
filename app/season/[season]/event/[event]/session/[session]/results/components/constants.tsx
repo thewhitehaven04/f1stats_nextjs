@@ -20,14 +20,17 @@ const raceHelper = createColumnHelper<IRaceData>()
 const BASE_COLUMNS = [
     baseColumnHelper.display({
         id: "selector",
-        cell: ({ row }) => (
-            <Checkbox
-                name="driver"
-                value={row.getValue('driver.id')}
-                onCheckedChange={row.getToggleSelectedHandler()}
-                checked={row.getIsSelected()}
-            />
-        ),
+        cell: ({ row }) => {
+            const driver = row.getValue("driver") as IBaseResultsData['driver']
+            return (
+                <Checkbox
+                    name="driver"
+                    value={driver.id}
+                    onCheckedChange={row.getToggleSelectedHandler()}
+                    checked={row.getIsSelected()}
+                />
+            )
+        },
     }),
     baseColumnHelper.display({
         id: "position",
