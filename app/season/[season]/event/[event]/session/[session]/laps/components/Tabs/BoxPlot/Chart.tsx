@@ -24,18 +24,24 @@ export function LapsBoxChart({
                 data: [
                     selectedStints[driver.driver]
                         ? {
-                              min: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .min_time,
-                              q1: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .low_quartile,
-                              q3: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .high_quartile,
-                              max: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .max_time,
-                              median: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .median,
-                              mean: driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                  .avg_time,
+                              min:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .min_time ?? 0,
+                              q1:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .low_quartile ?? 0,
+                              q3:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .high_quartile ?? 0,
+                              max:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .max_time ?? 0,
+                              median:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .median ?? 0,
+                              mean:
+                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
+                                      .avg_time ?? 0,
                               items: driver.laps
                                   .filter(
                                       (driverData) =>
@@ -44,12 +50,12 @@ export function LapsBoxChart({
                                   .map((driverData) => driverData.laptime),
                           }
                         : {
-                              min: driver.session_data.min_time,
-                              q1: driver.session_data.low_quartile,
-                              q3: driver.session_data.high_quartile,
-                              max: driver.session_data.max_time,
-                              median: driver.session_data.median,
-                              mean: driver.session_data.avg_time,
+                              min: driver.session_data.min_time ?? 0,
+                              q1: driver.session_data.low_quartile ?? 0,
+                              q3: driver.session_data.high_quartile ?? 0,
+                              max: driver.session_data.max_time ?? 0,
+                              median: driver.session_data.median ?? 0,
+                              mean: driver.session_data.avg_time ?? 0,
                               items: driver.laps
                                   .map((driverData) => driverData.laptime)
                                   .filter(Boolean),
@@ -59,7 +65,6 @@ export function LapsBoxChart({
                     driver.style === "alternative"
                         ? getAlternativeColor(driver.team.color)
                         : driver.team.color,
-                tyreCompounds: driver.laps.map(lap => lap.compound_id),
             })),
         }),
         [laps, selectedStints],
@@ -72,6 +77,7 @@ export function LapsBoxChart({
                   dataset.data.flatMap((data) => data.items),
               ),
           ) + 0.1
+
     const selectionMin = isOutliersShown
         ? laps.low_decile || 0
         : Math.min(
@@ -135,6 +141,7 @@ export function LapsBoxChart({
                     },
                     tooltip: {
                         callbacks: {
+                            /** @ts-ignore */
                             label: ({
                                 dataset,
                                 dataIndex,

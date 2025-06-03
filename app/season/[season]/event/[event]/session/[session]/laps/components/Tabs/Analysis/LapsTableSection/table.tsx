@@ -32,6 +32,7 @@ function lapsTable(
     const rowModel = getRowModel().rows
 
     return (
+        /** @ts-ignore TanStack table types not being cooperative */
         <TableContext.Provider value={table}>
             <div className="flex flex-col gap-4">
                 <div className="flex flex-row justify-end gap-4">

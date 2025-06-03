@@ -59,7 +59,7 @@ export default function BoxPlotTab({ laps: lapsPromise }: { laps: Promise<LapSel
                     onClick={() => setIsOutliersShown(!isOutliersShown)}
                     size="md"
                     variant="secondary"
-                    className='w-32'
+                    className="w-32"
                 >
                     {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
