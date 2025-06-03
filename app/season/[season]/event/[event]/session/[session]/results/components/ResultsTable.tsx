@@ -1,6 +1,12 @@
 "use client"
 
-import { flexRender, getCoreRowModel, useReactTable, type RowData } from "@tanstack/react-table"
+import {
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    type ColumnDef,
+    type RowData,
+} from "@tanstack/react-table"
 import type { ESessionType, IBaseResultsData } from "./types"
 import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from "./constants"
 import {
@@ -23,7 +29,7 @@ export const ResultsTable = <T extends IBaseResultsData>(
 
     const { getRowModel, getFlatHeaders, getIsSomeRowsSelected } = useReactTable<T>({
         data: rows,
-        columns: SESSION_TYPE_TO_RESULT_COLUMN_MAP[sessionType],
+        columns: SESSION_TYPE_TO_RESULT_COLUMN_MAP[sessionType] as ColumnDef<T>[],
         getRowId: (row) => row.driver.name,
         getCoreRowModel: getCoreRowModel(),
     })

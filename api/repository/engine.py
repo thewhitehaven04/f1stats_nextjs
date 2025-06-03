@@ -1,7 +1,12 @@
+from os import environ
 from sqlalchemy import Connection, create_engine
 
 
-engine = create_engine("postgresql://germanbulavkin:postgres@localhost:5432/postgres")
+db_conn_string = (
+    environ.get("DB_URL")
+    or "postgresql://germanbulavkin:postgres@localhost:5432/postgres"
+)
+engine = create_engine(db_conn_string)
 
 database_connection: Connection | None = None
 

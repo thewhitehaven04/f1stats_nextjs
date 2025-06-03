@@ -23,7 +23,7 @@ const BASE_COLUMNS = [
         cell: ({ row }) => (
             <Checkbox
                 name="driver"
-                value={row.getValue("driver").id}
+                value={row.getValue('driver.id')}
                 onCheckedChange={row.getToggleSelectedHandler()}
                 checked={row.getIsSelected()}
             />
