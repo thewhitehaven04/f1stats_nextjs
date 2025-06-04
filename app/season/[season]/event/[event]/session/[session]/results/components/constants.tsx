@@ -21,7 +21,7 @@ const BASE_COLUMNS = [
     baseColumnHelper.display({
         id: "selector",
         cell: ({ row }) => {
-            const driver = row.getValue("driver") as IBaseResultsData['driver']
+            const driver = row.getValue("driver") as IBaseResultsData["driver"]
             return (
                 <Checkbox
                     name="driver"

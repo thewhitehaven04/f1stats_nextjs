@@ -54,7 +54,6 @@ export const Breadcrumbs = () => {
     const crumbs = SEGMENTS.map((segment) => {
         if (segment.expression.test(pathname)) {
             const match = pathname.match(segment.expression)
-            console.log(match)
             return match ? (
                 <BreadcrumbItem>
                     <BreadcrumbLink asChild>
