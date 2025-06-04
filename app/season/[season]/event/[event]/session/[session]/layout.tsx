@@ -1,6 +1,6 @@
 import { format } from "date-fns/format"
 import { SummaryItem } from "./components/SummaryItem"
-import { dbClient } from "@/client/db"
+import dbClient from "@/client/db"
 import type { SessionIdentifier } from "@/client/generated"
 import type { ISessionPathnameParams } from "./types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,4 +1,4 @@
-import { dbClient } from "@/client/db"
+import dbClient from "@/client/db"
 import { EventSection } from "./components/EventSection"
 
 // revalidate calendar data every 30 minutes

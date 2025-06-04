@@ -2,7 +2,7 @@ import type { SessionIdentifier } from "@/client/generated"
 import type { ComponentProps } from "react"
 import Form from "next/form"
 import { ResultsTable } from "./components/ResultsTable"
-import { dbClient } from "@/client/db"
+import dbClient from "@/client/db"
 import {
     ESessionType,
     type IPracticeData,
