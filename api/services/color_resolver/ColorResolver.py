@@ -2,15 +2,15 @@ from operator import or_
 
 from sqlalchemy import Connection, and_, null, select
 
-from api.core.models.queries import SessionIdentifier
-from api.repository.repository import (
+from ...core.models.queries import SessionIdentifier
+from ...repository.repository import (
     DriverTeamChanges,
     EventSessions,
     SessionResults,
     TeamSeasonColors,
     Teams,
 )
-from api.services.color_resolver.models import TeamDto, TeamPlotData
+from ...services.color_resolver.models import TeamDto, TeamPlotData
 
 
 class TeamPlotStyleResolver:
