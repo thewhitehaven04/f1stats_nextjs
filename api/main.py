@@ -2,16 +2,12 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
-from core.models.queries import SessionIdentifier, SessionQueryFilter
-from repository.engine import (
-    engine,
-    get_connection,
-    set_connection,
-)
-from services.laps.LapDataResolver import LapDataResolver
-from services.laps.models.laps import LapSelectionData
-from services.telemetry.TelemetryResolver import TelemetryResolver
-from services.telemetry.models import DriverTelemetryPlotData, AverageTelemetryPlotData
+from api.core.models.queries import SessionIdentifier, SessionQueryFilter
+from api.repository.engine import engine, get_connection, set_connection
+from api.services.laps.LapDataResolver import LapDataResolver
+from api.services.laps.models.laps import LapSelectionData
+from api.services.telemetry.TelemetryResolver import TelemetryResolver
+from api.services.telemetry.models import AverageTelemetryPlotData, DriverTelemetryPlotData
 
 
 @asynccontextmanager

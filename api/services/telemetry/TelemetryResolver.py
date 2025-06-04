@@ -3,15 +3,15 @@ from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select
 
-from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
-from repository.repository import (
+from api.core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
+from api.repository.repository import (
     Laps,
     SessionResults,
     TelemetryMeasurements,
 )
-from services.color_resolver.ColorResolver import TeamPlotStyleResolver
-from services.laps.models.laps import TeamPlotStyleDto
-from services.telemetry.models import (
+from api.services.color_resolver.ColorResolver import TeamPlotStyleResolver
+from api.services.laps.models.laps import TeamPlotStyleDto
+from api.services.telemetry.models import (
     DriverTelemetryDelta,
     DriverTelemetryPlotData,
     LapTelemetryDto,
@@ -153,7 +153,7 @@ class TelemetryResolver:
                     driver=driver_id,
                     team=TeamPlotStyleDto(name=style.team.name, color=style.color),
                     style=style.style,
-                    stint_length=len(lap_ids)
+                    stint_length=len(lap_ids),
                 )
             )
 

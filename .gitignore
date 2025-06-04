@@ -37,14 +37,14 @@ yarn-error.log*
 next-env.d.ts
 .qodo
 
-api/.venv
+.venv/
 api/.READ
 api/.python-version
-api/pyproject.toml
-api/uv.lock
+pyproject.toml
+uv.lock
 api/.vscode
 api/**/__pycache__
-api/venv
 .vscode/
 
 **.code-workspace
+openapi-ts-error*

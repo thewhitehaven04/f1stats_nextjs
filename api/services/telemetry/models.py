@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
-from services.color_resolver.models import PlotStyle
-from services.laps.models.laps import TeamPlotStyleDto
+from api.services.color_resolver.models import PlotStyle
+from api.services.laps.models.laps import TeamPlotStyleDto
 
 
 class TelemetryMeasurementDto(BaseModel):

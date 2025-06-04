@@ -1,15 +1,16 @@
 from operator import or_
 
-from core.models.queries import SessionIdentifier
-from repository.repository import (
+from sqlalchemy import Connection, and_, null, select
+
+from api.core.models.queries import SessionIdentifier
+from api.repository.repository import (
     DriverTeamChanges,
     EventSessions,
     SessionResults,
     TeamSeasonColors,
     Teams,
 )
-from services.color_resolver.models import TeamDto, TeamPlotData
-from sqlalchemy import Connection, and_, null, select
+from api.services.color_resolver.models import TeamDto, TeamPlotData
 
 
 class TeamPlotStyleResolver:
@@ -62,7 +63,7 @@ class TeamPlotStyleResolver:
             )
             .join(Teams, DriverTeamChanges.team_id == Teams.id)
             .add_columns(
-                TeamSeasonColors.color.label('color'),
+                TeamSeasonColors.color.label("color"),
                 Teams.id.label("team_id"),
                 Teams.team_display_name,
             )
