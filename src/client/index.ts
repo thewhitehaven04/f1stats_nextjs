@@ -1,5 +1,7 @@
-import { createClient, createConfig } from "@hey-api/client-fetch"
+import { createClient } from "@hey-api/client-fetch"
 
-export const ApiClient = createClient(createConfig({
-    baseUrl: "",
-}))
+export const ApiClient = createClient({
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL
+        ? `https://${process.env.NEXT_PUBLIC_BASE_URL}/`
+        : "http://localhost:3000/",
+})
