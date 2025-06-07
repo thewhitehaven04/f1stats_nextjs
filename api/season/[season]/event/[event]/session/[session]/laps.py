@@ -20,7 +20,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post(
-    "/season/{year}/event/{event}/session/{session}/laps",
+    "/api/season/{year}/event/{event}/session/{session}/laps",
     response_model=LapSelectionData,
 )
 async def get_session_laptimes_filtered(

@@ -24,7 +24,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post(
-    "/season/{year}/event/{event}/session/{session}/telemetry/average",
+    "/api/season/{year}/event/{event}/session/{session}/telemetry/average",
     response_model=list[AverageTelemetryPlotData],
 )
 async def get_averaged_telemetry(

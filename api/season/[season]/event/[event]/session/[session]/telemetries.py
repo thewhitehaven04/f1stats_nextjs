@@ -24,7 +24,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post(
-    "/season/{year}/event/{event}/session/{session}/telemetries",
+    "/api/season/{year}/event/{event}/session/{session}/telemetries",
     response_model=list[DriverTelemetryPlotData],
 )
 async def get_lap_telemetries(
