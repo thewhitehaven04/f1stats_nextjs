@@ -15,10 +15,10 @@ export type TSpeedDataset = ChartDataset<
 >[]
 
 export function TelemetryChartSection(props: {
-    telemetryMeasurements: DriverTelemetryPlotData[] | null
+    data: DriverTelemetryPlotData[] | null
     ref: RefObject<HTMLElement | null>
 }) {
-    const { telemetryMeasurements, ref } = props
+    const { data: telemetryMeasurements, ref } = props
     const distanceLabels = telemetryMeasurements
         ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)))
         .sort((a, b) => a - b)

@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button"
 
 initGlobalChartConfig()
 
-export default function BoxPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
-    const laps = use(lapsPromise)
-
+export default function BoxPlotTab({ laps }: { laps: LapSelectionData }) {
     const { driver_lap_data: driverLapData } = laps
 
     const [isOutliersShown, setIsOutliersShown] = useState(true)

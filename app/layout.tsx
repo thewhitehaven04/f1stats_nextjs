@@ -1,5 +1,6 @@
 import "./globals.css"
 import { Archivo } from "next/font/google"
+import { Providers } from "./providers"
 
 export const metadata = {
     title: "F1 Stats",
@@ -21,7 +22,7 @@ export default async function RootLayout({
         <html lang="en">
             <body className={appFont.className}>
                 <div className="grid grid-cols-1 grid-rows-[min-content] overflow-y-scroll min-h-screen">
-                    {children}
+                    <Providers>{children}</Providers>
                 </div>
             </body>
         </html>

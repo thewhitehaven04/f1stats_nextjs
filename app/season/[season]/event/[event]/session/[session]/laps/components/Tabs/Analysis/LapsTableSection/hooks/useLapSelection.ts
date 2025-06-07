@@ -15,5 +15,5 @@ export const useLapSelection = () => {
         },
         [],
     )
-    return { hasSelected, updateSelection }
+    return { selection, hasSelected, updateSelection }
 }

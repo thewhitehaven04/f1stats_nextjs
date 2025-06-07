@@ -6,10 +6,8 @@ import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData } from "@/client/generated"
 import type { TSpeedDataset } from '../ChartSection'
 
-export const AverageTelemetrySection = ({
-    averageTelemetry,
-    ref,
-}: { averageTelemetry: AverageTelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
+export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
+    const { data: averageTelemetry, ref } = props
     const distanceLabels =
         averageTelemetry?.length &&
         averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))

@@ -20,9 +20,7 @@ export type TLinePlotTabBoxChartDataset = ChartData<
     style: "default" | "alternative"
 }
 
-export default function LinePlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
-    const laps = use(lapsPromise)
-
+export default function LinePlotTab({ laps }: { laps: LapSelectionData }) {
     const { driver_lap_data: driverLapData } = laps
     const [isOutliersShown, setIsOutliersShown] = useState(true)
 

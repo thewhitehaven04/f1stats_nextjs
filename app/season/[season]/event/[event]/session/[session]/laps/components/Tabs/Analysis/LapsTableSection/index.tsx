@@ -38,11 +38,22 @@ export interface ILapData {
 }
 export const columnHelper = createColumnHelper<ILapData>()
 
-export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
-    const laps = use(lapsPromise)
-
+export function LapsTableSection({
+    laps,
+    onUpdateSelection,
+}: {
+    laps: LapSelectionData
+    onUpdateSelection: ({
+        driver,
+        lap,
+        state,
+    }: {
+        driver: string
+        lap: number
+        state: boolean
+    }) => void
+}) {
     const flattenedLaps = useMemo(() => mapLapsToTableLapData(laps.driver_lap_data), [laps])
-    const { hasSelected, updateSelection } = useLapSelection()
 
     const tableColumns = useMemo(
         () => [
@@ -71,7 +82,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
                                         onCheckedChange={(checked) =>
-                                            updateSelection({
+                                            onUpdateSelection({
                                                 driver: driverName,
                                                 lap: lap,
                                                 state: !!checked,
@@ -177,7 +188,7 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
                 }),
             ),
         ],
-        [laps, updateSelection],
+        [laps, onUpdateSelection],
     )
 
     const initialState = useMemo(
@@ -198,34 +209,6 @@ export function LapsTableSection({ laps: lapsPromise }: { laps: Promise<LapSelec
 
     return (
         <>
-            <div className="flex flex-row gap-4 justify-end">
-                <TooltipProvider>
-                    <TooltipButton
-                        type="submit"
-                        variant="secondary"
-                        size="md"
-                        name="intent"
-                        value="lapTelemetry"
-                        tooltipText="You must select at least one lap to compare telemetry"
-                        disabled={!hasSelected}
-                    >
-                        Compare per-lap telemetry
-                    </TooltipButton>
-                </TooltipProvider>
-                <TooltipProvider>
-                    <TooltipButton
-                        type="submit"
-                        variant="secondary"
-                        size="md"
-                        name="intent"
-                        value="avgTelemetryComparison"
-                        tooltipText="You must select at least one lap to compare telemetry"
-                        disabled={!hasSelected}
-                    >
-                        Compare average telemetry per driver
-                    </TooltipButton>
-                </TooltipProvider>
-            </div>
             <LapsTable columns={tableColumns} data={flattenedLaps} initialState={initialState} />
             <LapsTableTelemetryTutorial />
         </>

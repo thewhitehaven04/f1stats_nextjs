@@ -2,8 +2,8 @@
 
 import { ApiClient } from "@/client"
 import {
-    getAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePost,
-    getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost,
+    getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
+    getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     type SessionIdentifier,
     type SessionQueryFilter,
 } from "@/client/generated"
@@ -41,7 +41,7 @@ export async function getTelemetry(state: unknown, formData: FormData) {
     if (intent === "avgTelemetryComparison") {
         return {
             data: (
-                await getAveragedTelemetryApiPySeasonYearEventEventSessionSessionTelemetryAveragePost(
+                await getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
                     {
                         client: ApiClient,
                         body: { queries },
@@ -56,7 +56,7 @@ export async function getTelemetry(state: unknown, formData: FormData) {
 
     return {
         data: (
-            await getLapTelemetriesApiPySeasonYearEventEventSessionSessionTelemetriesPost({
+            await getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
                 client: ApiClient,
                 body: { queries },
                 path,

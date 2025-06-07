@@ -1,3 +1,4 @@
+'use client'
 import type { LapSelectionData } from "@/client/generated"
 import { formatTime } from "@/core/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"

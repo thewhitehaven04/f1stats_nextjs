@@ -18,8 +18,7 @@ import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
 
-export function ViolinPlotTab({ laps: lapsPromise }: { laps: Promise<LapSelectionData> }) {
-    const laps = use(lapsPromise)
+export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
     const [isOutliersShown, setIsOutliersShown] = useState(false)
 
     const plotData: ChartConfiguration<"violin">["data"] = useMemo(
