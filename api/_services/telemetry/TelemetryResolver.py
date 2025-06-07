@@ -3,15 +3,15 @@ from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select
 
-from core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
-from repository.repository import (
+from api._core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
+from api._repository.repository import (
     Laps,
     SessionResults,
     TelemetryMeasurements,
 )
-from services.color_resolver.ColorResolver import TeamPlotStyleResolver
-from services.laps.models.laps import TeamPlotStyleDto
-from services.telemetry.models import (
+from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
+from api._services.laps.models.laps import TeamPlotStyleDto
+from api._services.telemetry.models import (
     DriverTelemetryDelta,
     DriverTelemetryPlotData,
     LapTelemetryDto,

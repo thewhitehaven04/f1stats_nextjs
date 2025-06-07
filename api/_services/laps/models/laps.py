@@ -4,7 +4,7 @@ from typing import Sequence
 from pandas.api.typing import NaTType
 from pydantic import BaseModel, ConfigDict, field_serializer
 
-from services.color_resolver.models import PlotStyle
+from api._services.color_resolver.models import PlotStyle
 
 
 class Compound(StrEnum):

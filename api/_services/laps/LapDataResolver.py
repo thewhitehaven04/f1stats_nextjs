@@ -2,16 +2,16 @@ from pandas import DataFrame, NamedAgg, read_sql
 from sqlalchemy import Connection, and_, null, or_, select
 from numpy.polynomial import Polynomial
 
-from repository.repository import (
+from api._repository.repository import (
     DriverTeamChanges,
     Drivers,
     EventSessions,
     Laps,
 )
-from core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 
-from services.color_resolver.ColorResolver import TeamPlotStyleResolver
-from services.laps.models.laps import (
+from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
+from api._services.laps.models.laps import (
     DriverLapData,
     LapSelectionData,
     StintData,

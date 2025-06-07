@@ -1,14 +1,14 @@
 from operator import or_
 
-from core.models.queries import SessionIdentifier
-from repository.repository import (
+from api._core.models.queries import SessionIdentifier
+from api._repository.repository import (
     DriverTeamChanges,
     EventSessions,
     SessionResults,
     TeamSeasonColors,
     Teams,
 )
-from services.color_resolver.models import TeamDto, TeamPlotData
+from api._services.color_resolver.models import TeamDto, TeamPlotData
 from sqlalchemy import Connection, and_, null, select
 
 
