@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "fastapi-dev": "cd api/ && uv run uvicorn main:app --reload",
+        "fastapi-dev": "cd api/ && uv run uvicorn index:app --reload",
         "next-dev": "next dev --turbopack",
         "dev": "concurrently \"pnpm run next-dev\" \"pnpm run fastapi-dev\"",
         "lint": "next lint",
@@ -24,6 +24,7 @@
         "@sgratzl/chartjs-chart-boxplot": "^4.4.4",
         "@tailwindcss/postcss": "4.1.4",
         "@tailwindcss/typography": "0.5.15",
+        "@tanstack/react-query": "5.80.6",
         "@tanstack/react-table": "^8.20.5",
         "chart.js": "4.4.9",
         "chartjs-plugin-zoom": "2.2.0",
@@ -43,7 +44,8 @@
         "tailwind-merge": "^3.2.0",
         "tailwindcss": "4.1.4",
         "ts-deepmerge": "7.0.2",
-        "uuid": "11.1.0"
+        "uuid": "11.1.0",
+        "zod": "3.25.56"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.3",
