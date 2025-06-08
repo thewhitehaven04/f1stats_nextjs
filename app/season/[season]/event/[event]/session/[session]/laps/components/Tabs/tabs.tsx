@@ -1,7 +1,7 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
+import { usePathname, useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
 import { AnalysisTab } from "./Analysis"
 import { useSession } from "../../../hooks/useSession"
 import { useSuspenseQuery } from "@tanstack/react-query"
@@ -29,10 +29,12 @@ export const LapsTabs = () => {
 
     const { event, season: year, session } = useSession()
 
-    const queries = Object.values(search).map((driver) => ({
+    const queries = search.getAll("driver").map((driver) => ({
         driver,
         lap_filter: null,
     }))
+
+    console.log(queries)
 
     const { data: lapSelectionData } = useSuspenseQuery({
         queryKey: ["laps", year, event, session],
