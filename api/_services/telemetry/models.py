@@ -1,3 +1,4 @@
+from typing import Sequence
 from pydantic import BaseModel, ConfigDict
 
 from api._services.color_resolver.models import PlotStyle
@@ -29,7 +30,7 @@ class AverageTelemetryPlotData(BaseModel):
     team: TeamPlotStyleDto
     style: PlotStyle
     stint_length: int
-    telemetry: list[TelemetryMeasurementDto]
+    telemetry: Sequence[TelemetryMeasurementDto]
 
 
 class DeltaInstance(BaseModel):

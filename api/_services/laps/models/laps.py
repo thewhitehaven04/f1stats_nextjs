@@ -28,7 +28,7 @@ class LapTimingData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     id: int
-    laptime: float | NaTType
+    laptime: float | NaTType 
     is_pb: bool
     sector_1_time: float | None
     sector_2_time: float | None
@@ -57,6 +57,7 @@ class LapTimingData(BaseModel):
         "speedtrap_1",
         "speedtrap_2",
         "speedtrap_fl",
+        "laptime",
         mode="plain",
         when_used="json",
         return_type=float | None,

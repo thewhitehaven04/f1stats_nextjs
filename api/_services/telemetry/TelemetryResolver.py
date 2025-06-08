@@ -1,3 +1,4 @@
+from tkinter import SE
 from typing import Tuple
 from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
@@ -153,7 +154,7 @@ class TelemetryResolver:
                     driver=driver_id,
                     team=TeamPlotStyleDto(name=style.team.name, color=style.color),
                     style=style.style,
-                    stint_length=len(lap_ids)
+                    stint_length=len(lap_ids),
                 )
             )
 
@@ -187,17 +188,16 @@ class TelemetryResolver:
         return laps.fetchone()
 
     def _get_reference_data(self, query_filter: SessionQueryFilter):
-        ref_lap = self._get_reference_lap(query_filter)
-        telemetry_data = read_sql(
-            con=self.db_connection,
-            sql=select(TelemetryMeasurements).where(
-                TelemetryMeasurements.lap_id == ref_lap.id
-            ),
-        )
-        telemetry_data["relative_distance"] = (
-            telemetry_data["distance"] / telemetry_data["distance"].tail(1).iloc[0]
-        )
-        if ref_lap:
+        if ref_lap := self._get_reference_lap(query_filter):
+            telemetry_data = read_sql(
+                con=self.db_connection,
+                sql=select(TelemetryMeasurements).where(
+                    TelemetryMeasurements.lap_id == ref_lap.id
+                ),
+            )
+            telemetry_data["relative_distance"] = (
+                telemetry_data["distance"] / telemetry_data["distance"].tail(1).iloc[0]
+            )
             return telemetry_data, ref_lap
         raise ValueError("No reference lap found")
 
@@ -225,14 +225,17 @@ class TelemetryResolver:
                     Laps.season_year == SessionResults.season_year,
                     Laps.session_type_id == SessionResults.session_type_id,
                     Laps.event_name == SessionResults.event_name,
+                    Laps.driver_id == SessionResults.driver_id,
                 ),
             )
             .where(
-                SessionResults.season_year == self.season,
-                SessionResults.session_type_id == self.session_identifier.value,
-                SessionResults.event_name == self.event,
-                Laps.lap_number == lap_number,
-                Laps.driver_id == driver,
+                and_(
+                    SessionResults.season_year == self.season,
+                    SessionResults.session_type_id == self.session_identifier.value,
+                    SessionResults.event_name == self.event,
+                    Laps.lap_number == lap_number,
+                    Laps.driver_id == driver,
+                )
             ),
         )
         telemetry_dataframe["relative_distance"] = (

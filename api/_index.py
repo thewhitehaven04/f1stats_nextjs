@@ -1,3 +1,5 @@
+# this file is used for local debugging only and is a collection of all the endpoints 
+# distributed in python serverless functions
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI

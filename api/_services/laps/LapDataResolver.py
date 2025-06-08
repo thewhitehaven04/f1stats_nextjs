@@ -211,6 +211,21 @@ class LapDataResolver:
                     Laps.season_year == self.season,
                     Laps.session_type_id == self.session_identifier.value,
                     Laps.event_name == self.event,
+                    or_(
+                        *[
+                            (
+                                and_(
+                                    Laps.driver_id == fil.driver,
+                                    Laps.lap_number.in_(fil.lap_filter),
+                                )
+                                if fil.lap_filter
+                                else and_(
+                                    Laps.driver_id == fil.driver,
+                                )
+                            )
+                            for fil in filter_.queries
+                        ]
+                    ),
                 )
             )
             .join(
@@ -235,23 +250,6 @@ class LapDataResolver:
                         DriverTeamChanges.timestamp_end.is_(null()),
                     ),
                 ),
-            )
-            .where(
-                or_(
-                    *[
-                        (
-                            and_(
-                                Laps.driver_id == fil.driver,
-                                Laps.lap_number.in_(fil.lap_filter),
-                            )
-                            if fil.lap_filter
-                            else and_(
-                                Laps.driver_id == fil.driver,
-                            )
-                        )
-                        for fil in filter_.queries
-                    ]
-                )
             ),
         )
         return self._resolve_lap_data(lap_data)
