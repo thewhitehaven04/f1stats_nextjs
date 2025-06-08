@@ -10,6 +10,7 @@ from api._repository.engine import (
 )
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import AverageTelemetryPlotData
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -21,6 +22,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_methods=["GET", "POST"],
+    allow_origins=["*"],
+    allow_credentials=True,
+)
 
 
 @app.post(

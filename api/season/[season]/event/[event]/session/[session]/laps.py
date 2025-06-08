@@ -6,6 +6,7 @@ from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.engine import engine, get_connection, set_connection
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -17,6 +18,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_methods=["GET", "POST"],
+    allow_origins=["*"],
+    allow_credentials=True,
+)
 
 
 @app.post(

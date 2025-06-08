@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.engine import engine, get_connection, set_connection
@@ -19,6 +20,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_methods=["GET", "POST"],
+    allow_origins=["*"],
+    allow_credentials=True,
+)
 
 
 @app.post(
