@@ -260,7 +260,7 @@ class TelemetryResolver:
         delta_df = DataFrame(columns=["distance", "relative_distance", "gap"])
         delta_df["gap"] = reference_telemetry["laptime_at"] - time_x
         delta_df["relative_distance"] = lattice_x
-        delta_df["distance"] = reference_telemetry["relative_distance"]
+        delta_df["distance"] = reference_telemetry["distance"]
 
         return delta_df
 
@@ -280,7 +280,7 @@ class TelemetryResolver:
                 delta = None
                 if (
                     lap != reference_lap.lap_number
-                    and query.driver != reference_lap.driver_id
+                    or query.driver != reference_lap.driver_id
                 ):
                     delta = DriverTelemetryDelta(
                         reference=reference_lap.driver_id,

@@ -34,8 +34,6 @@ export const LapsTabs = () => {
         lap_filter: null,
     }))
 
-    console.log(queries)
-
     const { data: lapSelectionData } = useSuspenseQuery({
         queryKey: ["laps", year, event, session],
         queryFn: async () =>

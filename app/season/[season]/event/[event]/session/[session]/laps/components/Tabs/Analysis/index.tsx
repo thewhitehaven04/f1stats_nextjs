@@ -84,7 +84,6 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         },
     })
 
-    console.log(data)
     return (
         <>
             <LapsTableSection laps={laps} onUpdateSelection={updateSelection} />

@@ -5,9 +5,10 @@ import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import type { DriverTelemetryPlotData } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
+import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 
 export type TSpeedDataset = ChartDataset<
-    "line",
+    "scatter",
     {
         x: number
         y: number
@@ -47,7 +48,7 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const rpmDatasets: ChartData<"line">["datasets"] = useMemo(
+    const rpmDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -60,7 +61,7 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const throttleDatasets: ChartData<"line">["datasets"] = useMemo(
+    const throttleDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -73,7 +74,7 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const brakeDatasets: ChartData<"line">["datasets"] = useMemo(
+    const brakeDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -86,7 +87,7 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const timeDeltaDatasets: ChartData<"line">["datasets"] = useMemo(
+    const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             telemetryMeasurements?.map((comp, index) => ({
                 label: `${comp.driver} vs ${comp.delta?.reference}`,
@@ -100,6 +101,8 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
+    console.log(timeDeltaDatasets)
+
     return (
         <section ref={ref} className="flex flex-col gap-2">
             <SpeedtracePresetChart
@@ -109,18 +112,8 @@ export function TelemetryChartSection(props: {
                 }}
                 height={150}
             />
-            <TelemetryPresetChart
+            <TimedeltaPresetChart
                 data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
-                options={{
-                    scales: {
-                        y: {
-                            title: {
-                                display: true,
-                                text: "Time delta, s",
-                            },
-                        },
-                    },
-                }}
                 height={60}
             />
             <TelemetryPresetChart

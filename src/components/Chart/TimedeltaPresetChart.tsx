@@ -1,11 +1,9 @@
-import { initGlobalChartConfig } from "@/components/Chart/config"
 import clsx from "clsx"
-import { type ChartProps, Chart } from "react-chartjs-2"
+import { Chart, type ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-initGlobalChartConfig()
 
-export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">) => {
+export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "scatter",
@@ -21,10 +19,6 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     max: props.data.labels?.at(-1) as number || 0
                 },
                 y: {
-                    title: {
-                        display: true,
-                        text: "Time delta, s",
-                    },
                     ticks: {
                         format: {
                             roundingMode: "halfCeil",
@@ -52,7 +46,7 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     callbacks: {
                         label(tooltipItem) {
                             const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
-                            return `${raw.x}: ${Math.trunc(raw.y as number).toString()}`
+                            return raw.y.toFixed(3)
                         },
                     },
                 },

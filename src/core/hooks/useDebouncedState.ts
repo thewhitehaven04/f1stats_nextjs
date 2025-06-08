@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, type Dispatch, type SetStateAction } from "react"
 
 const DEBOUNCE_TIMEOUT = 300
 
@@ -7,8 +7,8 @@ export function useDebouncedState<T>(value: T, delay: number = DEBOUNCE_TIMEOUT)
 
     let timeoutId: NodeJS.Timeout | null = null
 
-    const setValue = useCallback(
-        (newValue: T) => {
+    const setValue: Dispatch<SetStateAction<T>> = useCallback(
+        (newValue: T | SetStateAction<T>) => {
             if (timeoutId) {
                 clearTimeout(timeoutId)
             }

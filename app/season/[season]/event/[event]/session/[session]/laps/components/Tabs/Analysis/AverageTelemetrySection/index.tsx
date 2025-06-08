@@ -5,6 +5,7 @@ import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData } from "@/client/generated"
 import type { TSpeedDataset } from '../ChartSection'
+import { TimedeltaPresetChart } from '@/components/Chart/TimedeltaPresetChart'
 
 export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
     const { data: averageTelemetry, ref } = props
@@ -37,7 +38,7 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
         [averageTelemetry, presets],
     )
 
-    const rpmDatasets: ChartData<"line">["datasets"] = useMemo(
+    const rpmDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -50,7 +51,7 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
         [averageTelemetry, presets],
     )
 
-    const throttleDatasets: ChartData<"line">["datasets"] = useMemo(
+    const throttleDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -63,7 +64,7 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
         [averageTelemetry, presets],
     )
 
-    const brakeDatasets: ChartData<"line">["datasets"] = useMemo(
+    const brakeDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -85,6 +86,10 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
                 }}
                 height={150}
             />
+            {/* <TimedeltaPresetChart
+                data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
+                height={60}
+            /> */}
             <TelemetryPresetChart
                 data={{
                     labels: distanceLabels || [],

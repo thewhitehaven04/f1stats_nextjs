@@ -1,4 +1,3 @@
-import type { SessionIdentifier } from '@/client/generated'
 import { useParams } from "next/navigation"
 import { z } from "zod"
 

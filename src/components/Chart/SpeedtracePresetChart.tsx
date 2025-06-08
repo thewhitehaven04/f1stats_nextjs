@@ -14,8 +14,9 @@ export const SpeedtracePresetChart = (
 ) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
-        type: "line",
+        type: "scatter",
         options: {
+            showLine: true,
             elements: {
                 point: {
                     radius: 0,
@@ -73,6 +74,7 @@ export const SpeedtracePresetChart = (
                         display: true,
                     },
                     min: 0,
+                    max: (props.data.labels?.at(-1) as number) || 0,
                     ticks: {
                         format: {
                             minimumFractionDigits: 0,
@@ -94,7 +96,7 @@ export const SpeedtracePresetChart = (
                 },
             },
         },
-    } satisfies Partial<ChartProps<"line">>
+    } satisfies Partial<ChartProps<"scatter">>
 
     const mergedProps = merge(baseChartProps, props)
 
