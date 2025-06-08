@@ -89,15 +89,17 @@ export function TelemetryChartSection(props: {
 
     const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
-            telemetryMeasurements?.map((comp, index) => ({
-                label: `${comp.driver} vs ${comp.delta?.reference}`,
-                data:
-                    comp.delta?.delta.map((measurement) => ({
-                        x: measurement.distance,
-                        y: measurement.gap,
-                    })) || [],
-                ...presets[index],
-            })) || [],
+            telemetryMeasurements
+                ?.map((comp, index) => ({
+                    label: `${comp.driver} vs ${comp.delta?.reference}`,
+                    data:
+                        comp.delta?.delta.map((measurement) => ({
+                            x: measurement.distance,
+                            y: measurement.gap,
+                        })) || [],
+                    ...presets[index],
+                }))
+                .filter((tMeasurements) => tMeasurements.data.length > 0) || [],
         [telemetryMeasurements, presets],
     )
 

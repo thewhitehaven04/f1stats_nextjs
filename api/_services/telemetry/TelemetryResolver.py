@@ -195,7 +195,7 @@ class TelemetryResolver:
         else:
             raise ValueError("No reference driver found")
 
-        return prepared_telemetries 
+        return prepared_telemetries
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
         laps = self.db_connection.execute(
@@ -292,7 +292,7 @@ class TelemetryResolver:
         self,
         reference_telemetry: DataFrame,
         target_telemetry: DataFrame,
-        is_aligned: bool = False,
+        is_aligned: bool,
     ):
         delta_df = DataFrame(columns=["distance", "relative_distance", "gap"])
         if is_aligned:
@@ -337,7 +337,7 @@ class TelemetryResolver:
                     delta = DriverTelemetryDelta(
                         reference=reference_lap.driver_id,
                         delta=self._get_delta(
-                            telemetry_dataframe, reference_telemetry
+                            telemetry_dataframe, reference_telemetry, is_aligned=False
                         ).to_dict(orient="records"),
                     )
                 lap_distance = int(telemetry_dataframe["distance"].tail(1).iloc[0])

@@ -44,6 +44,10 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     mode: "nearest",
                     intersect: false,
                     callbacks: {
+                        title(tooltipItem) {
+                            const raw = tooltipItem[0].raw as TSpeedDataset[number]["data"][number]
+                            return `${Math.trunc(raw.x).toString()} m`
+                        },
                         label(tooltipItem) {
                             const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
                             return raw.y.toFixed(3)
