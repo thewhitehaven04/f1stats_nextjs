@@ -56,7 +56,7 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                         },
                         label(tooltipItem) {
                             const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
-                            return `${raw.x}: ${Math.trunc(raw.y as number).toString()}`
+                            return `${Math.trunc(raw.x)}: ${Math.trunc(raw.y as number).toString()}`
                         },
                     },
                 },

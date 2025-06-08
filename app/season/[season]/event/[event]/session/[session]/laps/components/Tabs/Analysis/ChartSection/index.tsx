@@ -103,8 +103,6 @@ export function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    console.log(timeDeltaDatasets)
-
     return (
         <section ref={ref} className="flex flex-col gap-2">
             <SpeedtracePresetChart
