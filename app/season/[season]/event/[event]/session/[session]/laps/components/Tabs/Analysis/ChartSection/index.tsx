@@ -131,7 +131,7 @@ export function TelemetryChartSection(props: {
                         },
                     },
                 }}
-                height={60}
+                height={50}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: throttleDatasets }}
@@ -140,14 +140,14 @@ export function TelemetryChartSection(props: {
                         y: {
                             title: {
                                 display: true,
-                                text: "Throttle application, %",
+                                text: "Throttle %",
                             },
                             min: 0,
                             max: 100,
                         },
                     },
                 }}
-                height={45}
+                height={30}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: brakeDatasets }}
@@ -156,14 +156,14 @@ export function TelemetryChartSection(props: {
                         y: {
                             title: {
                                 display: true,
-                                text: "Brake application, %",
+                                text: "Brake %",
                             },
                             min: 0,
                             max: 100,
                         },
                     },
                 }}
-                height={45}
+                height={30}
             />
         </section>
     )

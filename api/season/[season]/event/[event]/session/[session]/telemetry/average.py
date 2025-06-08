@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from typing import Annotated
+from typing import Annotated, Sequence
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
@@ -33,7 +33,7 @@ app.add_middleware(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/telemetry/average",
-    response_model=list[AverageTelemetryPlotData],
+    response_model=Sequence[AverageTelemetryPlotData],
 )
 async def get_averaged_telemetry(
     year: str,

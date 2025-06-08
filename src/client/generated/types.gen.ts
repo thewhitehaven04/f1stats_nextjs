@@ -6,6 +6,7 @@ export type AverageTelemetryPlotData = {
     style: "default" | "alternative"
     stint_length: number
     telemetry: Array<TelemetryMeasurementDto>
+    delta: DriverTelemetryDelta | null
 }
 
 export type Compound =
@@ -66,7 +67,7 @@ export type LapTelemetryDto = {
 
 export type LapTimingData = {
     id: number
-    laptime: number
+    laptime: number | null
     is_pb: boolean
     sector_1_time: number | null
     sector_2_time: number | null

@@ -16,7 +16,7 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
             },
             scales: {
                 x: {
-                    max: props.data.labels?.at(-1) as number || 0
+                    max: (props.data.labels?.at(-1) as number) || 0,
                 },
                 y: {
                     ticks: {
@@ -36,7 +36,7 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
             },
             plugins: {
                 legend: {
-                    display: false,
+                    position: "bottom",
                 },
                 tooltip: {
                     includeInvisible: false,

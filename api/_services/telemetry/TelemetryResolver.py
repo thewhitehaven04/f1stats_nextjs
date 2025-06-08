@@ -110,7 +110,7 @@ class TelemetryResolver:
 
     def get_average_telemetry(
         self, filter_: SessionQueryFilter
-    ) -> list[DriverTelemetryPlotData]:
+    ) -> Sequence[DriverTelemetryPlotData]:
         driver_lap_id_entries = [
             [
                 query.driver,
@@ -167,7 +167,7 @@ class TelemetryResolver:
                 }
             )
         prepared_telemetries: Sequence[AverageTelemetryPlotData] = []
-        if reference_driver and bool(reference_telemetry):
+        if reference_driver and reference_telemetry is not None:
             for avg_telemetry in avg_telemetries:
                 prepared_telemetries.append(
                     AverageTelemetryPlotData(
@@ -192,10 +192,10 @@ class TelemetryResolver:
                         ),
                     )
                 )
-            else:
-                raise ValueError("No reference driver found")
+        else:
+            raise ValueError("No reference driver found")
 
-        return avg_telemetries
+        return prepared_telemetries 
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
         laps = self.db_connection.execute(

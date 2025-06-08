@@ -4,10 +4,13 @@ import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData } from "@/client/generated"
-import type { TSpeedDataset } from '../ChartSection'
-import { TimedeltaPresetChart } from '@/components/Chart/TimedeltaPresetChart'
+import type { TSpeedDataset } from "../ChartSection"
+import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 
-export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[] | null; ref: RefObject<HTMLElement | null> }) => {
+export const AverageTelemetrySection = (props: {
+    data: AverageTelemetryPlotData[] | null
+    ref: RefObject<HTMLElement | null>
+}) => {
     const { data: averageTelemetry, ref } = props
     const distanceLabels =
         averageTelemetry?.length &&
@@ -35,6 +38,20 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
                 })),
                 ...presets[index],
             })) || [],
+        [averageTelemetry, presets],
+    )
+
+    const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
+        () =>
+            averageTelemetry?.map((tel, index) => ({
+                label: `${tel.driver} gap to ${tel.delta?.reference}`,
+                data:
+                    tel.delta?.delta.map((dMeasurement) => ({
+                        x: dMeasurement.distance,
+                        y: dMeasurement.gap,
+                    })) || [],
+                ...presets[index],
+            })).filter((dataset) => dataset.data.length > 0) || [],
         [averageTelemetry, presets],
     )
 
@@ -86,16 +103,16 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
                 }}
                 height={150}
             />
-            {/* <TimedeltaPresetChart
-                data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
+            <TimedeltaPresetChart
+                data={{ labels: distanceLabels || [], datasets: timeDeltaDatasets }}
                 height={60}
-            /> */}
+            />
             <TelemetryPresetChart
                 data={{
                     labels: distanceLabels || [],
                     datasets: rpmDatasets,
                 }}
-                height={45}
+                height={50}
                 options={{
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
@@ -103,16 +120,16 @@ export const AverageTelemetrySection = (props: { data: AverageTelemetryPlotData[
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
                 options={{
-                    scales: { y: { title: { display: true, text: "Throttle application, %" } } },
+                    scales: { y: { title: { display: true, text: "Throttle %" } } },
                 }}
-                height={30}
+                height={40}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
                 options={{
-                    scales: { y: { title: { display: true, text: "Brake application, %" } } },
+                    scales: { y: { title: { display: true, text: "Brake %" } } },
                 }}
-                height={30}
+                height={40}
             />
         </section>
     )
