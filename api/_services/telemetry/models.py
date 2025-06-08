@@ -20,17 +20,7 @@ class LapTelemetryDto(BaseModel):
     id: int
     lap_number: int
     telemetry: list[TelemetryMeasurementDto]
-    lap_distance: int 
-
-
-class AverageTelemetryPlotData(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    driver: str
-    team: TeamPlotStyleDto
-    style: PlotStyle
-    stint_length: int
-    telemetry: Sequence[TelemetryMeasurementDto]
+    lap_distance: int
 
 
 class DeltaInstance(BaseModel):
@@ -44,6 +34,17 @@ class DriverTelemetryDelta(BaseModel):
 
     reference: str
     delta: list[DeltaInstance]
+
+
+class AverageTelemetryPlotData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    driver: str
+    team: TeamPlotStyleDto
+    style: PlotStyle
+    stint_length: int
+    telemetry: Sequence[TelemetryMeasurementDto]
+    delta: DriverTelemetryDelta | None
 
 
 class DriverTelemetryPlotData(BaseModel):

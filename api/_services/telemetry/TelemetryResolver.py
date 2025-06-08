@@ -1,5 +1,5 @@
-from tkinter import SE
-from typing import Tuple
+import sys
+from typing import Sequence, Tuple
 from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select
@@ -133,6 +133,11 @@ class TelemetryResolver:
         ]
 
         avg_telemetries = []
+
+        min_laptime = sys.float_info.max
+        reference_telemetry = None
+        reference_driver = None
+
         for driver_id, lap_ids in driver_lap_id_entries:
             telemetry_data = read_sql(
                 con=self.db_connection,
@@ -144,19 +149,51 @@ class TelemetryResolver:
                 telemetry_data.laptime_at, unit="s"
             )
             style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
+            avg_telemetry_data = self.average_telemetry_for_driver(telemetry_data)
+
+            laptime = avg_telemetry_data["laptime_at"].tail(1).iloc[0]
+            if laptime < min_laptime:
+                min_laptime = laptime
+                reference_telemetry = avg_telemetry_data
+                reference_driver = driver_id
+
             avg_telemetries.append(
-                AverageTelemetryPlotData(
-                    telemetry=(
-                        self.average_telemetry_for_driver(telemetry_data).to_dict(
-                            orient="records"
-                        )
-                    ),
-                    driver=driver_id,
-                    team=TeamPlotStyleDto(name=style.team.name, color=style.color),
-                    style=style.style,
-                    stint_length=len(lap_ids),
-                )
+                {
+                    "raw_telemetry": avg_telemetry_data,
+                    "driver": driver_id,
+                    "team": TeamPlotStyleDto(name=style.team.name, color=style.color),
+                    "style": style.style,
+                    "stint_length": len(lap_ids),
+                }
             )
+        prepared_telemetries: Sequence[AverageTelemetryPlotData] = []
+        if reference_driver and bool(reference_telemetry):
+            for avg_telemetry in avg_telemetries:
+                prepared_telemetries.append(
+                    AverageTelemetryPlotData(
+                        telemetry=avg_telemetry["raw_telemetry"].to_dict(
+                            orient="records"
+                        ),
+                        driver=avg_telemetry["driver"],
+                        team=avg_telemetry["team"],
+                        style=avg_telemetry["style"],
+                        stint_length=avg_telemetry["stint_length"],
+                        delta=(
+                            DriverTelemetryDelta(
+                                reference=reference_driver,
+                                delta=self._get_delta(
+                                    avg_telemetry["raw_telemetry"],
+                                    reference_telemetry,
+                                    is_aligned=True,
+                                ).to_dict(orient="records"),
+                            )
+                            if avg_telemetry["driver"] != reference_driver
+                            else None
+                        ),
+                    )
+                )
+            else:
+                raise ValueError("No reference driver found")
 
         return avg_telemetries
 
@@ -251,16 +288,31 @@ class TelemetryResolver:
             [[series[0] - channel_start], series, [series[-1] + channel_end]]
         )
 
-    def _get_delta(self, reference_telemetry: DataFrame, target_telemetry: DataFrame):
-        lattice_x = reference_telemetry["relative_distance"].to_numpy()
-        time_fp = target_telemetry["laptime_at"].to_numpy()
-        relative_distance_xp = target_telemetry["relative_distance"].to_numpy()
-        time_x = interp(lattice_x, relative_distance_xp, time_fp)
-
+    def _get_delta(
+        self,
+        reference_telemetry: DataFrame,
+        target_telemetry: DataFrame,
+        is_aligned: bool = False,
+    ):
         delta_df = DataFrame(columns=["distance", "relative_distance", "gap"])
-        delta_df["gap"] = reference_telemetry["laptime_at"] - time_x
-        delta_df["relative_distance"] = lattice_x
-        delta_df["distance"] = reference_telemetry["distance"]
+        if is_aligned:
+            delta_df["gap"] = (
+                reference_telemetry["laptime_at"] - target_telemetry["laptime_at"]
+            )
+            delta_df["distance"] = target_telemetry["distance"]
+            delta_df["relative_distance"] = (
+                target_telemetry["distance"]
+                / target_telemetry["distance"].tail(1).iloc[0]
+            )
+
+        else:
+            lattice_x = reference_telemetry["relative_distance"].to_numpy()
+            time_fp = target_telemetry["laptime_at"].to_numpy()
+            relative_distance_xp = target_telemetry["relative_distance"].to_numpy()
+            time_x = interp(lattice_x, relative_distance_xp, time_fp)
+            delta_df["gap"] = reference_telemetry["laptime_at"] - time_x
+            delta_df["relative_distance"] = lattice_x
+            delta_df["distance"] = reference_telemetry["distance"]
 
         return delta_df
 
