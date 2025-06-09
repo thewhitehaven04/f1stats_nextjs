@@ -45,7 +45,7 @@ export const getQueries = (selection: [string, number][]) =>
 
 export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
     const ref = useRef<HTMLElement>(null)
-    const { selection, updateSelection } = useLapSelection()
+    const { selection, updateSelection, resetSelection } = useLapSelection()
     const { event, season: year, session } = useSession()
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
@@ -84,17 +84,24 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         },
     })
 
+    const handleTabChange = (tab: string) => {
+        resetSelection()
+        setTab("averageTelemetry")
+    }
+
     return (
         <>
             <LapsTableSection laps={laps} onUpdateSelection={updateSelection} />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
-                    <TabsTrigger value="telemetry" onClick={() => setTab("telemetry")}>
+                    <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>
                         Per-lap telemetry
                     </TabsTrigger>
                     <TabsTrigger
                         value="averageTelemetry"
-                        onClick={() => setTab("averageTelemetry")}
+                        onClick={() => {
+                            handleTabChange("averageTelemetry")
+                        }}
                     >
                         Average telemetry
                     </TabsTrigger>

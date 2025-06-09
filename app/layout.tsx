@@ -21,9 +21,11 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={appFont.className}>
-                <div className="grid grid-cols-1 grid-rows-[min-content] overflow-y-scroll min-h-screen">
-                    <Providers>{children}</Providers>
-                </div>
+                <Providers>
+                    <div className="grid grid-cols-1 grid-rows-[min-content] overflow-y-scroll min-h-screen">
+                        {children}
+                    </div>
+                </Providers>
             </body>
         </html>
     )
