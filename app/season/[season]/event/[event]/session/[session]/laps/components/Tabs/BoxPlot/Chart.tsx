@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import type { LapSelectionData } from "@/client/generated"
 import { formatTime } from "@/core/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
@@ -20,53 +20,45 @@ export function LapsBoxChart({
     const sessionData = useMemo(
         () => ({
             labels: ["Laptime"],
-            datasets: laps.driver_lap_data.map((driver) => ({
-                label: driver.driver,
-                data: [
-                    selectedStints[driver.driver]
-                        ? {
-                              min:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .min_time ?? 0,
-                              q1:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .low_quartile ?? 0,
-                              q3:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .high_quartile ?? 0,
-                              max:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .max_time ?? 0,
-                              median:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .median ?? 0,
-                              mean:
-                                  driver.stints[(selectedStints[driver.driver] as number) - 1]
-                                      .avg_time ?? 0,
-                              items: driver.laps
-                                  .filter(
-                                      (driverData) =>
-                                          driverData.stint === selectedStints[driver.driver],
-                                  )
-                                  .map((driverData) => driverData.laptime),
-                          }
-                        : {
-                              min: driver.session_data.min_time ?? 0,
-                              q1: driver.session_data.low_quartile ?? 0,
-                              q3: driver.session_data.high_quartile ?? 0,
-                              max: driver.session_data.max_time ?? 0,
-                              median: driver.session_data.median ?? 0,
-                              mean: driver.session_data.avg_time ?? 0,
-                              items: driver.laps
-                                  .map((driverData) => driverData.laptime)
-                                  .filter(Boolean),
-                          },
-                ],
-                borderColor:
-                    driver.style === "alternative"
-                        ? getAlternativeColor(driver.team.color)
-                        : driver.team.color,
-            })),
+            datasets: laps.driver_lap_data.map((driver) => {
+                const stint_index = (selectedStints[driver.driver] as number) - 1
+                return {
+                    label: driver.driver,
+                    data: [
+                        selectedStints[driver.driver]
+                            ? {
+                                  min: driver.stints[stint_index].min_time ?? 0,
+                                  q1: driver.stints[stint_index].low_quartile ?? 0,
+                                  q3: driver.stints[stint_index].high_quartile ?? 0,
+                                  max: driver.stints[stint_index].max_time ?? 0,
+                                  median: driver.stints[stint_index].median ?? 0,
+                                  mean: driver.stints[stint_index].avg_time ?? 0,
+                                  items: driver.laps
+                                      .filter(
+                                          (driverData) =>
+                                              driverData.stint === selectedStints[driver.driver],
+                                      )
+                                      .map((driverData) => driverData.laptime)
+                                      .filter((time) => time !== null),
+                              }
+                            : {
+                                  min: driver.session_data.min_time ?? 0,
+                                  q1: driver.session_data.low_quartile ?? 0,
+                                  q3: driver.session_data.high_quartile ?? 0,
+                                  max: driver.session_data.max_time ?? 0,
+                                  median: driver.session_data.median ?? 0,
+                                  mean: driver.session_data.avg_time ?? 0,
+                                  items: driver.laps
+                                      .map((driverData) => driverData.laptime)
+                                      .filter((time) => time !== null),
+                              },
+                    ],
+                    borderColor:
+                        driver.style === "alternative"
+                            ? getAlternativeColor(driver.team.color)
+                            : driver.team.color,
+                }
+            }),
         }),
         [laps, selectedStints],
     ) satisfies ChartConfiguration<"boxplot">["data"]
