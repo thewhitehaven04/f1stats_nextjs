@@ -5,3 +5,5 @@ export const ApiClient = createClient({
         ? `https://${process.env.NEXT_PUBLIC_BASE_URL}/`
         : "http://localhost:3000/",
 })
+
+console.log(process.env.NEXT_PUBLIC_BASE_URL)
