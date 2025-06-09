@@ -59,10 +59,10 @@ export default function LinePlotTab({ laps }: { laps: LapSelectionData }) {
                     .map((lap, index) => ({
                         x: index,
                         y: isOutliersShown
-                            ? lap.laptime
-                            : lap.laptime > (laps.high_decile || 0) * 1.02
+                            ? (lap.laptime ?? Number.NaN)
+                            : (lap.laptime || Number.NaN) > (laps.high_decile || 0) * 1.02
                               ? Number.NaN
-                              : lap.laptime,
+                              : (lap.laptime ?? Number.NaN),
                         compound: lap.compound_id,
                     })),
                 teamColor: driverData.team.color,
