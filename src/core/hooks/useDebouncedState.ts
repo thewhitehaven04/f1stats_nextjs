@@ -12,9 +12,12 @@ export function useDebouncedState<T>(value: T, delay: number = DEBOUNCE_TIMEOUT)
                 clearTimeout(timeoutRef.current)
             }
 
-            timeoutRef.current = setTimeout(() => {
-                setState(newValue)
-            }, delay)
+            timeoutRef.current = setTimeout(
+                () => {
+                    setState(newValue)
+                },
+                timeoutRef.current ? 0 : delay,
+            )
         },
         [delay],
     )

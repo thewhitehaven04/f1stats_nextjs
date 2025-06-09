@@ -84,9 +84,9 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         },
     })
 
-    const handleTabChange = (tab: string) => {
+    const handleTabChange = (newTab: typeof tab) => {
         resetSelection()
-        setTab("averageTelemetry")
+        setTab(newTab)
     }
 
     return (

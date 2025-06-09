@@ -1,6 +1,6 @@
 "use client"
 import { createColumnHelper } from "@tanstack/react-table"
-import { use, useMemo } from "react"
+import { useMemo } from "react"
 import type { LapSelectionData, LapTimingData } from "@/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
@@ -11,9 +11,6 @@ import { Laptime } from "@/components/Laptime"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { TooltipButton } from "./components/TooltipButton"
-import { useLapSelection } from "./hooks/useLapSelection"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]

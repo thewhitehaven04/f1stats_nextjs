@@ -1,5 +1,7 @@
 import sys
+from turtle import speed
 from typing import Sequence, Tuple
+from fastapi import logger
 from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select
@@ -18,6 +20,10 @@ from api._services.telemetry.models import (
     LapTelemetryDto,
     AverageTelemetryPlotData,
 )
+
+
+def convert_from_kph_to_m_s(kph: float) -> float:
+    return kph * 1000 / 3600
 
 
 class TelemetryResolver:
@@ -110,7 +116,7 @@ class TelemetryResolver:
 
     def get_average_telemetry(
         self, filter_: SessionQueryFilter
-    ) -> Sequence[DriverTelemetryPlotData]:
+    ) -> Sequence[AverageTelemetryPlotData]:
         driver_lap_id_entries = [
             [
                 query.driver,
@@ -182,8 +188,8 @@ class TelemetryResolver:
                             DriverTelemetryDelta(
                                 reference=reference_driver,
                                 delta=self._get_delta(
-                                    avg_telemetry["raw_telemetry"],
-                                    reference_telemetry,
+                                    reference_telemetry=reference_telemetry,
+                                    target_telemetry=avg_telemetry["raw_telemetry"],
                                     is_aligned=True,
                                 ).to_dict(orient="records"),
                             )
@@ -199,7 +205,7 @@ class TelemetryResolver:
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
         laps = self.db_connection.execute(
-            select(Laps.id, Laps.lap_number, Laps.driver_id)
+            select(Laps.id, Laps.lap_number, Laps.driver_id, Laps.laptime)
             .join(
                 SessionResults,
                 and_(
@@ -214,13 +220,15 @@ class TelemetryResolver:
                         and_(
                             Laps.driver_id == query.driver,
                             Laps.lap_number.in_(query.lap_filter or []),
+                            Laps.event_name == self.event,
+                            Laps.session_type_id == self.session_identifier.value,
+                            Laps.season_year == self.season,
                         )
                         for query in query_filter.queries
                     ]
                 )
             )
             .order_by(Laps.laptime.asc())
-            .limit(1)
         )
         return laps.fetchone()
 
@@ -232,8 +240,11 @@ class TelemetryResolver:
                     TelemetryMeasurements.lap_id == ref_lap.id
                 ),
             )
-            telemetry_data["relative_distance"] = (
-                telemetry_data["distance"] / telemetry_data["distance"].tail(1).iloc[0]
+            time_offset = ref_lap.laptime - telemetry_data["laptime_at"].iat[-1]
+            speed = telemetry_data["speed"].iat[-1]
+            telemetry_data["relative_distance"] = telemetry_data["distance"] / (
+                telemetry_data["distance"].iat[-1]
+                + time_offset * (convert_from_kph_to_m_s(speed))
             )
             return telemetry_data, ref_lap
         raise ValueError("No reference lap found")
@@ -251,7 +262,7 @@ class TelemetryResolver:
     def _get_telemetry(self, lap_number: int, driver: str):
         telemetry_dataframe = read_sql(
             con=self.db_connection,
-            sql=select(TelemetryMeasurements)
+            sql=select(TelemetryMeasurements, Laps.laptime)
             .join(
                 Laps,
                 and_(Laps.id == TelemetryMeasurements.lap_id),
@@ -275,9 +286,15 @@ class TelemetryResolver:
                 )
             ),
         )
-        telemetry_dataframe["relative_distance"] = (
-            telemetry_dataframe["distance"]
-            / telemetry_dataframe.tail(1)["distance"].iloc[0]
+        time_offset = (
+            telemetry_dataframe["laptime"].iat[-1]
+            - telemetry_dataframe["laptime_at"].iat[-1]
+        )
+
+        speed = telemetry_dataframe["speed"].iat[-1]
+        telemetry_dataframe["relative_distance"] = telemetry_dataframe["distance"] / (
+            telemetry_dataframe["distance"].iat[-1]
+            + time_offset * (convert_from_kph_to_m_s(speed))
         )
         return telemetry_dataframe
 
@@ -301,18 +318,22 @@ class TelemetryResolver:
             )
             delta_df["distance"] = target_telemetry["distance"]
             delta_df["relative_distance"] = (
-                target_telemetry["distance"]
-                / target_telemetry["distance"].tail(1).iloc[0]
+                target_telemetry["distance"] / target_telemetry["distance"].iat[-1]
             )
 
         else:
-            lattice_x = reference_telemetry["relative_distance"].to_numpy()
-            time_fp = target_telemetry["laptime_at"].to_numpy()
-            relative_distance_xp = target_telemetry["relative_distance"].to_numpy()
-            time_x = interp(lattice_x, relative_distance_xp, time_fp)
-            delta_df["gap"] = reference_telemetry["laptime_at"] - time_x
-            delta_df["relative_distance"] = lattice_x
+            x = reference_telemetry["relative_distance"].to_numpy()
+
+            xp = target_telemetry["relative_distance"].to_numpy()
+            fp = target_telemetry["laptime_at"].to_numpy()
+
+            time_at_x = interp(x, xp, fp)
+
+            delta_df["gap"] = time_at_x - reference_telemetry["laptime_at"]
             delta_df["distance"] = reference_telemetry["distance"]
+            delta_df["relative_distance"] = (
+                reference_telemetry["distance"] / reference_telemetry["distance"].iat[-1]
+            )
 
         return delta_df
 
@@ -337,7 +358,9 @@ class TelemetryResolver:
                     delta = DriverTelemetryDelta(
                         reference=reference_lap.driver_id,
                         delta=self._get_delta(
-                            telemetry_dataframe, reference_telemetry, is_aligned=False
+                            reference_telemetry=reference_telemetry,
+                            target_telemetry=telemetry_dataframe,
+                            is_aligned=False,
                         ).to_dict(orient="records"),
                     )
                 lap_distance = int(telemetry_dataframe["distance"].tail(1).iloc[0])

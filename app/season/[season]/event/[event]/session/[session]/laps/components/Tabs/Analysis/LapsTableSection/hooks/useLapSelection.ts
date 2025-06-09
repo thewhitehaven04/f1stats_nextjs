@@ -2,7 +2,7 @@ import { useDebouncedState } from "@/core/hooks/useDebouncedState"
 import { useCallback } from "react"
 
 export const useLapSelection = () => {
-    const [selection, setSelection] = useDebouncedState<[string, number][]>([], 500)
+    const [selection, setSelection] = useDebouncedState<[string, number][]>([], 750)
 
     const updateSelection = useCallback(
         ({ driver, lap, state }: { driver: string; lap: number; state: boolean }) => {
