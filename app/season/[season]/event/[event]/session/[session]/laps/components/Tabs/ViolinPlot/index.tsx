@@ -26,7 +26,7 @@ export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
             labels: ["Laptimes"],
             datasets: laps.driver_lap_data.map((driver) => ({
                 label: driver.driver,
-                data: [driver.laps.map((driverData) => driverData.laptime).filter(Boolean)],
+                data: [driver.laps.map((driverData) => driverData.laptime).filter(laptime => laptime !== null)],
                 tyreCompound: driver.laps.map((driverData) => driverData.compound_id),
                 borderColor:
                     driver.style === "alternative"
