@@ -209,7 +209,7 @@ class LapDataResolver:
             .where(
                 and_(
                     Laps.season_year == self.season,
-                    Laps.session_type_id == self.session_identifier.value,
+                    Laps.session_type_id == self.session_identifier,
                     Laps.event_name == self.event,
                     or_(
                         *[

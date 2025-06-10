@@ -32,7 +32,7 @@ class TeamPlotStyleResolver:
             .where(
                 SessionResults.season_year == self.season,
                 SessionResults.event_name == self.event,
-                SessionResults.session_type_id == self.session_identifier.value,
+                SessionResults.session_type_id == self.session_identifier,
             )
             .join(
                 EventSessions,

@@ -124,7 +124,7 @@ class TelemetryResolver:
                         select(Laps.id).where(
                             and_(
                                 Laps.season_year == self.season,
-                                Laps.session_type_id == self.session_identifier.value,
+                                Laps.session_type_id == self.session_identifier,
                                 Laps.event_name == self.event,
                                 Laps.driver_id == query.driver,
                                 Laps.lap_number.in_(query.lap_filter or []),
@@ -219,7 +219,7 @@ class TelemetryResolver:
                             Laps.driver_id == query.driver,
                             Laps.lap_number.in_(query.lap_filter or []),
                             Laps.event_name == self.event,
-                            Laps.session_type_id == self.session_identifier.value,
+                            Laps.session_type_id == self.session_identifier,
                             Laps.season_year == self.season,
                         )
                         for query in query_filter.queries
@@ -277,7 +277,7 @@ class TelemetryResolver:
             .where(
                 and_(
                     SessionResults.season_year == self.season,
-                    SessionResults.session_type_id == self.session_identifier.value,
+                    SessionResults.session_type_id == self.session_identifier,
                     SessionResults.event_name == self.event,
                     Laps.lap_number == lap_number,
                     Laps.driver_id == driver,

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import (
     get_connection,
 )
@@ -26,7 +26,7 @@ app.add_middleware(
 async def get_lap_telemetries(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
 ) -> list[DriverTelemetryPlotData]:
     """Retrieve telemetry data for a specific Formula 1 session.
@@ -45,5 +45,5 @@ async def get_lap_telemetries(
         db_connection=get_connection(),
         season=year,
         event=event,
-        session_identifier=session,
+        session_identifier=unquoute(session),
     ).get_telemetry(query_filter=body)

@@ -1,5 +1,6 @@
-from fastapi import FastAPI, logger
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from urllib.parse import unquote 
+from fastapi import FastAPI 
+from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import get_connection 
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
@@ -24,7 +25,7 @@ app.add_middleware(
 async def get_session_laptimes_filtered(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
 ):
     """Retrieve filtered lap times for a specific Formula 1 session.
@@ -38,13 +39,11 @@ async def get_session_laptimes_filtered(
     Returns:
         Filtered lap times for the specified session.
     """
-    logger.logger.error(msg=f"Received request for session: {session}, {event}, {year}")
-    logger.logger.error(msg=f"Body: {body.model_dump_json()}")
     return LapDataResolver(
         db_connection=get_connection(),
         season=year,
-        event=event,
-        session_identifier=session,
+        event=unquote(event),
+        session_identifier=unquote(session),
     ).get_laptime_comparison(
         filter_=body,
     )

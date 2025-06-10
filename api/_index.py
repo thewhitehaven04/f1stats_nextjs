@@ -1,15 +1,19 @@
-# this file is used for local debugging only and is a collection of all the endpoints 
+# this file is used for local debugging only and is a collection of all the endpoints
 # distributed in python serverless functions
 from typing import Annotated
+from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import get_connection
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
-from api._services.telemetry.models import AverageTelemetryPlotData, DriverTelemetryPlotData
+from api._services.telemetry.models import (
+    AverageTelemetryPlotData,
+    DriverTelemetryPlotData,
+)
 
 
 app = FastAPI()
@@ -28,7 +32,7 @@ app.add_middleware(
 async def get_session_laptimes_filtered(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
@@ -43,7 +47,6 @@ async def get_session_laptimes_filtered(
     Returns:
         Filtered lap times for the specified session.
     """
-
     return LapDataResolver(
         db_connection=connection,
         season=year,
@@ -61,7 +64,7 @@ async def get_session_laptimes_filtered(
 async def get_lap_telemetries(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ) -> list[DriverTelemetryPlotData]:
@@ -81,7 +84,7 @@ async def get_lap_telemetries(
         db_connection=connection,
         season=year,
         event=event,
-        session_identifier=session,
+        session_identifier=unquote(session),
     ).get_telemetry(query_filter=body)
 
 
@@ -92,7 +95,7 @@ async def get_lap_telemetries(
 async def get_averaged_telemetry(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
@@ -109,7 +112,10 @@ async def get_averaged_telemetry(
         Averaged telemetry measurements for the specified session based on the provided filter.
     """
     return TelemetryResolver(
-        db_connection=connection, season=year, event=event, session_identifier=session
+        db_connection=connection,
+        season=year,
+        event=event,
+        session_identifier=unquote(session),
     ).get_average_telemetry(
         filter_=body,
     )

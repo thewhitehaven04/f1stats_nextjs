@@ -1,6 +1,7 @@
 from typing import Sequence
+from urllib.parse import unquote
 from fastapi import FastAPI
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import (
     get_connection,
 )
@@ -26,7 +27,7 @@ app.add_middleware(
 async def get_averaged_telemetry(
     year: str,
     event: str,
-    session: SessionIdentifier,
+    session: str,
     body: SessionQueryFilter,
 ):
     """Retrieve averaged telemetry data for a specific Formula 1 session.
@@ -45,7 +46,7 @@ async def get_averaged_telemetry(
         db_connection=get_connection(),
         season=year,
         event=event,
-        session_identifier=session,
+        session_identifier=unquote(session),
     ).get_average_telemetry(
         filter_=body,
     )
