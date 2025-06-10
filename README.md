@@ -20,3 +20,7 @@ If you have any suggestions, questions or you've found an issue, feel free to op
 
 ## Disclaimer
 This site is a passion project and is not affiliated with, endorsed by, or sponsored by Formula 1. All trademarks and copyrights belong to their respective owners.
+
+## Special thanks
+- [FastF1](https://docs.fastf1.dev/index.html) for providing the source data;
+- [Tomo Bacinger](https://svemir.co/f1/) for the circuit data.
