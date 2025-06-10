@@ -1,5 +1,7 @@
+from typing import Annotated
 from urllib.parse import unquote 
-from fastapi import FastAPI 
+from fastapi import Depends, FastAPI
+from sqlalchemy import Connection 
 from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import get_connection 
 from api._services.laps.LapDataResolver import LapDataResolver
@@ -27,6 +29,7 @@ async def get_session_laptimes_filtered(
     event: str,
     session: str,
     body: SessionQueryFilter,
+    connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve filtered lap times for a specific Formula 1 session.
 
@@ -40,7 +43,7 @@ async def get_session_laptimes_filtered(
         Filtered lap times for the specified session.
     """
     return LapDataResolver(
-        db_connection=get_connection(),
+        db_connection=connection,
         season=year,
         event=unquote(event),
         session_identifier=unquote(session),

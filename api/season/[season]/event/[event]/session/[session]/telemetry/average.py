@@ -1,6 +1,7 @@
-from typing import Sequence
+from typing import Annotated, Sequence
 from urllib.parse import unquote
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from sqlalchemy import Connection
 from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import (
     get_connection,
@@ -29,6 +30,7 @@ async def get_averaged_telemetry(
     event: str,
     session: str,
     body: SessionQueryFilter,
+    connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve averaged telemetry data for a specific Formula 1 session.
 
@@ -43,7 +45,7 @@ async def get_averaged_telemetry(
         Averaged telemetry measurements for the specified session based on the provided filter.
     """
     return TelemetryResolver(
-        db_connection=get_connection(),
+        db_connection=connection,
         season=year,
         event=event,
         session_identifier=unquote(session),
