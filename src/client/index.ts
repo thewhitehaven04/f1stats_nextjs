@@ -1,15 +1,10 @@
 import { createClient } from "@hey-api/client-fetch"
 
-const url =
-    process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-        ? process.env.NEXT_PUBLIC_URL
-        : process.env.NEXT_PUBLIC_BASE_URL
-          ? `https://${process.env.NEXT_PUBLIC_BASE_URL}/`
-          : "http://localhost:3000/"
-
 export const ApiClient = createClient({
-    baseUrl: url,
+    baseUrl:
+        process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+            ? `https://${process.env.NEXT_PUBLIC_URL}`
+            : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
+              ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+              : `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`,
 })
-
-console.log('Current env: ', process.env.NEXT_PUBLIC_VERCEL_ENV)
-console.log('Current base url: ', url)

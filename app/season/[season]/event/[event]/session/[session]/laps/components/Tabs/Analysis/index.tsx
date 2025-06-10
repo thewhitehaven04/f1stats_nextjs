@@ -99,9 +99,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                     </TabsTrigger>
                     <TabsTrigger
                         value="averageTelemetry"
-                        onClick={() => {
-                            handleTabChange("averageTelemetry")
-                        }}
+                        onClick={() => handleTabChange("averageTelemetry")}
                     >
                         Average telemetry
                     </TabsTrigger>
