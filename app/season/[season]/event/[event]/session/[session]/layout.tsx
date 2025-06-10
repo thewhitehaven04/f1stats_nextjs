@@ -4,6 +4,7 @@ import dbClient from "@/client/db"
 import type { SessionIdentifier } from "@/client/generated"
 import type { ISessionPathnameParams } from "./types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Suspense } from "react"
 const fetchSessionDataWithWeather = async (
     session: SessionIdentifier,
     season: number,
@@ -56,7 +57,7 @@ export default async function Layout({
     )
     return (
         <>
-            <Card className='mb-4'>
+            <Card className="mb-4">
                 <CardHeader>
                     <CardTitle>
                         {sessionData.eventName} - {sessionData.sessionType}

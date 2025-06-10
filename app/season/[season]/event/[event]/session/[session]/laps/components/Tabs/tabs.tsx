@@ -36,19 +36,17 @@ export const LapsTabs = () => {
 
     const { data: lapSelectionData } = useSuspenseQuery({
         queryKey: ["laps", year, event, session],
-        queryFn: async () =>
-            (
-                await getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost({
-                    client: ApiClient,
-                    path: {
-                        event,
-                        session: session as SessionIdentifier,
-                        year,
-                    },
-                    body: { queries },
-                    throwOnError: true,
-                })
-            ).data,
+        queryFn: () =>
+            getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost({
+                client: ApiClient,
+                path: {
+                    event,
+                    session: session as SessionIdentifier,
+                    year,
+                },
+                body: { queries },
+                throwOnError: true,
+            }).then((response) => response.data),
     })
 
     return (

@@ -1,7 +1,5 @@
 import sys
-from turtle import speed
 from typing import Sequence, Tuple
-from fastapi import logger
 from numpy import concatenate, interp, linspace, trunc
 from pandas import DataFrame, Series, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select

@@ -1,23 +1,12 @@
-from contextlib import asynccontextmanager
-from typing import Annotated
-from fastapi import Depends, FastAPI
-from sqlalchemy import Connection
+from fastapi import FastAPI, logger
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
-from api._repository.engine import engine, get_connection, set_connection
+from api._repository.engine import get_connection 
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
 from fastapi.middleware.cors import CORSMiddleware
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    with engine.connect() as pg_con:
-        set_connection(pg_con)
-        yield
-        pg_con.close()
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 
 app.add_middleware(
@@ -37,7 +26,6 @@ async def get_session_laptimes_filtered(
     event: str,
     session: SessionIdentifier,
     body: SessionQueryFilter,
-    connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve filtered lap times for a specific Formula 1 session.
 
@@ -50,9 +38,10 @@ async def get_session_laptimes_filtered(
     Returns:
         Filtered lap times for the specified session.
     """
-
+    logger.logger.error(msg=f"Received request for session: {session}, {event}, {year}")
+    logger.logger.error(msg=f"Body: {body.model_dump_json()}")
     return LapDataResolver(
-        db_connection=connection,
+        db_connection=get_connection(),
         season=year,
         event=event,
         session_identifier=session,

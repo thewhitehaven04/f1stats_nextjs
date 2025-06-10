@@ -1,27 +1,15 @@
-from contextlib import asynccontextmanager
-from typing import Annotated, Sequence
-from fastapi import Depends, FastAPI
-from sqlalchemy import Connection
+from typing import Sequence
+from fastapi import FastAPI
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.engine import (
-    engine,
     get_connection,
-    set_connection,
 )
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import AverageTelemetryPlotData
 from fastapi.middleware.cors import CORSMiddleware
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    with engine.connect() as pg_con:
-        set_connection(pg_con)
-        yield
-        pg_con.close()
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +28,6 @@ async def get_averaged_telemetry(
     event: str,
     session: SessionIdentifier,
     body: SessionQueryFilter,
-    connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve averaged telemetry data for a specific Formula 1 session.
 
@@ -55,7 +42,10 @@ async def get_averaged_telemetry(
         Averaged telemetry measurements for the specified session based on the provided filter.
     """
     return TelemetryResolver(
-        db_connection=connection, season=year, event=event, session_identifier=session
+        db_connection=get_connection(),
+        season=year,
+        event=event,
+        session_identifier=session,
     ).get_average_telemetry(
         filter_=body,
     )
