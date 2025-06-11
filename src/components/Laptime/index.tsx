@@ -12,10 +12,10 @@ export function Laptime({ className, isPersonalBest, isSessionBest, value, ...re
     return (
         <div
             className={clsx(className, "px-1", "overflow-hidden", {
-                "bg-personal-best": isPersonalBest && !isSessionBest,
-                "bg-best": isSessionBest,
-                "bg-non-personal-best": isPersonalBest === false,
-                "text-white": !!isSessionBest,
+                "text-personal-best font-medium": isPersonalBest && !isSessionBest,
+                "text-best font-medium": isSessionBest,
+                "text-non-personal-best font-medium": isPersonalBest === false,
+                "text-black font-medium": !!isSessionBest,
             })}
             {...rest}
         >
