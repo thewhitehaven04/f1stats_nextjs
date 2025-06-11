@@ -11,9 +11,10 @@ import {
 import dynamic from "next/dynamic"
 import { ChartLoading } from "./Analysis/ChartLoading"
 import { useSession } from "../../../hooks/useSession"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { ApiClient } from "@/client"
 import { Suspense } from "react"
+import LoadingLaps from "../../loading"
 
 const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string) => {
     const search = new URLSearchParams(readOnlySearch)
@@ -101,9 +102,7 @@ export const LapsTabs = () => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="analysis">
-                    <Suspense fallback={<div>Loading</div>}>
-                        <AnalysisTab laps={data} />
-                    </Suspense>
+                    <AnalysisTab laps={data} />
                 </TabsContent>
                 <TabsContent value="lineplot">
                     <LinePlotTab laps={data} />

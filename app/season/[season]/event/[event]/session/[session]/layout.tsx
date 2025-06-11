@@ -4,6 +4,7 @@ import type { SessionIdentifier } from "@/client/generated"
 import dbClient from "@/client/db"
 import type { ISessionPathnameParams } from "./types"
 import { SummaryItem } from "./SummaryItem"
+import { Suspense } from "react"
 
 const fetchSessionDataWithWeather = async (
     session: SessionIdentifier,
@@ -88,7 +89,7 @@ export default async function SummaryLayout({
                     </CardContent>
                 </Card>
             </section>
-            {children}
+            <Suspense fallback={<div>Loading</div>}>{children}</Suspense>
         </>
     )
 }
