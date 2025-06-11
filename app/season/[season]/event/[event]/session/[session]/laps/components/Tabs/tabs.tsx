@@ -1,18 +1,19 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import { usePathname, useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
+import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
 import { AnalysisTab } from "./Analysis"
-import { useSession } from "../../../hooks/useSession"
-import { useSuspenseQuery } from "@tanstack/react-query"
 import {
     getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
+    type LapSelectionData,
     type SessionIdentifier,
 } from "@/client/generated"
-import { ApiClient } from "@/client"
-import { SectionLoadingSpinner } from "@/components/SectionLoadingSpinner"
-import { Suspense } from "react"
 import dynamic from "next/dynamic"
+import { ChartLoading } from "./Analysis/ChartLoading"
+import { useSession } from "../../../hooks/useSession"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { ApiClient } from "@/client"
+import { Suspense } from "react"
 
 const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string) => {
     const search = new URLSearchParams(readOnlySearch)
@@ -20,9 +21,18 @@ const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string)
     return search.toString()
 }
 
-const LinePlotTab = dynamic(() => import("./LapsLinePlot/LinePlotTab"))
-const BoxPlotTab = dynamic(() => import("./BoxPlot/index"))
-const ViolinPlotTab = dynamic(() => import("./ViolinPlot/index"))
+const LinePlotTab = dynamic(() => import("./LapsLinePlot/LinePlotTab"), {
+    loading: () => <ChartLoading />,
+    ssr: false,
+})
+const BoxPlotTab = dynamic(() => import("./BoxPlot/index"), {
+    loading: () => <ChartLoading />,
+    ssr: false,
+})
+const ViolinPlotTab = dynamic(() => import("./ViolinPlot/index"), {
+    loading: () => <ChartLoading />,
+    ssr: false,
+})
 
 export const LapsTabs = () => {
     const search = useSearchParams()
@@ -34,7 +44,7 @@ export const LapsTabs = () => {
         lap_filter: null,
     }))
 
-    const { data: lapSelectionData } = useSuspenseQuery({
+    const { data } = useSuspenseQuery({
         queryKey: ["laps", year, event, session],
         queryFn: () =>
             getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost({
@@ -50,65 +60,61 @@ export const LapsTabs = () => {
     })
 
     return (
-        <Tabs value={search.get("tab") ?? "analysis"}>
-            <TabsList className="gap-4 w-full">
-                <TabsTrigger value="analysis" asChild>
-                    <Link
-                        href={{
-                            search: getTabQueryString(search, "analysis"),
-                        }}
-                    >
-                        Lap analysis
-                    </Link>
-                </TabsTrigger>
-                <TabsTrigger value="lineplot">
-                    <Link
-                        href={{
-                            search: getTabQueryString(search, "lineplot"),
-                        }}
-                    >
-                        Line plot
-                    </Link>
-                </TabsTrigger>
-                <TabsTrigger value="boxplot">
-                    <Link
-                        href={{
-                            search: getTabQueryString(search, "boxplot"),
-                        }}
-                    >
-                        Box plot
-                    </Link>
-                </TabsTrigger>
-                <TabsTrigger value="violinplot">
-                    <Link
-                        href={{
-                            search: getTabQueryString(search, "violinplot"),
-                        }}
-                    >
-                        Violin plot
-                    </Link>
-                </TabsTrigger>
-            </TabsList>
-            <TabsContent value="analysis">
-                <Suspense fallback={<SectionLoadingSpinner />}>
-                    <AnalysisTab laps={lapSelectionData} />
-                </Suspense>
-            </TabsContent>
-            <TabsContent value="lineplot">
-                <Suspense fallback={<SectionLoadingSpinner />}>
-                    <LinePlotTab laps={lapSelectionData} />
-                </Suspense>
-            </TabsContent>
-            <TabsContent value="boxplot">
-                <Suspense fallback={<SectionLoadingSpinner />}>
-                    <BoxPlotTab laps={lapSelectionData} />
-                </Suspense>
-            </TabsContent>
-            <TabsContent value="violinplot">
-                <Suspense fallback={<SectionLoadingSpinner />}>
-                    <ViolinPlotTab laps={lapSelectionData} />
-                </Suspense>
-            </TabsContent>
-        </Tabs>
+        <>
+            <Tabs value={search.get("tab") ?? "analysis"}>
+                <TabsList className="gap-4 w-full">
+                    <TabsTrigger value="analysis" asChild>
+                        <Link
+                            href={{
+                                search: getTabQueryString(search, "analysis"),
+                            }}
+                        >
+                            Lap analysis
+                        </Link>
+                    </TabsTrigger>
+                    <TabsTrigger value="lineplot">
+                        <Link
+                            href={{
+                                search: getTabQueryString(search, "lineplot"),
+                            }}
+                        >
+                            Line plot
+                        </Link>
+                    </TabsTrigger>
+                    <TabsTrigger value="boxplot">
+                        <Link
+                            href={{
+                                search: getTabQueryString(search, "boxplot"),
+                            }}
+                        >
+                            Box plot
+                        </Link>
+                    </TabsTrigger>
+                    <TabsTrigger value="violinplot">
+                        <Link
+                            href={{
+                                search: getTabQueryString(search, "violinplot"),
+                            }}
+                        >
+                            Violin plot
+                        </Link>
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="analysis">
+                    <Suspense fallback={<div>Loading</div>}>
+                        <AnalysisTab laps={data} />
+                    </Suspense>
+                </TabsContent>
+                <TabsContent value="lineplot">
+                    <LinePlotTab laps={data} />
+                </TabsContent>
+                <TabsContent value="boxplot">
+                    <BoxPlotTab laps={data} />
+                </TabsContent>
+                <TabsContent value="violinplot">
+                    <ViolinPlotTab laps={data} />
+                </TabsContent>
+            </Tabs>
+        </>
     )
 }

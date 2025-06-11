@@ -1,5 +1,5 @@
-import { SectionLoadingSpinner } from "@/components/SectionLoadingSpinner"
+import { SectionLoadingIndicator } from "@/components/SectionLoadingSpinner"
 
 export default function LoadingLayout() {
-    return <SectionLoadingSpinner />
+    return <SectionLoadingIndicator />
 }

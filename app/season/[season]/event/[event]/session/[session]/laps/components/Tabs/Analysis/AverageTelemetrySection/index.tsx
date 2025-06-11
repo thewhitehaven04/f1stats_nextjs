@@ -7,7 +7,7 @@ import type { AverageTelemetryPlotData } from "@/client/generated"
 import type { TSpeedDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 
-export const AverageTelemetrySection = (props: {
+export default (props: {
     data: AverageTelemetryPlotData[] | null
     ref: RefObject<HTMLElement | null>
 }) => {
@@ -43,15 +43,17 @@ export const AverageTelemetrySection = (props: {
 
     const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
         () =>
-            averageTelemetry?.map((tel, index) => ({
-                label: `${tel.driver} gap to ${tel.delta?.reference}`,
-                data:
-                    tel.delta?.delta.map((dMeasurement) => ({
-                        x: dMeasurement.distance,
-                        y: dMeasurement.gap,
-                    })) || [],
-                ...presets[index],
-            })).filter((dataset) => dataset.data.length > 0) || [],
+            averageTelemetry
+                ?.map((tel, index) => ({
+                    label: `${tel.driver} gap to ${tel.delta?.reference}`,
+                    data:
+                        tel.delta?.delta.map((dMeasurement) => ({
+                            x: dMeasurement.distance,
+                            y: dMeasurement.gap,
+                        })) || [],
+                    ...presets[index],
+                }))
+                .filter((dataset) => dataset.data.length > 0) || [],
         [averageTelemetry, presets],
     )
 

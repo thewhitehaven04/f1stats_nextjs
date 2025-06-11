@@ -21,7 +21,7 @@ export function LapsTableTelemetryTutorial() {
     }
 
     return !hasCompletedTutorial && isTutorialShown ? (
-        <Card className="fixed bottom-8 right-8 max-w-80 cursor-pointer shadow-md" onClick={handleDismiss}>
+        <Card className="fixed bottom-8 right-8 max-w-80 cursor-pointer shadow-md z-50" onClick={handleDismiss}>
             <CardContent className="shadow-zinc-200">
                 In order to plot telemetry data, select the desired laps from the table and then
                 click on the "View telemetry" button

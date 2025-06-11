@@ -12,7 +12,7 @@ body {
     }
 }
 
-@theme {
+@theme inline {
     --color-non-personal-best: "#F8D30B";
     --color-best: "#AA3CDC";
     --color-personal-best: "#4DD346";
@@ -21,9 +21,6 @@ body {
     --color-soft-tyre: "#e32526";
     --color-wet-tyre: "#0e629e";
     --color-intermediate-tyre: "#148f37";
-}
-
-@theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);

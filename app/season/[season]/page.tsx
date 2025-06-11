@@ -1,8 +1,17 @@
 import dbClient from "@/client/db"
 import { EventSection } from "./components/EventSection"
+import type { Metadata } from "next"
 
 // revalidate calendar data every 30 minutes
 export const revalidate = 1800
+
+export async function generateMetadata({
+    params,
+}: { params: { season: string } }): Promise<Metadata> {
+    return {
+        title: `F1Stats | Season ${params.season}`,
+    }
+}
 
 export async function generateStaticParams() {
     // cache every season other than the current one

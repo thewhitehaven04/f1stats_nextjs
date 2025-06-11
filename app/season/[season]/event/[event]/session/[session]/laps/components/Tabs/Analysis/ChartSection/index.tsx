@@ -15,7 +15,7 @@ export type TSpeedDataset = ChartDataset<
     }[]
 >[]
 
-export function TelemetryChartSection(props: {
+export default function TelemetryChartSection(props: {
     data: DriverTelemetryPlotData[] | null
     ref: RefObject<HTMLElement | null>
 }) {

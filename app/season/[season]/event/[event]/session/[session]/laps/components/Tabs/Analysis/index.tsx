@@ -15,16 +15,17 @@ import { useQuery } from "@tanstack/react-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ApiClient } from "@/client"
 import { useSession } from "../../../../hooks/useSession"
+import { ChartLoading } from "./ChartLoading"
 
-const AverageTelemetrySection = dynamic(
-    async () => (await import("./AverageTelemetrySection/index")).AverageTelemetrySection,
-    { ssr: false },
-)
+const AverageTelemetrySection = dynamic(() => import("./AverageTelemetrySection/index"), {
+    ssr: false,
+    loading: () => <ChartLoading />,
+})
 
-const TelemetryChartSection = dynamic(
-    async () => (await import("./ChartSection/index")).TelemetryChartSection,
-    { ssr: false },
-)
+const TelemetryChartSection = dynamic(() => import("./ChartSection/index"), {
+    ssr: false,
+    loading: () => <ChartLoading />,
+})
 
 export const getQueries = (selection: [string, number][]) =>
     selection.reduce(
