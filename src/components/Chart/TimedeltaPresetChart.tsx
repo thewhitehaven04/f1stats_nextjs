@@ -76,9 +76,9 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
         <div className="relative">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
-                <h1 className="absolute z-10 h-full w-full text-center text-lg font-bold top-[50%]">
-                    No laps selected
-                </h1>
+                <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">
+                    <h1 className="text-center text-lg font-bold">No laps selected</h1>
+                </div>
             )}
             <Chart {...merge(baseChartProps, props)} />
         </div>
