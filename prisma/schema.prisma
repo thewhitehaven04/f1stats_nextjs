@@ -65,6 +65,14 @@ model event_sessions {
   @@id([event_name, season_year, session_type_id])
 }
 
+model circuits {
+  id      String @id @db.VarChar(8)
+  name    String
+  geojson Json 
+
+  events  events[]
+}
+
 model events {
   event_name          String
   event_official_name String
@@ -76,6 +84,8 @@ model events {
   event_formats       event_formats    @relation(fields: [event_format_name], references: [event_format_name], onUpdate: NoAction, map: "fk_event_format_name")
   seasons             seasons          @relation(fields: [season_year], references: [season_year], onUpdate: NoAction, map: "fk_season_year")
   laps                laps[]
+  circuit_id          String           @db.VarChar(8)
+  circuits            circuits?        @relation(fields: [circuit_id], references: [id], onUpdate: NoAction, map: "fk_circuit_id")
 
   @@id([event_name, season_year])
 }
