@@ -118,7 +118,6 @@ model laps {
 
   @@unique([session_type_id, season_year, event_name, driver_id, lap_number], map: "session_type_id_event_name_season_year_driver_id_lap_number_uni")
 }
-
 model practice_session_results {
   id              Int             @id @default(autoincrement())
   laptime         Float?          @db.Real
