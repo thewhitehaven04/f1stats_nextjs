@@ -9,7 +9,7 @@
         "lint": "next lint",
         "fetch-api": "node ./src/client/apiGenerator/saveSpec.mjs",
         "update-api": "openapi-ts",
-        "build": "pnpx prisma db pull --schema ./prisma/prisma.schema && pnpx prisma generate --schema ./prisma/prisma.schema && next build"
+        "build": "pnpx prisma db pull --schema ./prisma/schema.prisma && pnpx prisma generate --schema ./prisma/schema.prisma && next build"
     },
     "dependencies": {
         "@prisma/client": "6.6.0",
