@@ -4,7 +4,6 @@ import { useCallback } from "react"
 export const useLapSelection = () => {
     const [selection, setSelection] = useDebouncedState<[string, number][]>([], 750)
 
-    console.log(selection)
     const updateSelection = useCallback(
         ({ driver, lap, state }: { driver: string; lap: number; state: boolean }) => {
             if (state) {

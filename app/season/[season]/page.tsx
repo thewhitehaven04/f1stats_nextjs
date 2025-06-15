@@ -9,7 +9,7 @@ export async function generateMetadata({
     params,
 }: { params: { season: string } }): Promise<Metadata> {
     return {
-        title: `F1Stats | Season ${params.season}`,
+        title: `F1Stats | Season ${(await params).season}`,
     }
 }
 

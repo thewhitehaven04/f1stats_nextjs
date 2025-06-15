@@ -5,16 +5,13 @@ import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
 import { AnalysisTab } from "./Analysis"
 import {
     getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
-    type LapSelectionData,
     type SessionIdentifier,
 } from "@/client/generated"
 import dynamic from "next/dynamic"
 import { ChartLoading } from "./Analysis/ChartLoading"
 import { useSession } from "../../../hooks/useSession"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { ApiClient } from "@/client"
-import { Suspense } from "react"
-import LoadingLaps from "../../loading"
 
 const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string) => {
     const search = new URLSearchParams(readOnlySearch)
