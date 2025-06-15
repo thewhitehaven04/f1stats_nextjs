@@ -1,4 +1,5 @@
 from typing import Annotated
+from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
 from api._core.models.queries import SessionQueryFilter
@@ -48,5 +49,5 @@ async def get_lap_telemetries(
         db_connection=connection,
         season=year,
         event=event,
-        session_identifier=unquoute(session),
+        session_identifier=unquote(session),
     ).get_telemetry(query_filter=body)
