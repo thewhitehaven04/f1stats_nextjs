@@ -10,6 +10,7 @@ import {
     Title,
     Tooltip,
     Chart,
+    ScatterController,
 } from "chart.js"
 import zoom from "chartjs-plugin-zoom"
 
@@ -19,6 +20,7 @@ Chart.register([
     LinearScale,
     CategoryScale,
     PointElement,
+    ScatterController,
     Tooltip,
     Legend,
     Title,
