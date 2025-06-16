@@ -48,6 +48,6 @@ async def get_lap_telemetries(
     return TelemetryResolver(
         db_connection=connection,
         season=year,
-        event=event,
+        event=unquote(event),
         session_identifier=unquote(session),
     ).get_telemetry(query_filter=body)

@@ -47,7 +47,7 @@ async def get_averaged_telemetry(
     return TelemetryResolver(
         db_connection=connection,
         season=year,
-        event=event,
+        event=unquote(event),
         session_identifier=unquote(session),
     ).get_average_telemetry(
         filter_=body,
