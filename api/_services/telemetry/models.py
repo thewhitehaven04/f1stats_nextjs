@@ -27,6 +27,7 @@ class DeltaInstance(BaseModel):
     relative_distance: float
     distance: float
     gap: float
+    gap_dt: float
 
 
 class FastestDelta(BaseModel):

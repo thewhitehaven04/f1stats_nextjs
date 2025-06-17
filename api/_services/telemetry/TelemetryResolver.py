@@ -1,10 +1,10 @@
 import sys
-from typing import Sequence, Tuple
+from typing import Sequence
 from numpy import interp, linspace, ndarray, trunc
 from pandas import DataFrame, read_sql, to_timedelta
-from sqlalchemy import Connection, Row, and_, or_, select
+from sqlalchemy import Connection, and_, or_, select
 
-from api._core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
+from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.repository import (
     Laps,
     SessionResults,
@@ -85,10 +85,7 @@ class TelemetryResolver:
         df["brake"] = interp(lattice, rel_dist_xp, telemetry["brake"].to_numpy())
         df["gear"] = interp(lattice, rel_dist_xp, telemetry["gear"].to_numpy())
         df["laptime_at"] = interp(
-            lattice,
-            rel_dist_xp,
-            telemetry["laptime_at"].to_numpy(),
-            left=0
+            lattice, rel_dist_xp, telemetry["laptime_at"].to_numpy(), left=0
         )
         df["distance"] = interp(
             lattice, rel_dist_xp, telemetry["distance"].to_numpy(), left=0
@@ -284,10 +281,83 @@ class TelemetryResolver:
     ) -> LapTelemetriesResponseDto:
         arr: Sequence[DriverTelemetryPlotData] = []
         ref_telemetry, ref_lap = self._get_reference_data(query_filter)
-        for query in query_filter.queries:
-            arr.extend(self.get_driver_telemetries(query, ref_lap, ref_telemetry))
 
-        deltas: Sequence[FastestDelta] = []
+        lattice = linspace(0, 1, 360)
+
+        deltas_collection = []
+        for query in query_filter.queries:
+            plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
+            if isinstance(query.lap_filter, list):
+                for lap in query.lap_filter:
+                    telemetry_dataframe = self._get_telemetry(lap, query.driver)
+                    interpolated_reference = self._interpolate_telemetry(
+                        telemetry=ref_telemetry,
+                        lattice=lattice,
+                        ref_laptime=ref_lap.laptime,
+                    )
+                    interpolated_target = self._interpolate_telemetry(
+                        telemetry=telemetry_dataframe,
+                        lattice=lattice,
+                        ref_laptime=self._get_laptime(
+                            lap_number=lap, driver=query.driver
+                        ),
+                    )
+
+                    telemetry_delta = None
+                    if lap != ref_lap.lap_number or query.driver != ref_lap.driver_id:
+                        delta = self._get_delta(
+                            reference_telemetry=interpolated_reference,
+                            target_telemetry=interpolated_target,
+                            is_aligned=True,
+                        )
+                        deltas_collection.append(
+                            {"driver": query.driver, "delta": delta}
+                        )
+                        telemetry_delta = DriverTelemetryDelta(
+                            reference=ref_lap.driver_id,
+                            delta=delta.to_dict(orient="records"),
+                        )
+                    lap_distance = int(telemetry_dataframe["distance"].iat[-1])
+                    arr.append(
+                        DriverTelemetryPlotData(
+                            driver=query.driver,
+                            team=TeamPlotStyleDto(
+                                name=plot_style_data.team.name,
+                                color=plot_style_data.color,
+                            ),
+                            style=plot_style_data.style,
+                            lap=LapTelemetryDto(
+                                id=telemetry_dataframe.iloc[0].lap_id,
+                                lap_number=lap,
+                                telemetry=telemetry_dataframe.to_dict(orient="records"),
+                                lap_distance=lap_distance,
+                            ),
+                            delta=telemetry_delta,
+                        )
+                    )
+            else:
+                raise ValueError("No filter specified")
+
+        deltas = []
+        for i, row in enumerate(
+            zip(*map(lambda x: x["delta"]["gap_dt"].values, deltas_collection))
+        ):
+            if all([x > 0 for x in row]):
+                deltas.append(
+                    FastestDelta(
+                        driver=ref_lap.driver_id,
+                        relative_distance=lattice[i],
+                    )
+                )
+            else:
+                index = row.index(min(row))
+                deltas.append(
+                    FastestDelta(
+                        driver=deltas_collection[index]["driver"],
+                        relative_distance=lattice[i],
+                    )
+                )
+
         return LapTelemetriesResponseDto(telemetries=arr, delta=deltas)
 
     def _get_telemetry(self, lap_number: int, driver: str):
@@ -377,6 +447,8 @@ class TelemetryResolver:
             delta_df["relative_distance"] = (
                 target_telemetry["distance"] / target_telemetry["distance"].iat[-1]
             )
+            delta_df["gap_dt"] = delta_df["gap"].diff()
+            delta_df['gap_dt'].iloc[0] = 0
 
         else:
             x = reference_telemetry["relative_distance"].to_numpy()
@@ -392,66 +464,7 @@ class TelemetryResolver:
                 reference_telemetry["distance"]
                 / reference_telemetry["distance"].iat[-1]
             )
+            delta_df["gap_dt"] = delta_df["gap"].diff()
+            delta_df['gap_dt'].iloc[0] = 0
 
         return delta_df
-
-    def get_driver_telemetries(
-        self,
-        query: SessionQuery,
-        reference_lap: Row[Tuple[int, int, str]],
-        reference_telemetry: DataFrame,
-    ) -> list[DriverTelemetryPlotData]:
-        telemetries: list[DriverTelemetryPlotData] = []
-
-        plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
-
-        lattice = linspace(0, 1, 360)
-        if isinstance(query.lap_filter, list):
-            for lap in query.lap_filter:
-                telemetry_dataframe = self._get_telemetry(lap, query.driver)
-                interpolated_reference = self._interpolate_telemetry(
-                    telemetry=reference_telemetry,
-                    lattice=lattice,
-                    ref_laptime=reference_lap[3],
-                )
-                interpolated_target = self._interpolate_telemetry(
-                    telemetry=telemetry_dataframe,
-                    lattice=lattice,
-                    ref_laptime=self._get_laptime(lap_number=lap, driver=query.driver),
-                )
-
-                telemetry_delta = None
-                if (
-                    lap != reference_lap.lap_number
-                    or query.driver != reference_lap.driver_id
-                ):
-                    telemetry_delta = DriverTelemetryDelta(
-                        reference=reference_lap.driver_id,
-                        delta=self._get_delta(
-                            reference_telemetry=interpolated_reference,
-                            target_telemetry=interpolated_target,
-                            is_aligned=True,
-                        ).to_dict(orient="records"),
-                    )
-                lap_distance = int(telemetry_dataframe["distance"].iat[-1])
-                telemetries.append(
-                    DriverTelemetryPlotData(
-                        driver=query.driver,
-                        team=TeamPlotStyleDto(
-                            name=plot_style_data.team.name,
-                            color=plot_style_data.color,
-                        ),
-                        style=plot_style_data.style,
-                        lap=LapTelemetryDto(
-                            id=telemetry_dataframe.iloc[0].lap_id,
-                            lap_number=lap,
-                            telemetry=telemetry_dataframe.to_dict(orient="records"),
-                            lap_distance=lap_distance,
-                        ),
-                        delta=telemetry_delta,
-                    )
-                )
-        else:
-            raise ValueError(f"No lap filters provided for driver: {query.driver}")
-
-        return telemetries
