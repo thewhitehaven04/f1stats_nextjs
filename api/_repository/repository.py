@@ -4,13 +4,12 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     CHAR,
-    CheckConstraint,
     Column,
     Computed,
     Date,
     DateTime,
     ForeignKeyConstraint,
-    Identity,
+    Index,
     Integer,
     PrimaryKeyConstraint,
     REAL,
@@ -18,15 +17,42 @@ from sqlalchemy import (
     String,
     Table,
     Text,
-    UniqueConstraint,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import datetime
 
 
 class Base(DeclarativeBase):
     pass
+
+
+class PrismaMigrations(Base):
+    __tablename__ = "_prisma_migrations"
+    __table_args__ = (PrimaryKeyConstraint("id", name="_prisma_migrations_pkey"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    checksum: Mapped[str] = mapped_column(String(64))
+    migration_name: Mapped[str] = mapped_column(String(255))
+    started_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), server_default=text("now()")
+    )
+    applied_steps_count: Mapped[int] = mapped_column(Integer, server_default=text("0"))
+    finished_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    logs: Mapped[Optional[str]] = mapped_column(Text)
+    rolled_back_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+
+class Circuits(Base):
+    __tablename__ = "circuits"
+    __table_args__ = (PrimaryKeyConstraint("id", name="circuits_pkey"),)
+
+    id: Mapped[str] = mapped_column(String(8), primary_key=True)
+    name: Mapped[str] = mapped_column(Text)
+    geojson: Mapped[dict] = mapped_column(JSONB)
+
+    events: Mapped[List["Events"]] = relationship("Events", back_populates="circuit")
 
 
 class Compounds(Base):
@@ -108,10 +134,7 @@ t_laps_with_analytics = Table(
 
 class Seasons(Base):
     __tablename__ = "seasons"
-    __table_args__ = (
-        CheckConstraint("season_year > 0", name="seasons_season_year_check"),
-        PrimaryKeyConstraint("season_year", name="seasons_pkey"),
-    )
+    __table_args__ = (PrimaryKeyConstraint("season_year", name="seasons_pkey"),)
 
     season_year: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     description_text: Mapped[Optional[str]] = mapped_column(Text)
@@ -141,16 +164,10 @@ class Teams(Base):
     __tablename__ = "teams"
     __table_args__ = (
         PrimaryKeyConstraint("id", name="teams_pkey"),
-        UniqueConstraint("team_display_name", name="teams_team_display_name_key"),
+        Index("teams_team_display_name_key", "team_display_name", unique=True),
     )
 
-    id: Mapped[int] = mapped_column(
-        SmallInteger,
-        Identity(
-            start=1, increment=1, minvalue=1, maxvalue=32767, cycle=False, cache=1
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     team_display_name: Mapped[Optional[str]] = mapped_column(String(64))
 
     driver_team_changes: Mapped[List["DriverTeamChanges"]] = relationship(
@@ -202,10 +219,12 @@ class DriverTeamChanges(Base):
 
     driver_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     timestamp_start: Mapped[datetime.datetime] = mapped_column(
-        DateTime, primary_key=True
+        TIMESTAMP(precision=6), primary_key=True
     )
     team_id: Mapped[int] = mapped_column(SmallInteger)
-    timestamp_end: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+    timestamp_end: Mapped[Optional[datetime.datetime]] = mapped_column(
+        TIMESTAMP(precision=6)
+    )
 
     driver: Mapped["Drivers"] = relationship(
         "Drivers", back_populates="driver_team_changes"
@@ -216,6 +235,9 @@ class DriverTeamChanges(Base):
 class Events(Base):
     __tablename__ = "events"
     __table_args__ = (
+        ForeignKeyConstraint(
+            ["circuit_id"], ["circuits.id"], ondelete="RESTRICT", name="fk_circuit_id"
+        ),
         ForeignKeyConstraint(
             ["event_format_name"],
             ["event_formats.event_format_name"],
@@ -237,7 +259,9 @@ class Events(Base):
     country: Mapped[str] = mapped_column(String(3))
     season_year: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     event_format_name: Mapped[str] = mapped_column(String(32))
+    circuit_id: Mapped[str] = mapped_column(String(8))
 
+    circuit: Mapped["Circuits"] = relationship("Circuits", back_populates="events")
     event_formats: Mapped["EventFormats"] = relationship(
         "EventFormats", back_populates="events"
     )
@@ -296,8 +320,8 @@ class EventSessions(Base):
     event_name: Mapped[str] = mapped_column(Text, primary_key=True)
     season_year: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     session_type_id: Mapped[str] = mapped_column(String(32), primary_key=True)
-    start_time: Mapped[datetime.datetime] = mapped_column(DateTime)
-    end_time: Mapped[datetime.datetime] = mapped_column(DateTime)
+    start_time: Mapped[datetime.datetime] = mapped_column(TIMESTAMP(precision=6))
+    end_time: Mapped[datetime.datetime] = mapped_column(TIMESTAMP(precision=6))
 
     events: Mapped["Events"] = relationship("Events", back_populates="event_sessions")
     session_type: Mapped["SessionTypes"] = relationship(
@@ -336,28 +360,18 @@ class Laps(Base):
             name="fk_session_type_id",
         ),
         PrimaryKeyConstraint("id", name="laps_pkey"),
-        UniqueConstraint(
+        Index(
+            "session_type_id_event_name_season_year_driver_id_lap_number_uni",
             "session_type_id",
             "season_year",
             "event_name",
             "driver_id",
             "lap_number",
-            name="session_type_id_event_name_season_year_driver_id_lap_number_uni",
+            unique=True,
         ),
     )
 
-    id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(
-            start=1,
-            increment=1,
-            minvalue=1,
-            maxvalue=9223372036854775807,
-            cycle=False,
-            cache=1,
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     lap_number: Mapped[int] = mapped_column(SmallInteger)
     stint: Mapped[int] = mapped_column(SmallInteger)
     event_name: Mapped[str] = mapped_column(Text)
@@ -414,13 +428,7 @@ class SessionResults(Base):
         PrimaryKeyConstraint("id", name="session_results_pkey"),
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        Identity(
-            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     event_name: Mapped[Optional[str]] = mapped_column(Text)
     season_year: Mapped[Optional[int]] = mapped_column(SmallInteger)
     session_type_id: Mapped[Optional[str]] = mapped_column(String(32))
@@ -505,13 +513,7 @@ class PracticeSessionResults(SessionResults):
         PrimaryKeyConstraint("id", name="practice_session_results_pkey"),
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        Identity(
-            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     laptime: Mapped[Optional[float]] = mapped_column(REAL)
     gap: Mapped[Optional[float]] = mapped_column(REAL)
 
@@ -528,13 +530,7 @@ class QualifyingSessionResults(SessionResults):
         PrimaryKeyConstraint("id", name="qualifying_session_results_pkey"),
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        Identity(
-            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     q1_laptime: Mapped[Optional[float]] = mapped_column(REAL)
     q2_laptime: Mapped[Optional[float]] = mapped_column(REAL)
     q3_laptime: Mapped[Optional[float]] = mapped_column(REAL)
@@ -553,13 +549,7 @@ class RaceSessionResults(SessionResults):
         PrimaryKeyConstraint("id", name="race_session_results_pkey"),
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        Identity(
-            start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1
-        ),
-        primary_key=True,
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     total_time: Mapped[Optional[float]] = mapped_column(REAL)
     result_status: Mapped[Optional[str]] = mapped_column(Text)
     classified_position: Mapped[Optional[str]] = mapped_column(Text)

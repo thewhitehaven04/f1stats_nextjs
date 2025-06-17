@@ -7,12 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import get_connection
+from api._services.circuits.CircuitResolver import CircuitResolver
+from api._services.circuits.models import CircuitGeometryDto
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import (
-    AverageTelemetryPlotData,
-    DriverTelemetryPlotData,
+    AverageTelemetriesResponseDto,
+    LapTelemetriesResponseDto,
 )
 
 
@@ -59,7 +61,7 @@ async def get_session_laptimes_filtered(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/telemetries",
-    response_model=list[DriverTelemetryPlotData],
+    response_model=LapTelemetriesResponseDto,
 )
 async def get_lap_telemetries(
     year: str,
@@ -67,7 +69,7 @@ async def get_lap_telemetries(
     session: str,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
-) -> list[DriverTelemetryPlotData]:
+) -> LapTelemetriesResponseDto:
     """Retrieve telemetry data for a specific Formula 1 session.
 
     Args:
@@ -90,7 +92,7 @@ async def get_lap_telemetries(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/telemetry/average",
-    response_model=list[AverageTelemetryPlotData],
+    response_model=AverageTelemetriesResponseDto,
 )
 async def get_averaged_telemetry(
     year: str,
@@ -119,3 +121,15 @@ async def get_averaged_telemetry(
     ).get_average_telemetry(
         filter_=body,
     )
+
+
+@app.get(
+    "/api/season/{year}/event/{event}/circuit/geojson",
+    response_model=CircuitGeometryDto,
+)
+async def get_circuit_geojson(
+    year: str, event: str, connection: Annotated[Connection, Depends(get_connection)]
+):
+    return CircuitResolver(
+        db_connection=connection, event=unquote(event), number=year
+    ).get_circuit_geometry()

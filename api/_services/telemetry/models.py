@@ -29,6 +29,10 @@ class DeltaInstance(BaseModel):
     gap: float
 
 
+class FastestDelta(BaseModel):
+    driver: str
+    relative_distance: float
+
 class DriverTelemetryDelta(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -55,3 +59,15 @@ class DriverTelemetryPlotData(BaseModel):
     style: PlotStyle
     lap: LapTelemetryDto
     delta: DriverTelemetryDelta | None
+
+class LapTelemetriesResponseDto(BaseModel): 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    telemetries: list[DriverTelemetryPlotData]
+    delta: list[FastestDelta]
+
+class AverageTelemetriesResponseDto(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    telemetries: list[AverageTelemetryPlotData]
+    delta: list[FastestDelta]

@@ -1,7 +1,7 @@
 import sys
 from typing import Sequence, Tuple
-from numpy import concatenate, interp, linspace, trunc
-from pandas import DataFrame, Series, read_sql, to_timedelta
+from numpy import interp, linspace, ndarray, trunc
+from pandas import DataFrame, read_sql, to_timedelta
 from sqlalchemy import Connection, Row, and_, or_, select
 
 from api._core.models.queries import SessionIdentifier, SessionQuery, SessionQueryFilter
@@ -13,11 +13,18 @@ from api._repository.repository import (
 from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from api._services.laps.models.laps import TeamPlotStyleDto
 from api._services.telemetry.models import (
+    AverageTelemetriesResponseDto,
     DriverTelemetryDelta,
     DriverTelemetryPlotData,
+    FastestDelta,
+    LapTelemetriesResponseDto,
     LapTelemetryDto,
     AverageTelemetryPlotData,
 )
+
+
+def get_min_index(array: list[float]) -> int:
+    return array.index(min(array))
 
 
 def convert_from_kph_to_m_s(kph: float) -> float:
@@ -25,6 +32,17 @@ def convert_from_kph_to_m_s(kph: float) -> float:
 
 
 class TelemetryResolver:
+    _TELEMETRY_DF_COLUMNS = [
+        "speed",
+        "rpm",
+        "throttle",
+        "brake",
+        "gear",
+        "laptime_at",
+        "distance",
+        "relative_distance",
+        "laptime_dt",
+    ]
 
     def __init__(
         self,
@@ -44,62 +62,56 @@ class TelemetryResolver:
             session_identifier,
         )
 
-    def average_telemetry_for_driver(self, resampled_telemetry: DataFrame):
-        unique_lap_ids = resampled_telemetry["lap_id"].unique()
+    def _interpolate_telemetry(
+        self, telemetry: DataFrame, lattice: ndarray, ref_laptime: float | None = None
+    ):
+        df = DataFrame(columns=self._TELEMETRY_DF_COLUMNS, index=lattice)
+
+        if ref_laptime:
+            adjusted_distance = telemetry["distance"].iat[-1] + (
+                (ref_laptime - telemetry["laptime_at"].iat[-1])
+                * convert_from_kph_to_m_s(telemetry["speed"].iat[-1])
+            )
+            rel_dist_xp = (telemetry["distance"] / adjusted_distance).to_numpy()
+        else:
+            rel_dist_xp = (
+                telemetry["distance"] / telemetry["distance"].iat[-1]
+            ).to_numpy()
+
+        df["relative_distance"] = lattice
+        df["speed"] = interp(lattice, rel_dist_xp, telemetry["speed"].to_numpy())
+        df["rpm"] = interp(lattice, rel_dist_xp, telemetry["rpm"].to_numpy())
+        df["throttle"] = interp(lattice, rel_dist_xp, telemetry["throttle"].to_numpy())
+        df["brake"] = interp(lattice, rel_dist_xp, telemetry["brake"].to_numpy())
+        df["gear"] = interp(lattice, rel_dist_xp, telemetry["gear"].to_numpy())
+        df["laptime_at"] = interp(
+            lattice,
+            rel_dist_xp,
+            telemetry["laptime_at"].to_numpy(),
+            left=0
+        )
+        df["distance"] = interp(
+            lattice, rel_dist_xp, telemetry["distance"].to_numpy(), left=0
+        )
+        df["laptime_dt"] = df["laptime_at"].diff()
+        return df
+
+    def average_telemetry_for_driver(self, telemetry: DataFrame):
+        unique_lap_ids = telemetry["lap_id"].unique()
         resampled_telemetries: list[DataFrame] = []
 
         lattice = linspace(0, 1, 360)
-        columns = [
-            "speed",
-            "rpm",
-            "throttle",
-            "brake",
-            "gear",
-            "laptime_at",
-            "distance",
-            "relative_distance",
-        ]
         for lap_id in unique_lap_ids:
-            interpolated_df = DataFrame(columns=columns, index=lattice)
-            lap_telemetry = resampled_telemetry[resampled_telemetry["lap_id"] == lap_id]
-            xp = (
-                lap_telemetry["distance"] / lap_telemetry["distance"].tail(1).values[0]
-            ).to_numpy()
-            interpolated_df["speed"] = interp(
-                lattice, xp, lap_telemetry["speed"].to_numpy()
-            )
-            interpolated_df["rpm"] = interp(
-                lattice, xp, lap_telemetry["rpm"].to_numpy()
-            )
-            interpolated_df["throttle"] = interp(
-                lattice, xp, lap_telemetry["throttle"].to_numpy()
-            )
-            interpolated_df["brake"] = interp(
-                lattice, xp, lap_telemetry["brake"].to_numpy()
-            )
-            interpolated_df["gear"] = interp(
-                lattice, xp, lap_telemetry["gear"].to_numpy()
-            )
-            interpolated_df["laptime_at"] = interp(
-                lattice,
-                xp,
-                lap_telemetry["laptime_at"].map(lambda x: x.total_seconds()).to_numpy(),
-            )
-            interpolated_df["distance"] = interp(
-                lattice, xp, lap_telemetry["distance"].to_numpy()
-            )
-            interpolated_df["relative_distance"] = (
-                interpolated_df["distance"]
-                / interpolated_df.tail(1)["distance"].iloc[0]
-            )
+            lap_telemetry = telemetry[telemetry["lap_id"] == lap_id]
+            interpolated_df = self._interpolate_telemetry(lap_telemetry, lattice)
             resampled_telemetries.append(interpolated_df)
 
         avg_dataframe = DataFrame(
-            columns=columns,
+            columns=self._TELEMETRY_DF_COLUMNS,
             index=lattice,
         )
 
-        for column in columns:
+        for column in self._TELEMETRY_DF_COLUMNS:
             avg_dataframe[column] = sum(
                 [
                     resampled_telemetry[column]
@@ -114,7 +126,8 @@ class TelemetryResolver:
 
     def get_average_telemetry(
         self, filter_: SessionQueryFilter
-    ) -> Sequence[AverageTelemetryPlotData]:
+    ) -> AverageTelemetriesResponseDto:
+        deltas: Sequence[FastestDelta] = []
         driver_lap_id_entries = [
             [
                 query.driver,
@@ -170,6 +183,7 @@ class TelemetryResolver:
                     "stint_length": len(lap_ids),
                 }
             )
+
         prepared_telemetries: Sequence[AverageTelemetryPlotData] = []
         if reference_driver and reference_telemetry is not None:
             for avg_telemetry in avg_telemetries:
@@ -199,7 +213,25 @@ class TelemetryResolver:
         else:
             raise ValueError("No reference driver found")
 
-        return prepared_telemetries
+        indices = [
+            get_min_index(laptime_dt)
+            for laptime_dt in zip(
+                *[x["raw_telemetry"].laptime_dt.to_numpy() for x in avg_telemetries]
+            )
+        ]
+
+        deltas = [
+            FastestDelta(
+                driver=avg_telemetries[index]["driver"],
+                relative_distance=avg_telemetries[index][
+                    "raw_telemetry"
+                ].relative_distance,
+            )
+            for index in indices
+        ]
+        return AverageTelemetriesResponseDto(
+            telemetries=prepared_telemetries, delta=deltas
+        )
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
         laps = self.db_connection.execute(
@@ -249,13 +281,14 @@ class TelemetryResolver:
 
     def get_telemetry(
         self, query_filter: SessionQueryFilter
-    ) -> list[DriverTelemetryPlotData]:
-        arr = []
+    ) -> LapTelemetriesResponseDto:
+        arr: Sequence[DriverTelemetryPlotData] = []
         ref_telemetry, ref_lap = self._get_reference_data(query_filter)
         for query in query_filter.queries:
             arr.extend(self.get_driver_telemetries(query, ref_lap, ref_telemetry))
 
-        return arr
+        deltas: Sequence[FastestDelta] = []
+        return LapTelemetriesResponseDto(telemetries=arr, delta=deltas)
 
     def _get_telemetry(self, lap_number: int, driver: str):
         telemetry_dataframe = read_sql(
@@ -296,12 +329,31 @@ class TelemetryResolver:
         )
         return telemetry_dataframe
 
-    def interpolated_boundaries(self, series: Series):
-        channel_start = series[1] - series[0]
-        channel_end = series[-1] - series[-2]
-        return concatenate(
-            [[series[0] - channel_start], series, [series[-1] + channel_end]]
-        )
+    def _get_laptime(self, lap_number: int, driver: str):
+        row = self.db_connection.execute(
+            select(Laps.laptime)
+            .join(
+                SessionResults,
+                and_(
+                    Laps.season_year == SessionResults.season_year,
+                    Laps.session_type_id == SessionResults.session_type_id,
+                    Laps.event_name == SessionResults.event_name,
+                    Laps.driver_id == SessionResults.driver_id,
+                ),
+            )
+            .where(
+                and_(
+                    SessionResults.season_year == self.season,
+                    SessionResults.session_type_id == self.session_identifier,
+                    SessionResults.event_name == self.event,
+                    Laps.lap_number == lap_number,
+                    Laps.driver_id == driver,
+                )
+            )
+        ).fetchone()
+        if row:
+            return row.tuple()[0]
+        raise ValueError("Laptime not found")
 
     def _get_delta(
         self,
@@ -309,10 +361,17 @@ class TelemetryResolver:
         target_telemetry: DataFrame,
         is_aligned: bool,
     ):
+        # def interpolated_boundaries(self, series: Series):
+        #     channel_start = series[1] - series[0]
+        #     channel_end = series[-1] - series[-2]
+        #     return concatenate(
+        #         [[series[0] - channel_start], series, [series[-1] + channel_end]]
+        #     )
+
         delta_df = DataFrame(columns=["distance", "relative_distance", "gap"])
         if is_aligned:
             delta_df["gap"] = (
-                reference_telemetry["laptime_at"] - target_telemetry["laptime_at"]
+                target_telemetry["laptime_at"] - reference_telemetry["laptime_at"]
             )
             delta_df["distance"] = target_telemetry["distance"]
             delta_df["relative_distance"] = (
@@ -330,7 +389,8 @@ class TelemetryResolver:
             delta_df["gap"] = time_at_x - reference_telemetry["laptime_at"]
             delta_df["distance"] = reference_telemetry["distance"]
             delta_df["relative_distance"] = (
-                reference_telemetry["distance"] / reference_telemetry["distance"].iat[-1]
+                reference_telemetry["distance"]
+                / reference_telemetry["distance"].iat[-1]
             )
 
         return delta_df
@@ -342,26 +402,38 @@ class TelemetryResolver:
         reference_telemetry: DataFrame,
     ) -> list[DriverTelemetryPlotData]:
         telemetries: list[DriverTelemetryPlotData] = []
+
         plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
 
+        lattice = linspace(0, 1, 360)
         if isinstance(query.lap_filter, list):
             for lap in query.lap_filter:
                 telemetry_dataframe = self._get_telemetry(lap, query.driver)
+                interpolated_reference = self._interpolate_telemetry(
+                    telemetry=reference_telemetry,
+                    lattice=lattice,
+                    ref_laptime=reference_lap[3],
+                )
+                interpolated_target = self._interpolate_telemetry(
+                    telemetry=telemetry_dataframe,
+                    lattice=lattice,
+                    ref_laptime=self._get_laptime(lap_number=lap, driver=query.driver),
+                )
 
-                delta = None
+                telemetry_delta = None
                 if (
                     lap != reference_lap.lap_number
                     or query.driver != reference_lap.driver_id
                 ):
-                    delta = DriverTelemetryDelta(
+                    telemetry_delta = DriverTelemetryDelta(
                         reference=reference_lap.driver_id,
                         delta=self._get_delta(
-                            reference_telemetry=reference_telemetry,
-                            target_telemetry=telemetry_dataframe,
-                            is_aligned=False,
+                            reference_telemetry=interpolated_reference,
+                            target_telemetry=interpolated_target,
+                            is_aligned=True,
                         ).to_dict(orient="records"),
                     )
-                lap_distance = int(telemetry_dataframe["distance"].tail(1).iloc[0])
+                lap_distance = int(telemetry_dataframe["distance"].iat[-1])
                 telemetries.append(
                     DriverTelemetryPlotData(
                         driver=query.driver,
@@ -376,7 +448,7 @@ class TelemetryResolver:
                             telemetry=telemetry_dataframe.to_dict(orient="records"),
                             lap_distance=lap_distance,
                         ),
-                        delta=delta,
+                        delta=telemetry_delta,
                     )
                 )
         else:
