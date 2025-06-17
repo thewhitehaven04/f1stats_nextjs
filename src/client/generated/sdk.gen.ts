@@ -11,6 +11,9 @@ import type {
     GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostData,
     GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
     GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostError,
+    GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData,
+    GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
+    GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
@@ -135,5 +138,23 @@ export const getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryA
             "Content-Type": "application/json",
             ...options?.headers,
         },
+    })
+}
+
+/**
+ * Get Circuit Geojson
+ */
+export const getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData, ThrowOnError>,
+) => {
+    return (options.client ?? _heyApiClient).get<
+        GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
+        GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
+        ThrowOnError
+    >({
+        url: "/api/season/{year}/event/{event}/circuit/geojson",
+        ...options,
     })
 }
