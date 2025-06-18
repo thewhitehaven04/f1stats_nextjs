@@ -66,9 +66,11 @@ class LapTelemetriesResponseDto(BaseModel):
 
     telemetries: list[DriverTelemetryPlotData]
     delta: list[FastestDelta]
+    circuit_distance: float
 
 class AverageTelemetriesResponseDto(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     telemetries: list[AverageTelemetryPlotData]
     delta: list[FastestDelta]
+    circuit_distance: float

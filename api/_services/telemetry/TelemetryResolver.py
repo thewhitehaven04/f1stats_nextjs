@@ -10,6 +10,7 @@ from api._repository.repository import (
     SessionResults,
     TelemetryMeasurements,
 )
+from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from api._services.laps.models.laps import TeamPlotStyleDto
 from api._services.telemetry.models import (
@@ -61,6 +62,7 @@ class TelemetryResolver:
             event,
             session_identifier,
         )
+        self.circuit_resolver = CircuitResolver(db_connection, event, season)
 
     def _interpolate_telemetry(
         self, telemetry: DataFrame, lattice: ndarray, ref_laptime: float | None = None
@@ -217,6 +219,7 @@ class TelemetryResolver:
             )
         ]
 
+        distance = self.circuit_resolver.calculate_geodesic_distance()
         deltas = [
             FastestDelta(
                 driver=avg_telemetries[index]["driver"],
@@ -226,12 +229,15 @@ class TelemetryResolver:
             )
             for index in indices
         ]
+
         return AverageTelemetriesResponseDto(
-            telemetries=prepared_telemetries, delta=deltas
+            telemetries=prepared_telemetries, 
+            delta=deltas, 
+            circuit_distance=distance
         )
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
-        laps = self.db_connection.execute(
+        return self.db_connection.execute(
             select(Laps.id, Laps.lap_number, Laps.driver_id, Laps.laptime)
             .join(
                 SessionResults,
@@ -256,8 +262,7 @@ class TelemetryResolver:
                 )
             )
             .order_by(Laps.laptime.asc())
-        )
-        return laps.fetchone()
+        ).fetchone()
 
     def _get_reference_data(self, query_filter: SessionQueryFilter):
         if ref_lap := self._get_reference_lap(query_filter):
@@ -266,12 +271,6 @@ class TelemetryResolver:
                 sql=select(TelemetryMeasurements).where(
                     TelemetryMeasurements.lap_id == ref_lap.id
                 ),
-            )
-            time_offset = ref_lap.laptime - telemetry_data["laptime_at"].iat[-1]
-            speed = telemetry_data["speed"].iat[-1]
-            telemetry_data["relative_distance"] = telemetry_data["distance"] / (
-                telemetry_data["distance"].iat[-1]
-                + time_offset * (convert_from_kph_to_m_s(speed))
             )
             return telemetry_data, ref_lap
         raise ValueError("No reference lap found")
@@ -283,17 +282,19 @@ class TelemetryResolver:
         ref_telemetry, ref_lap = self._get_reference_data(query_filter)
 
         lattice = linspace(0, 1, 360)
+        interpolated_reference = self._interpolate_telemetry(
+            telemetry=ref_telemetry,
+            lattice=lattice,
+            ref_laptime=ref_lap.laptime,
+        )
 
         deltas_collection = []
         for query in query_filter.queries:
             plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
             if isinstance(query.lap_filter, list):
                 for lap in query.lap_filter:
-                    telemetry_dataframe = self._get_telemetry(lap, query.driver)
-                    interpolated_reference = self._interpolate_telemetry(
-                        telemetry=ref_telemetry,
-                        lattice=lattice,
-                        ref_laptime=ref_lap.laptime,
+                    telemetry_dataframe = self._get_telemetry_dataframe(
+                        lap, query.driver
                     )
                     interpolated_target = self._interpolate_telemetry(
                         telemetry=telemetry_dataframe,
@@ -358,10 +359,15 @@ class TelemetryResolver:
                     )
                 )
 
-        return LapTelemetriesResponseDto(telemetries=arr, delta=deltas)
+        distance = self.circuit_resolver.calculate_geodesic_distance()
+        return LapTelemetriesResponseDto(
+            telemetries=arr, 
+            delta=deltas, 
+            circuit_distance=distance
+        )
 
-    def _get_telemetry(self, lap_number: int, driver: str):
-        telemetry_dataframe = read_sql(
+    def _get_telemetry_dataframe(self, lap_number: int, driver: str):
+        return read_sql(
             con=self.db_connection,
             sql=select(TelemetryMeasurements, Laps.laptime)
             .join(
@@ -387,17 +393,6 @@ class TelemetryResolver:
                 )
             ),
         )
-        time_offset = (
-            telemetry_dataframe["laptime"].iat[-1]
-            - telemetry_dataframe["laptime_at"].iat[-1]
-        )
-
-        speed = telemetry_dataframe["speed"].iat[-1]
-        telemetry_dataframe["relative_distance"] = telemetry_dataframe["distance"] / (
-            telemetry_dataframe["distance"].iat[-1]
-            + time_offset * (convert_from_kph_to_m_s(speed))
-        )
-        return telemetry_dataframe
 
     def _get_laptime(self, lap_number: int, driver: str):
         row = self.db_connection.execute(
@@ -448,7 +443,7 @@ class TelemetryResolver:
                 target_telemetry["distance"] / target_telemetry["distance"].iat[-1]
             )
             delta_df["gap_dt"] = delta_df["gap"].diff()
-            delta_df['gap_dt'].iloc[0] = 0
+            delta_df["gap_dt"].iloc[0] = 0
 
         else:
             x = reference_telemetry["relative_distance"].to_numpy()
@@ -465,6 +460,6 @@ class TelemetryResolver:
                 / reference_telemetry["distance"].iat[-1]
             )
             delta_df["gap_dt"] = delta_df["gap"].diff()
-            delta_df['gap_dt'].iloc[0] = 0
+            delta_df["gap_dt"].iloc[0] = 0
 
         return delta_df

@@ -46,9 +46,17 @@ fastapi-cli==0.0.7 \
     --hash=sha256:02b3b65956f526412515907a0793c9094abd4bfb5457b389f645b0ea6ba3605e \
     --hash=sha256:d549368ff584b2804336c61f192d86ddea080c11255f375959627911944804f4
     # via fastapi
+geographiclib==2.0 \
+    --hash=sha256:6b7225248e45ff7edcee32becc4e0a1504c606ac5ee163a5656d482e0cd38734 \
+    --hash=sha256:f7f41c85dc3e1c2d3d935ec86660dc3b2c848c83e17f9a9e51ba9d5146a15859
+    # via geopy
 geojson-pydantic==2.0.0 \
     --hash=sha256:b62e8b44502dd1ad518b5f739035a81924a76f980cbdb3a4e8916ef913be242e \
     --hash=sha256:fd75876768a1dcab30dd04c478773191e0c19d678ef74580a9bad7c4576bfe98
+    # via api
+geopy==2.4.1 \
+    --hash=sha256:50283d8e7ad07d89be5cb027338c6365a32044df3ae2556ad3f52f4840b3d0d1 \
+    --hash=sha256:ae8b4bc5c1131820f4d75fce9d4aaaca0c85189b3aa5d64c3dcaf5e3b7b882a7
     # via api
 greenlet==3.2.0 ; (python_full_version < '3.14' and platform_machine == 'AMD64') or (python_full_version < '3.14' and platform_machine == 'WIN32') or (python_full_version < '3.14' and platform_machine == 'aarch64') or (python_full_version < '3.14' and platform_machine == 'amd64') or (python_full_version < '3.14' and platform_machine == 'ppc64le') or (python_full_version < '3.14' and platform_machine == 'win32') or (python_full_version < '3.14' and platform_machine == 'x86_64') \
     --hash=sha256:0010e928e1901d36625f21d008618273f9dda26b516dbdecf873937d39c9dff0 \

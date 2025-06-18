@@ -5,7 +5,7 @@ from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
-from api._core.models.queries import SessionQueryFilter
+from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.engine import get_connection
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
@@ -34,7 +34,7 @@ app.add_middleware(
 async def get_session_laptimes_filtered(
     year: str,
     event: str,
-    session: str,
+    session: SessionIdentifier,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
@@ -66,7 +66,7 @@ async def get_session_laptimes_filtered(
 async def get_lap_telemetries(
     year: str,
     event: str,
-    session: str,
+    session: SessionIdentifier,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ) -> LapTelemetriesResponseDto:
@@ -97,7 +97,7 @@ async def get_lap_telemetries(
 async def get_averaged_telemetry(
     year: str,
     event: str,
-    session: str,
+    session: SessionIdentifier,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
