@@ -4,8 +4,8 @@ import { formatTime } from "@/core/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
-import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import { initGlobalChartConfig } from "@/components/Chart/config"
+import { getColorFromColorMap } from "@/components/Chart/helpers"
 initGlobalChartConfig()
 
 export function LapsBoxChart({
@@ -17,6 +17,7 @@ export function LapsBoxChart({
     selectedStints: Record<string, number | undefined>
     laps: LapSelectionData
 }) {
+    const { color_map } = laps
     const sessionData = useMemo(
         () => ({
             labels: ["Laptime"],
@@ -53,14 +54,11 @@ export function LapsBoxChart({
                                       .filter((time) => time !== null),
                               },
                     ],
-                    borderColor:
-                        driver.style === "alternative"
-                            ? getAlternativeColor(driver.team.color)
-                            : driver.team.color,
+                    borderColor: getColorFromColorMap(color_map, driver.driver),
                 }
             }),
         }),
-        [laps, selectedStints],
+        [laps, selectedStints, color_map],
     ) satisfies ChartConfiguration<"boxplot">["data"]
 
     const selectionMax = isOutliersShown

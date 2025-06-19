@@ -1,7 +1,7 @@
 "use client"
-import { use, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { LineLapsChart } from "./Chart"
-import type { Compound, LapSelectionData } from "@/client/generated"
+import type { Compound, LapSelectionData, PlotColor } from "@/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
 import { StintSelector } from "../../StintSelector"
@@ -15,13 +15,14 @@ export type TLapsLinePlotDataset = {
 export type TLinePlotTabBoxChartDataset = ChartData<
     "line",
     TLapsLinePlotDataset[]
->["datasets"][number] & {
-    teamColor: string
-    style: "default" | "alternative"
-}
+>["datasets"][number] &
+    PlotColor
 
-export default function LinePlotTab({ laps }: { laps: LapSelectionData }) {
+export default function LinePlotTab({
+    laps,
+}: { laps: LapSelectionData }) {
     const { driver_lap_data: driverLapData } = laps
+    const { color_map } = driverLapData
     const [isOutliersShown, setIsOutliersShown] = useState(true)
 
     const initialDriverState = useMemo(
@@ -65,10 +66,9 @@ export default function LinePlotTab({ laps }: { laps: LapSelectionData }) {
                               : (lap.laptime ?? Number.NaN),
                         compound: lap.compound_id,
                     })),
-                teamColor: driverData.team.color,
-                style: driverData.style,
+                ...color_map[driverData.driver],
             })),
-        [laps, isOutliersShown, driverStints],
+        [laps, isOutliersShown, driverStints, color_map],
     )
 
     return (

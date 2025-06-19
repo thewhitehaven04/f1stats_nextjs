@@ -63,7 +63,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                           },
                           path: {
                               event,
-                              session: session as SessionIdentifier,
+                              session,
                               year,
                           },
                           throwOnError: true,
@@ -74,7 +74,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                       body: { queries: getQueries(selection) },
                       path: {
                           event,
-                          session: session as SessionIdentifier,
+                          session,
                           year,
                       },
                       throwOnError: true,

@@ -8,17 +8,18 @@ import {
     Tooltip,
     type ChartConfiguration,
 } from "chart.js"
-import { use, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
 import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
-import { getAlternativeColor } from "../../helpers/getAlternativeColor"
+import { getColorFromColorMap } from "@/components/Chart/helpers"
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
 
 export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
+    const { color_map } = laps
     const [isOutliersShown, setIsOutliersShown] = useState(false)
 
     const plotData: ChartConfiguration<"violin">["data"] = useMemo(
@@ -26,15 +27,16 @@ export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
             labels: ["Laptimes"],
             datasets: laps.driver_lap_data.map((driver) => ({
                 label: driver.driver,
-                data: [driver.laps.map((driverData) => driverData.laptime).filter(laptime => laptime !== null)],
+                data: [
+                    driver.laps
+                        .map((driverData) => driverData.laptime)
+                        .filter((laptime) => laptime !== null),
+                ],
                 tyreCompound: driver.laps.map((driverData) => driverData.compound_id),
-                borderColor:
-                    driver.style === "alternative"
-                        ? getAlternativeColor(driver.team.color)
-                        : driver.team.color,
+                borderColor: getColorFromColorMap(color_map, driver.driver),
             })),
         }),
-        [laps],
+        [laps, color_map],
     )
 
     return (

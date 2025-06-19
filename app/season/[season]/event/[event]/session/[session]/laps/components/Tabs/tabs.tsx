@@ -3,10 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
 import { AnalysisTab } from "./Analysis"
-import {
-    getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
-    type SessionIdentifier,
-} from "@/client/generated"
+import { getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost } from "@/client/generated"
 import dynamic from "next/dynamic"
 import { ChartLoading } from "./Analysis/ChartLoading"
 import { useSession } from "../../../hooks/useSession"
@@ -49,7 +46,7 @@ export const LapsTabs = () => {
                 client: ApiClient,
                 path: {
                     event,
-                    session: session as SessionIdentifier,
+                    session,
                     year,
                 },
                 body: { queries },

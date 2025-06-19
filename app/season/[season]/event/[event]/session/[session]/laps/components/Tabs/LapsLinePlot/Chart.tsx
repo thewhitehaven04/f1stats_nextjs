@@ -35,20 +35,14 @@ export const LineLapsChart = (
                                 return TYRE_COLOR_MAP[data.compound] || "grey"
                             },
                             borderColor(ctx) {
-                                const { style, teamColor } =
-                                    ctx.dataset as TLinePlotTabBoxChartDataset
-                                return style === "default"
-                                    ? teamColor
-                                    : getAlternativeColor(teamColor)
+                                const { style, color } = ctx.dataset as TLinePlotTabBoxChartDataset
+                                return style === "default" ? color : getAlternativeColor(color)
                             },
                         },
                         line: {
                             borderColor(ctx) {
-                                const { style, teamColor } =
-                                    ctx.dataset as TLinePlotTabBoxChartDataset
-                                return style === "default"
-                                    ? teamColor
-                                    : getAlternativeColor(teamColor)
+                                const { style, color } = ctx.dataset as TLinePlotTabBoxChartDataset
+                                return style === "default" ? color : getAlternativeColor(color)
                             },
                         },
                     },

@@ -1,11 +1,11 @@
 "use client"
 import type { ChartData, ChartDataset } from "chart.js"
 import { useMemo, type RefObject } from "react"
-import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import type { DriverTelemetryPlotData, PlotColor } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
+import { getColorFromColorMap } from "@/components/Chart/helpers"
 
 export type TSpeedDataset = ChartDataset<
     "scatter",
@@ -28,10 +28,7 @@ export default function TelemetryChartSection(props: {
     const presets = useMemo(
         () =>
             telemetryMeasurements?.map((driverMeasurements) => ({
-                borderColor:
-                    colorMap[driverMeasurements.driver].style === "alternative"
-                        ? getAlternativeColor(colorMap[driverMeasurements.driver].color)
-                        : colorMap[driverMeasurements.driver].color,
+                borderColor: getColorFromColorMap(colorMap, driverMeasurements.driver),
                 borderDash:
                     colorMap[driverMeasurements.driver].style === "alternative"
                         ? [6, 1.5]
