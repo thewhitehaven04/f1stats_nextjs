@@ -1,6 +1,5 @@
 from functools import cache
 from itertools import pairwise
-from typing import Iterable, Sequence
 from sqlalchemy import Connection, select
 from sqlalchemy.orm import sessionmaker
 
@@ -50,9 +49,11 @@ class CircuitResolver:
             )
         )
 
-    def resample_circuit_geometry(self, lattice: list[float]) -> Iterable[Point]:
+    def resample_circuit_geometry(
+        self, lattice: list[float]
+    ) -> tuple[list[Point], list[float]]:
         """
-        Resamples the circuit geometry with the given lattice.
+        Resamples the circuit geometry with the given lattice and the joint points.
 
         Args:
             lattice: A sequence of floats representing the relative distance along the circuit.
@@ -63,17 +64,23 @@ class CircuitResolver:
         points = self._get_circuit_geometry_points()
         max_distance = self.calculate_geodesic_distance()
 
+        lattice_copy = lattice.copy()
+
         def unshift():
-            return lattice.pop(0)
+            return lattice_copy.pop(0)
 
         def peek():
-            return lattice[0]
+            return lattice_copy[0]
 
         resampled_points: list[Point] = []
 
+        next_split_abs_dist = 0
         for start, end in pairwise(points):
-            next_split_abs_dist = geodesic(start, end).meters
-            while peek() * max_distance <= next_split_abs_dist:
+            next_split_abs_dist += geodesic(
+                (start.longitude, start.latitude), (end.longitude, end.latitude)
+            ).meters
+
+            while peek() * max_distance < next_split_abs_dist:
                 abs_dist = unshift() * max_distance
                 coef = abs_dist / next_split_abs_dist
                 resampled_points.append(
@@ -82,7 +89,13 @@ class CircuitResolver:
                         start[1] + (end[1] - start[1]) * coef,
                     )
                 )
-        return resampled_points
+
+            resampled_points.append(end)
+            lattice.append(next_split_abs_dist / max_distance)
+
+        resampled_points.append(points[-1])
+        lattice.sort()
+        return resampled_points, lattice
 
     def calculate_geodesic_distance(self):
         circuit_tuple = self.get_circuit_record()
