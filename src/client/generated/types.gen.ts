@@ -3,12 +3,14 @@
 export type AverageTelemetriesResponseDto = {
     telemetries: Array<AverageTelemetryPlotData>
     delta: Array<FastestDelta>
+    circuit_distance: number
+    color_map: {
+        [key: string]: PlotColor
+    }
 }
 
 export type AverageTelemetryPlotData = {
     driver: string
-    team: TeamPlotStyleDto
-    style: "default" | "alternative"
     stint_length: number
     telemetry: Array<TelemetryMeasurementDto>
     delta: DriverTelemetryDelta | null
@@ -48,6 +50,7 @@ export type DeltaInstance = {
     relative_distance: number
     distance: number
     gap: number
+    gap_dt: number
 }
 
 export type DriverLapData = {
@@ -66,8 +69,6 @@ export type DriverTelemetryDelta = {
 
 export type DriverTelemetryPlotData = {
     driver: string
-    team: TeamPlotStyleDto
-    style: "default" | "alternative"
     lap: LapTelemetryDto
     delta: DriverTelemetryDelta | null
 }
@@ -75,6 +76,7 @@ export type DriverTelemetryPlotData = {
 export type FastestDelta = {
     driver: string
     relative_distance: number
+    point: [number, number]
 }
 
 export type HttpValidationError = {
@@ -92,6 +94,10 @@ export type LapSelectionData = {
 export type LapTelemetriesResponseDto = {
     telemetries: Array<DriverTelemetryPlotData>
     delta: Array<FastestDelta>
+    circuit_distance: number
+    color_map: {
+        [key: string]: PlotColor
+    }
 }
 
 export type LapTelemetryDto = {
@@ -136,6 +142,11 @@ export type LineString = {
         | null
     type: "LineString"
     coordinates: Array<Position2D | Position3D>
+}
+
+export type PlotColor = {
+    color: string
+    style: "default" | "alternative"
 }
 
 export type Position2D = [number, number]
@@ -189,7 +200,15 @@ export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsP
     path: {
         year: string
         event: string
-        session: string
+        session:
+            | "Race"
+            | "Qualifying"
+            | "Sprint"
+            | "Sprint Qualifying"
+            | "Sprint Shootout"
+            | "Practice 1"
+            | "Practice 2"
+            | "Practice 3"
     }
     query?: never
     url: "/api/season/{year}/event/{event}/session/{session}/laps"
@@ -220,7 +239,15 @@ export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPos
     path: {
         year: string
         event: string
-        session: string
+        session:
+            | "Race"
+            | "Qualifying"
+            | "Sprint"
+            | "Sprint Qualifying"
+            | "Sprint Shootout"
+            | "Practice 1"
+            | "Practice 2"
+            | "Practice 3"
     }
     query?: never
     url: "/api/season/{year}/event/{event}/session/{session}/telemetries"
@@ -251,7 +278,15 @@ export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAv
     path: {
         year: string
         event: string
-        session: string
+        session:
+            | "Race"
+            | "Qualifying"
+            | "Sprint"
+            | "Sprint Qualifying"
+            | "Sprint Shootout"
+            | "Practice 1"
+            | "Practice 2"
+            | "Practice 3"
     }
     query?: never
     url: "/api/season/{year}/event/{event}/session/{session}/telemetry/average"

@@ -10,6 +10,7 @@ class TeamDto(BaseModel):
     id_: int
     name: str
 
+
 class TeamPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -17,3 +18,13 @@ class TeamPlotData(BaseModel):
     color: str
     driver: str
     style: PlotStyle
+
+
+class PlotColor(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    color: str
+    style: PlotStyle
+
+
+ColorMap = dict[str, PlotColor]

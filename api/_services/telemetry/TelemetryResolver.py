@@ -1,6 +1,6 @@
 import sys
 from typing import Sequence
-from numpy import interp, linspace, ndarray, trunc
+from numpy import array, interp, linspace, ndarray, trunc
 from pandas import DataFrame, read_sql, to_timedelta
 from sqlalchemy import Connection, and_, or_, select
 
@@ -11,8 +11,9 @@ from api._repository.repository import (
     TelemetryMeasurements,
 )
 from api._services.circuits.CircuitResolver import CircuitResolver
+from api._services.color_resolver.ColorMap import ColorMapBuilder
 from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
-from api._services.laps.models.laps import TeamPlotStyleDto
+from api._services.color_resolver.models import PlotColor
 from api._services.telemetry.models import (
     AverageTelemetriesResponseDto,
     DriverTelemetryDelta,
@@ -95,19 +96,18 @@ class TelemetryResolver:
         df["laptime_dt"] = df["laptime_at"].diff()
         return df
 
-    def average_telemetry_for_driver(self, telemetry: DataFrame):
+    def average_telemetry_for_driver(self, telemetry: DataFrame, lat: ndarray):
         unique_lap_ids = telemetry["lap_id"].unique()
         resampled_telemetries: list[DataFrame] = []
 
-        lattice = linspace(0, 1, 360)
         for lap_id in unique_lap_ids:
             lap_telemetry = telemetry[telemetry["lap_id"] == lap_id]
-            interpolated_df = self._interpolate_telemetry(lap_telemetry, lattice)
+            interpolated_df = self._interpolate_telemetry(lap_telemetry, lat)
             resampled_telemetries.append(interpolated_df)
 
         avg_dataframe = DataFrame(
             columns=self._TELEMETRY_DF_COLUMNS,
-            index=lattice,
+            index=lat,
         )
 
         for column in self._TELEMETRY_DF_COLUMNS:
@@ -127,6 +127,7 @@ class TelemetryResolver:
         self, filter_: SessionQueryFilter
     ) -> AverageTelemetriesResponseDto:
         deltas: Sequence[FastestDelta] = []
+        color_map = ColorMapBuilder()
         driver_lap_id_entries = [
             [
                 query.driver,
@@ -154,6 +155,11 @@ class TelemetryResolver:
         reference_telemetry = None
         reference_driver = None
 
+        points, lat = self.circuit_resolver.resample_circuit_geometry(
+            linspace(0, 1, 360).tolist()
+        )
+        np_lat = array(lat)
+
         for driver_id, lap_ids in driver_lap_id_entries:
             telemetry_data = read_sql(
                 con=self.db_connection,
@@ -165,7 +171,10 @@ class TelemetryResolver:
                 telemetry_data.laptime_at, unit="s"
             )
             style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
-            avg_telemetry_data = self.average_telemetry_for_driver(telemetry_data)
+            color_map.set(driver_id, PlotColor(color=style.color, style=style.style))
+            avg_telemetry_data = self.average_telemetry_for_driver(
+                telemetry_data, np_lat
+            )
 
             laptime = avg_telemetry_data["laptime_at"].tail(1).iloc[0]
             if laptime < min_laptime:
@@ -177,8 +186,6 @@ class TelemetryResolver:
                 {
                     "raw_telemetry": avg_telemetry_data,
                     "driver": driver_id,
-                    "team": TeamPlotStyleDto(name=style.team.name, color=style.color),
-                    "style": style.style,
                     "stint_length": len(lap_ids),
                 }
             )
@@ -192,8 +199,6 @@ class TelemetryResolver:
                             orient="records"
                         ),
                         driver=avg_telemetry["driver"],
-                        team=avg_telemetry["team"],
-                        style=avg_telemetry["style"],
                         stint_length=avg_telemetry["stint_length"],
                         delta=(
                             DriverTelemetryDelta(
@@ -226,14 +231,16 @@ class TelemetryResolver:
                 relative_distance=avg_telemetries[index][
                     "raw_telemetry"
                 ].relative_distance,
+                point=(points[index].latitude, points[index].longitude),
             )
             for index in indices
         ]
 
         return AverageTelemetriesResponseDto(
-            telemetries=prepared_telemetries, 
-            delta=deltas, 
-            circuit_distance=distance
+            telemetries=prepared_telemetries,
+            delta=deltas,
+            circuit_distance=distance,
+            color_map=color_map(),
         )
 
     def _get_reference_lap(self, query_filter: SessionQueryFilter):
@@ -279,18 +286,28 @@ class TelemetryResolver:
         self, query_filter: SessionQueryFilter
     ) -> LapTelemetriesResponseDto:
         arr: Sequence[DriverTelemetryPlotData] = []
+        color_map = ColorMapBuilder()
+
         ref_telemetry, ref_lap = self._get_reference_data(query_filter)
 
-        lattice = linspace(0, 1, 360)
+        points, lat = self.circuit_resolver.resample_circuit_geometry(
+            list(linspace(0, 1, 360).tolist())
+        )
+        np_lat = array(lat)
+
         interpolated_reference = self._interpolate_telemetry(
             telemetry=ref_telemetry,
-            lattice=lattice,
             ref_laptime=ref_lap.laptime,
+            lattice=np_lat,
         )
 
         deltas_collection = []
         for query in query_filter.queries:
             plot_style_data = self.plot_style_resolver.get_driver_style(query.driver)
+            color_map.set(
+                query.driver,
+                PlotColor(color=plot_style_data.color, style=plot_style_data.style),
+            )
             if isinstance(query.lap_filter, list):
                 for lap in query.lap_filter:
                     telemetry_dataframe = self._get_telemetry_dataframe(
@@ -298,7 +315,7 @@ class TelemetryResolver:
                     )
                     interpolated_target = self._interpolate_telemetry(
                         telemetry=telemetry_dataframe,
-                        lattice=lattice,
+                        lattice=np_lat,
                         ref_laptime=self._get_laptime(
                             lap_number=lap, driver=query.driver
                         ),
@@ -322,11 +339,6 @@ class TelemetryResolver:
                     arr.append(
                         DriverTelemetryPlotData(
                             driver=query.driver,
-                            team=TeamPlotStyleDto(
-                                name=plot_style_data.team.name,
-                                color=plot_style_data.color,
-                            ),
-                            style=plot_style_data.style,
                             lap=LapTelemetryDto(
                                 id=telemetry_dataframe.iloc[0].lap_id,
                                 lap_number=lap,
@@ -347,7 +359,8 @@ class TelemetryResolver:
                 deltas.append(
                     FastestDelta(
                         driver=ref_lap.driver_id,
-                        relative_distance=lattice[i],
+                        relative_distance=np_lat[i],
+                        point=(points[i].latitude, points[i].longitude),
                     )
                 )
             else:
@@ -355,19 +368,21 @@ class TelemetryResolver:
                 deltas.append(
                     FastestDelta(
                         driver=deltas_collection[index]["driver"],
-                        relative_distance=lattice[i],
+                        relative_distance=np_lat[i],
+                        point=(points[i].latitude, points[i].longitude),
                     )
                 )
 
         distance = self.circuit_resolver.calculate_geodesic_distance()
         return LapTelemetriesResponseDto(
-            telemetries=arr, 
-            delta=deltas, 
-            circuit_distance=distance
+            telemetries=arr,
+            delta=deltas,
+            circuit_distance=distance,
+            color_map=color_map(),
         )
 
     def _get_telemetry_dataframe(self, lap_number: int, driver: str):
-        return read_sql(
+        df = read_sql(
             con=self.db_connection,
             sql=select(TelemetryMeasurements, Laps.laptime)
             .join(
@@ -393,6 +408,15 @@ class TelemetryResolver:
                 )
             ),
         )
+
+        time_offset = df["laptime"].iat[-1] - df["laptime_at"].iat[-1]
+        speed_finish = df["speed"].iat[-1]
+
+        df["relative_distance"] = df["distance"] / (
+            df["distance"].iat[-1]
+            + time_offset * (convert_from_kph_to_m_s(speed_finish))
+        )
+        return df
 
     def _get_laptime(self, lap_number: int, driver: str):
         row = self.db_connection.execute(

@@ -1,7 +1,7 @@
-from typing import Sequence
+from typing import Sequence, TypedDict
 from pydantic import BaseModel, ConfigDict
 
-from api._services.color_resolver.models import PlotStyle
+from api._services.color_resolver.models import ColorMap, PlotStyle
 from api._services.laps.models.laps import TeamPlotStyleDto
 
 
@@ -33,6 +33,7 @@ class DeltaInstance(BaseModel):
 class FastestDelta(BaseModel):
     driver: str
     relative_distance: float
+    point: tuple[float, float]
 
 class DriverTelemetryDelta(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -45,8 +46,6 @@ class AverageTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
-    team: TeamPlotStyleDto
-    style: PlotStyle
     stint_length: int
     telemetry: Sequence[TelemetryMeasurementDto]
     delta: DriverTelemetryDelta | None
@@ -56,17 +55,18 @@ class DriverTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
-    team: TeamPlotStyleDto
-    style: PlotStyle
     lap: LapTelemetryDto
     delta: DriverTelemetryDelta | None
 
-class LapTelemetriesResponseDto(BaseModel): 
+
+class LapTelemetriesResponseDto(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     telemetries: list[DriverTelemetryPlotData]
     delta: list[FastestDelta]
     circuit_distance: float
+    color_map: ColorMap
+
 
 class AverageTelemetriesResponseDto(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -74,3 +74,4 @@ class AverageTelemetriesResponseDto(BaseModel):
     telemetries: list[AverageTelemetryPlotData]
     delta: list[FastestDelta]
     circuit_distance: float
+    color_map: ColorMap
