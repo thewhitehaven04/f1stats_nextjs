@@ -10,7 +10,9 @@ from api._repository.repository import (
 )
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 
+from api._services.color_resolver.ColorMap import ColorMapBuilder
 from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
+from api._services.color_resolver.models import PlotColor
 from api._services.laps.models.laps import (
     DriverLapData,
     LapSelectionData,
@@ -108,7 +110,65 @@ class LapDataResolver:
 
         return laps
 
-    def _resolve_lap_data(self, laps: DataFrame):
+    def _get_laps_dataframe(self, filter_: SessionQueryFilter):
+        return read_sql(
+            con=self.db_connection,
+            sql=select(Laps)
+            .where(
+                and_(
+                    Laps.season_year == self.season,
+                    Laps.session_type_id == self.session_identifier,
+                    Laps.event_name == self.event,
+                    or_(
+                        *[
+                            (
+                                and_(
+                                    Laps.driver_id == fil.driver,
+                                    Laps.lap_number.in_(fil.lap_filter),
+                                )
+                                if fil.lap_filter
+                                else and_(
+                                    Laps.driver_id == fil.driver,
+                                )
+                            )
+                            for fil in filter_.queries
+                        ]
+                    ),
+                )
+            )
+            .join(
+                Drivers,
+                Laps.driver_id == Drivers.id,
+            )
+            .join(
+                EventSessions,
+                and_(
+                    EventSessions.event_name == Laps.event_name,
+                    EventSessions.season_year == Laps.season_year,
+                    EventSessions.session_type_id == Laps.session_type_id,
+                ),
+            )
+            .join(
+                DriverTeamChanges,
+                and_(
+                    DriverTeamChanges.driver_id == Drivers.id,
+                    DriverTeamChanges.timestamp_start <= EventSessions.start_time,
+                    or_(
+                        DriverTeamChanges.timestamp_end >= EventSessions.start_time,
+                        DriverTeamChanges.timestamp_end.is_(null()),
+                    ),
+                ),
+            ),
+        )
+
+    def get_laptime_comparison(
+        self,
+        filter_: SessionQueryFilter,
+    ):
+        laps = self._get_laps_dataframe(filter_)
+
+        color_map = ColorMapBuilder()
+
         formatted_laps = laps[
             [
                 "id",
@@ -165,13 +225,12 @@ class LapDataResolver:
             driver_style = self.team_plot_style_resolver.get_driver_style(
                 driver_id=index
             )
+            color_map.set(
+                index, PlotColor(color=driver_style.color, style=driver_style.style)
+            )
             lap_data.append(
                 DriverLapData(
-                    driver=driver_style.driver,
-                    team=TeamPlotStyleDto(
-                        name=driver_style.team.name, color=driver_style.color
-                    ),
-                    style=driver_style.style,
+                    driver=index,
                     stints=filtered_stint_groups.to_dict(orient="records"),
                     session_data=StintData(
                         total_laps=len(non_filtered_laps),
@@ -193,63 +252,9 @@ class LapDataResolver:
         ]
         return LapSelectionData(
             driver_lap_data=lap_data,
+            color_map=color_map(),
             low_decile=flying_laps["laptime"].quantile(0.1),  # type: ignore
             high_decile=flying_laps["laptime"].quantile(0.9),  # type: ignore
             min_time=formatted_laps["laptime"].min(),
             max_time=formatted_laps["laptime"].max(),
         )
-
-    def get_laptime_comparison(
-        self,
-        filter_: SessionQueryFilter,
-    ):
-        lap_data = read_sql(
-            con=self.db_connection,
-            sql=select(Laps)
-            .where(
-                and_(
-                    Laps.season_year == self.season,
-                    Laps.session_type_id == self.session_identifier,
-                    Laps.event_name == self.event,
-                    or_(
-                        *[
-                            (
-                                and_(
-                                    Laps.driver_id == fil.driver,
-                                    Laps.lap_number.in_(fil.lap_filter),
-                                )
-                                if fil.lap_filter
-                                else and_(
-                                    Laps.driver_id == fil.driver,
-                                )
-                            )
-                            for fil in filter_.queries
-                        ]
-                    ),
-                )
-            )
-            .join(
-                Drivers,
-                Laps.driver_id == Drivers.id,
-            )
-            .join(
-                EventSessions,
-                and_(
-                    EventSessions.event_name == Laps.event_name,
-                    EventSessions.season_year == Laps.season_year,
-                    EventSessions.session_type_id == Laps.session_type_id,
-                ),
-            )
-            .join(
-                DriverTeamChanges,
-                and_(
-                    DriverTeamChanges.driver_id == Drivers.id,
-                    DriverTeamChanges.timestamp_start <= EventSessions.start_time,
-                    or_(
-                        DriverTeamChanges.timestamp_end >= EventSessions.start_time,
-                        DriverTeamChanges.timestamp_end.is_(null()),
-                    ),
-                ),
-            ),
-        )
-        return self._resolve_lap_data(lap_data)

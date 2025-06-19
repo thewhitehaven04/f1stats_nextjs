@@ -4,7 +4,7 @@ from typing import Sequence
 from pandas.api.typing import NaTType
 from pydantic import BaseModel, ConfigDict, field_serializer
 
-from api._services.color_resolver.models import PlotStyle
+from api._services.color_resolver.models import ColorMap
 
 
 class Compound(StrEnum):
@@ -81,9 +81,8 @@ class StintData(BaseModel):
 
 class DriverLapData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    team: TeamPlotStyleDto
+
     driver: str
-    style: PlotStyle
     session_data: StintData
     stints: Sequence[StintData]
     laps: Sequence[LapTimingData]
@@ -93,6 +92,8 @@ class LapSelectionData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver_lap_data: list[DriverLapData]
+    color_map: ColorMap
+
     low_decile: float | None
     high_decile: float | None
     min_time: float | None

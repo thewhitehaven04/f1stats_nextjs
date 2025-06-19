@@ -1,8 +1,7 @@
-from typing import Sequence, TypedDict
+from typing import Sequence
 from pydantic import BaseModel, ConfigDict
 
-from api._services.color_resolver.models import ColorMap, PlotStyle
-from api._services.laps.models.laps import TeamPlotStyleDto
+from api._services.color_resolver.models import ColorMap
 
 
 class TelemetryMeasurementDto(BaseModel):
@@ -34,6 +33,7 @@ class FastestDelta(BaseModel):
     driver: str
     relative_distance: float
     point: tuple[float, float]
+
 
 class DriverTelemetryDelta(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
