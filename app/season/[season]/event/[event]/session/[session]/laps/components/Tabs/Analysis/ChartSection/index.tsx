@@ -2,7 +2,7 @@
 import type { ChartData, ChartDataset } from "chart.js"
 import { useMemo, type RefObject } from "react"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
-import type { DriverTelemetryPlotData } from "@/client/generated"
+import type { DriverTelemetryPlotData, PlotColor } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
@@ -17,9 +17,10 @@ export type TSpeedDataset = ChartDataset<
 
 export default function TelemetryChartSection(props: {
     data: DriverTelemetryPlotData[] | null
+    colorMap: Record<string, PlotColor>
     ref: RefObject<HTMLElement | null>
 }) {
-    const { data: telemetryMeasurements, ref } = props
+    const { data: telemetryMeasurements, colorMap, ref } = props
     const distanceLabels = telemetryMeasurements
         ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)))
         .sort((a, b) => a - b)
@@ -28,11 +29,15 @@ export default function TelemetryChartSection(props: {
         () =>
             telemetryMeasurements?.map((driverMeasurements) => ({
                 borderColor:
-                    driverMeasurements.style === "alternative"
-                        ? getAlternativeColor(driverMeasurements.team.color)
-                        : driverMeasurements.team.color,
+                    colorMap[driverMeasurements.driver].style === "alternative"
+                        ? getAlternativeColor(colorMap[driverMeasurements.driver].color)
+                        : colorMap[driverMeasurements.driver].color,
+                borderDash:
+                    colorMap[driverMeasurements.driver].style === "alternative"
+                        ? [6, 1.5]
+                        : undefined,
             })) || [],
-        [telemetryMeasurements],
+        [telemetryMeasurements, colorMap],
     )
 
     const speedDatasets: TSpeedDataset = useMemo(

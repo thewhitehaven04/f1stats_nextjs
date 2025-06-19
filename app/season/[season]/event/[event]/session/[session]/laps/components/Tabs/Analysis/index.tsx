@@ -1,21 +1,22 @@
 import {
     getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
+    getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
     getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     type AverageTelemetryPlotData,
     type DriverTelemetryPlotData,
     type LapSelectionData,
-    type SessionIdentifier,
     type SessionQueryFilter,
 } from "@/client/generated"
 import { useRef, useState } from "react"
 import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"
 import { useLapSelection } from "./LapsTableSection/hooks/useLapSelection"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ApiClient } from "@/client"
 import { useSession } from "../../../../hooks/useSession"
 import { ChartLoading } from "./ChartLoading"
+import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
 
 const AverageTelemetrySection = dynamic(() => import("./AverageTelemetrySection/index"), {
     ssr: false,
@@ -50,39 +51,45 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
     const { event, season: year, session } = useSession()
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
-    const { data } = useQuery({
+    const { data: telemetry } = useQuery({
         queryKey: [tab, year, event, session, selection],
-        queryFn: async () => {
-            return tab === "averageTelemetry"
-                ? (
-                      await getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
-                          {
-                              client: ApiClient,
-                              body: {
-                                  queries: getQueries(selection),
-                              },
-                              path: {
-                                  event,
-                                  session: session as SessionIdentifier,
-                                  year,
-                              },
-                              throwOnError: true,
-                          },
-                      )
-                  ).data
-                : (
-                      await getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
+        queryFn: async () =>
+            (tab === "averageTelemetry"
+                ? await getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
+                      {
                           client: ApiClient,
-                          body: { queries: getQueries(selection) },
+                          body: {
+                              queries: getQueries(selection),
+                          },
                           path: {
                               event,
                               session: session as SessionIdentifier,
                               year,
                           },
                           throwOnError: true,
-                      })
-                  ).data
-        },
+                      },
+                  )
+                : await getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
+                      client: ApiClient,
+                      body: { queries: getQueries(selection) },
+                      path: {
+                          event,
+                          session: session as SessionIdentifier,
+                          year,
+                      },
+                      throwOnError: true,
+                  })
+            ).data,
+    })
+
+    const { data: geometry } = useSuspenseQuery({
+        queryKey: [year, event],
+        queryFn: () =>
+            getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet({
+                path: { year, event },
+                client: ApiClient,
+                throwOnError: true,
+            }).then((res) => res.data),
     })
 
     const handleTabChange = (newTab: typeof tab) => {
@@ -107,14 +114,26 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                 </TabsList>
                 <TabsContent value="telemetry">
                     <TelemetryChartSection
-                        data={(data as DriverTelemetryPlotData[]) || null}
+                        data={(telemetry?.telemetries as DriverTelemetryPlotData[]) || null}
+                        colorMap={telemetry?.color_map || {}}
                         ref={ref}
+                    />
+                    <DeltaCircuitMap
+                        geometry={geometry}
+                        driverDeltas={telemetry?.delta || []}
+                        colorMap={telemetry?.color_map || {}}
                     />
                 </TabsContent>
                 <TabsContent value="averageTelemetry">
                     <AverageTelemetrySection
-                        data={(data as AverageTelemetryPlotData[]) || null}
+                        data={(telemetry?.telemetries as AverageTelemetryPlotData[]) || null}
+                        colorMap={telemetry?.color_map || {}}
                         ref={ref}
+                    />
+                    <DeltaCircuitMap
+                        geometry={geometry}
+                        driverDeltas={telemetry?.delta || []}
+                        colorMap={telemetry?.color_map || {}}
                     />
                 </TabsContent>
             </Tabs>

@@ -3,15 +3,16 @@ import { useMemo, type RefObject } from "react"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import type { AverageTelemetryPlotData } from "@/client/generated"
+import type { AverageTelemetryPlotData, PlotColor } from "@/client/generated"
 import type { TSpeedDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 
 export default (props: {
     data: AverageTelemetryPlotData[] | null
+    colorMap: Record<string, PlotColor>
     ref: RefObject<HTMLElement | null>
 }) => {
-    const { data: averageTelemetry, ref } = props
+    const { data: averageTelemetry, ref, colorMap } = props
     const distanceLabels =
         averageTelemetry?.length &&
         averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
@@ -20,12 +21,15 @@ export default (props: {
         () =>
             averageTelemetry?.map((driverMeasurements) => ({
                 borderColor:
-                    driverMeasurements.style === "alternative"
-                        ? getAlternativeColor(driverMeasurements.team.color)
-                        : driverMeasurements.team.color,
-                borderDash: driverMeasurements.style === "alternative" ? [6, 1.5] : undefined,
+                    colorMap[driverMeasurements.driver].style === "alternative"
+                        ? getAlternativeColor(colorMap[driverMeasurements.driver].color)
+                        : colorMap[driverMeasurements.driver].color,
+                borderDash:
+                    colorMap[driverMeasurements.driver].style === "alternative"
+                        ? [6, 1.5]
+                        : undefined,
             })) || [],
-        [averageTelemetry],
+        [averageTelemetry, colorMap],
     )
 
     const speedDatasets: TSpeedDataset = useMemo(
