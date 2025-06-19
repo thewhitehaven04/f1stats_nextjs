@@ -1,4 +1,4 @@
-from typing import Annotated, Sequence
+from typing import Annotated
 from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
@@ -7,7 +7,7 @@ from api._repository.engine import (
     get_connection,
 )
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
-from api._services.telemetry.models import AverageTelemetryPlotData
+from api._services.telemetry.models import AverageTelemetriesResponseDto
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -23,7 +23,7 @@ app.add_middleware(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/telemetry/average",
-    response_model=Sequence[AverageTelemetryPlotData],
+    response_model=AverageTelemetriesResponseDto,
 )
 async def get_averaged_telemetry(
     year: str,

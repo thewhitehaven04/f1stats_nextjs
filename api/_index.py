@@ -52,8 +52,8 @@ async def get_session_laptimes_filtered(
     return LapDataResolver(
         db_connection=connection,
         season=year,
-        event=event,
-        session_identifier=session,
+        event=unquote(event),
+        session_identifier=unquote(session),
     ).get_laptime_comparison(
         filter_=body,
     )
@@ -85,7 +85,7 @@ async def get_lap_telemetries(
     return TelemetryResolver(
         db_connection=connection,
         season=year,
-        event=event,
+        event=unquote(event),
         session_identifier=unquote(session),
     ).get_telemetry(query_filter=body)
 
@@ -116,7 +116,7 @@ async def get_averaged_telemetry(
     return TelemetryResolver(
         db_connection=connection,
         season=year,
-        event=event,
+        event=unquote(event),
         session_identifier=unquote(session),
     ).get_average_telemetry(
         filter_=body,
@@ -131,5 +131,5 @@ async def get_circuit_geojson(
     year: str, event: str, connection: Annotated[Connection, Depends(get_connection)]
 ):
     return CircuitResolver(
-        db_connection=connection, event=unquote(event), number=year
+        db_connection=connection, event=unquote(event), season=year
     ).get_circuit_geometry()

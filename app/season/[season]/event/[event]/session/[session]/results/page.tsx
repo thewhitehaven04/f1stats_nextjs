@@ -1,4 +1,3 @@
-import type { SessionIdentifier } from "@/client/generated"
 import type { ISessionPathnameParams } from "../types"
 import { ResultsSection } from "./components/ResultsSection"
 import { fetchSessionResults } from "./fetcher"
@@ -18,7 +17,7 @@ export default async function Page({ params }: { params: Promise<ISessionPathnam
     const { data, type } = await fetchSessionResults(
         season,
         decodeURIComponent(event),
-        decodeURIComponent(session) as SessionIdentifier,
+        decodeURIComponent(session),
     )
 
     return <ResultsSection sessionType={type} sessionResults={data} />

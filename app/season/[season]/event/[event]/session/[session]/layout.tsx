@@ -1,13 +1,12 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { format } from "date-fns/format"
-import type { SessionIdentifier } from "@/client/generated"
 import dbClient from "@/client/db"
 import type { ISessionPathnameParams } from "./types"
 import { SummaryItem } from "./SummaryItem"
 import { Suspense } from "react"
 
 const fetchSessionDataWithWeather = async (
-    session: SessionIdentifier,
+    session: string,
     season: number,
     event: string,
 ) => {
@@ -50,7 +49,7 @@ export default async function SummaryLayout({
 }: { params: Promise<ISessionPathnameParams>; children: React.ReactNode }) {
     const { season, session, event } = await params
     const { sessionData, weather } = await fetchSessionDataWithWeather(
-        decodeURIComponent(session) as SessionIdentifier,
+        decodeURIComponent(session),
         Number.parseInt(season),
         decodeURIComponent(event),
     )

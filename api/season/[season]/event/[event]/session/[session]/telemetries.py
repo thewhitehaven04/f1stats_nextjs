@@ -7,7 +7,7 @@ from api._repository.engine import (
     get_connection,
 )
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
-from api._services.telemetry.models import DriverTelemetryPlotData
+from api._services.telemetry.models import LapTelemetriesResponseDto
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,7 +24,7 @@ app.add_middleware(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/telemetries",
-    response_model=list[DriverTelemetryPlotData],
+    response_model=LapTelemetriesResponseDto,
 )
 async def get_lap_telemetries(
     year: str,
@@ -32,7 +32,7 @@ async def get_lap_telemetries(
     session: str,
     body: SessionQueryFilter,
     connection: Annotated[Connection, Depends(get_connection)],
-) -> list[DriverTelemetryPlotData]:
+):
     """Retrieve telemetry data for a specific Formula 1 session.
 
     Args:

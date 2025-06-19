@@ -1,9 +1,9 @@
 from typing import Annotated
-from urllib.parse import unquote 
+from urllib.parse import unquote
 from fastapi import Depends, FastAPI
-from sqlalchemy import Connection 
+from sqlalchemy import Connection
 from api._core.models.queries import SessionQueryFilter
-from api._repository.engine import get_connection 
+from api._repository.engine import get_connection
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
 from fastapi.middleware.cors import CORSMiddleware

@@ -21,8 +21,7 @@ export type TLinePlotTabBoxChartDataset = ChartData<
 export default function LinePlotTab({
     laps,
 }: { laps: LapSelectionData }) {
-    const { driver_lap_data: driverLapData } = laps
-    const { color_map } = driverLapData
+    const { driver_lap_data: driverLapData, color_map } = laps
     const [isOutliersShown, setIsOutliersShown] = useState(true)
 
     const initialDriverState = useMemo(

@@ -7,7 +7,7 @@ from sqlalchemy import Connection, create_engine
 logger.logger.setLevel('INFO')
 db_conn_string = (
     environ.get("DB_URL_PYTHON")
-    or "postgresql://cv9gjm:xau_Su3byWZ1DhB0oHQvKxDxOYxuj6UvUIjAf@eu-central-1.sql.xata.sh/f1-stats:main?sslmode=require"
+    or "postgresql://germanbulavkin:postgres@localhost:5432/postgres"
 )
 logger.logger.info(f"--------\nDatabase connection string: {db_conn_string}\n---------")
 

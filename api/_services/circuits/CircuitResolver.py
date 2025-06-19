@@ -9,10 +9,10 @@ from geopy.distance import geodesic, Point
 
 class CircuitResolver:
 
-    def __init__(self, db_connection: Connection, event: str, number: str):
+    def __init__(self, db_connection: Connection, event: str, season: str):
         self.session = sessionmaker(db_connection)
         self.event = event
-        self.season = number
+        self.season = season
 
     @staticmethod
     def _distance_to_finish(coordinates) -> float:

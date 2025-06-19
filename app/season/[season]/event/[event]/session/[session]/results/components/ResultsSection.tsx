@@ -3,11 +3,10 @@ import { ResultsTable } from "./ResultsTable"
 import type { ComponentProps } from "react"
 import { ESessionType, type IPracticeData, type IQualifyingData, type IRaceData } from "./types"
 import type { TFetchSessionResults } from "../fetcher"
-import type { SessionIdentifier } from "@/client/generated"
 
 export const ResultsSection = (props: {
     sessionResults: TFetchSessionResults
-    sessionType: SessionIdentifier
+    sessionType: string 
 }) => {
     const { sessionResults, sessionType} = props
     let tableData: ComponentProps<typeof ResultsTable>
