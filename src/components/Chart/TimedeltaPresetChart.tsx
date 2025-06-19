@@ -50,7 +50,7 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                         },
                         label(tooltipItem) {
                             const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
-                            return raw.y.toFixed(3)
+                            return `${tooltipItem.dataset.label} ${raw.y.toFixed(3)}`
                         },
                     },
                 },

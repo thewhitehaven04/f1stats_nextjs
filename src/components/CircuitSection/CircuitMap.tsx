@@ -44,7 +44,8 @@ export function DeltaCircuitMap(props: {
     const Y = maxY - minY
 
     return (
-        <section className="w-full h-full flex justify-center items-center p-2">
+        <section className="w-full h-full flex flex-col justify-center items-center p-2 gap-4">
+            <h2 className="text-lg font-bold">Circuit map</h2>
             <svg width={WIDTH} height={HEIGHT} className="overflow-visible">
                 <title>Driver speed comparison</title>
                 {geometry.geometry?.coordinates.map((pos, index) => {
@@ -98,16 +99,25 @@ export function DeltaCircuitMap(props: {
                                 Y,
                             })}
                             fill="white"
-                            stroke={
-                                colorMap[pos.driver].style === "alternative"
-                                    ? getAlternativeColor(colorMap[pos.driver].color)
-                                    : colorMap[pos.driver].color
-                            }
+                            stroke={colorMap[pos.driver].color}
                             strokeWidth="6"
                         />
                     )
                 })}
             </svg>
+            <div className="flex flex-row gap-2 justify-center">
+                {Object.entries(colorMap).map(([driver, plotColor]) => {
+                    return (
+                        <div key={driver} className="flex flex-row gap-2 items-center text-sm">
+                            <div
+                                className="h-3 w-9 border-2 border-black"
+                                style={{ backgroundColor: plotColor.color }}
+                            />
+                            <div>{driver}</div>
+                        </div>
+                    )
+                })}
+            </div>
         </section>
     )
 }

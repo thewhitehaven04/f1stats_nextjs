@@ -54,9 +54,7 @@ export type DeltaInstance = {
 }
 
 export type DriverLapData = {
-    team: TeamPlotStyleDto
     driver: string
-    style: "default" | "alternative"
     session_data: StintData
     stints: Array<StintData>
     laps: Array<LapTimingData>
@@ -85,6 +83,9 @@ export type HttpValidationError = {
 
 export type LapSelectionData = {
     driver_lap_data: Array<DriverLapData>
+    color_map: {
+        [key: string]: PlotColor
+    }
     low_decile: number | null
     high_decile: number | null
     min_time: number | null
@@ -171,11 +172,6 @@ export type StintData = {
     low_quartile: number | null
     high_quartile: number | null
     deg_rate: number | null
-}
-
-export type TeamPlotStyleDto = {
-    name: string
-    color: string
 }
 
 export type TelemetryMeasurementDto = {
