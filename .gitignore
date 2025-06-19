@@ -46,5 +46,7 @@ api/.vscode
 api/**/__pycache__
 api/venv
 .vscode/
+.xata/
+uv.lock
 
 **.code-workspace
