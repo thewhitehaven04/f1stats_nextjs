@@ -9,13 +9,14 @@ db_conn_string = (
     environ.get("DB_URL_PYTHON")
     or "postgresql://germanbulavkin:postgres@localhost:5432/postgres"
 )
-logger.logger.info(f"--------\nDatabase connection string: {db_conn_string}\n---------")
+logger.logger.warning(f"--------\nDatabase connection string: {db_conn_string}\n---------")
 
+postgres = create_engine(db_conn_string)
 
 @cache
 def get_connection() -> Connection:
     try:
-        connection = create_engine(db_conn_string).connect()
+        connection = postgres.connect()
         logger.logger.info("Connection established")
         return connection
     except:

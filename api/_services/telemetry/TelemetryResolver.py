@@ -1,7 +1,7 @@
 import sys
 from typing import Sequence
 from numpy import array, interp, linspace, ndarray, trunc
-from pandas import DataFrame, read_sql, to_timedelta
+from pandas import DataFrame, read_sql, to_numeric
 from sqlalchemy import Connection, and_, or_, select
 
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter
@@ -167,9 +167,7 @@ class TelemetryResolver:
                     and_(TelemetryMeasurements.lap_id.in_(lap_ids))
                 ),
             )
-            telemetry_data.laptime_at = to_timedelta(
-                telemetry_data.laptime_at, unit="s"
-            )
+            telemetry_data.laptime_at = to_numeric(telemetry_data.laptime_at)
             style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
             color_map.set(driver_id, PlotColor(color=style.color, style=style.style))
             avg_telemetry_data = self.average_telemetry_for_driver(
@@ -230,10 +228,10 @@ class TelemetryResolver:
                 driver=avg_telemetries[index]["driver"],
                 relative_distance=avg_telemetries[index][
                     "raw_telemetry"
-                ].relative_distance,
+                ].relative_distance.iat[i],
                 point=(points[index].latitude, points[index].longitude),
             )
-            for index in indices
+            for i, index in enumerate(indices)
         ]
 
         return AverageTelemetriesResponseDto(
