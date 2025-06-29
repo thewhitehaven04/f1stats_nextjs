@@ -1,23 +1,43 @@
-import { useDebouncedState } from "@/core/hooks/useDebouncedState"
-import { useCallback } from "react"
+import { useCallback, useRef, useState } from "react"
 
 export const useLapSelection = () => {
-    const [selection, setSelection] = useDebouncedState<[string, number][]>([], 750)
+    const [selection, setSelection] = useState<[string, number][]>([])
+
+    const batch = useRef<(() => void)[]>([])
+    const timeoutRef = useRef<NodeJS.Timeout>(null)
+    const clearIfTimeout = useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+        }
+    }, [])
+
+    const flushBatch = useCallback(() => {
+        batch.current.forEach((fn) => fn())
+        batch.current = []
+    }, [])
 
     const updateSelection = useCallback(
         ({ driver, lap, state }: { driver: string; lap: number; state: boolean }) => {
+            clearIfTimeout()
+
             if (state) {
-                setSelection((prev) => [...prev, [driver, lap]])
+                batch.current.push(() => setSelection((prev) => [...prev, [driver, lap]]))
+                timeoutRef.current = setTimeout(flushBatch, 1000)
             } else {
-                setSelection((prev) =>
-                    prev.filter(([key, value]) => key !== driver || value !== lap),
-                )
+                batch.current.push(() => {
+                    setSelection((prev) =>
+                        prev.filter(([key, value]) => key !== driver || value !== lap),
+                    )
+                })
             }
         },
-        [setSelection],
+        [flushBatch, clearIfTimeout],
     )
+
     const resetSelection = () => {
+        clearIfTimeout()
         setSelection([])
     }
+
     return { selection, updateSelection, resetSelection }
 }

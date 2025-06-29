@@ -99,7 +99,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
 
     return (
         <>
-            <LapsTableSection laps={laps} onUpdateSelection={updateSelection} />
+            <LapsTableSection key={tab} laps={laps} onUpdateSelection={updateSelection} />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
                     <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>

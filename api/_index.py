@@ -9,10 +9,6 @@ from api._core.models.queries import SessionIdentifier, SessionQueryFilter
 from api._repository.engine import get_connection
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
-from api._services.fastf1_fetcher.fetcher import (
-    init_year_data,
-    store_session_data_to_db,
-)
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LapSelectionData
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
@@ -137,23 +133,3 @@ async def get_circuit_geojson(
     return CircuitResolver(
         db_connection=connection, event=unquote(event), season=year
     ).get_circuit_geometry()
-
-
-@app.get(
-    "/api/season/{season}/event/{event}/session/{session}/populate",
-)
-async def populate_database_with_session_data(
-    year: str,
-    event: int,
-    session: int,
-):
-    store_session_data_to_db(year, event, session)
-    return {"success": "true"}
-
-
-@app.get(
-    "/api/season/{season}/init",
-)
-async def populate_db_with_season_data(year: str):
-    init_year_data(year)
-    return {"success": "true"}
