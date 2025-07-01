@@ -35,7 +35,7 @@ export const TeamSeasonFormSection = (props: {
                         {seasonForm.map((_, roundNumber) => {
                             return (
                                 // biome-ignore lint/suspicious/noArrayIndexKey: SAME
-                                <TableCell key={roundNumber}>
+                                <TableCell key={roundNumber} className="align-middle">
                                     {seasonForm[roundNumber][index] ? (
                                         <Position
                                             position={seasonForm[roundNumber][index].position || ""}

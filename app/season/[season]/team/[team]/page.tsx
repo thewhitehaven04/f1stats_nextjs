@@ -1,5 +1,5 @@
 import dbClient from "@/client/db"
-import { TeamSeasonFormSection } from "./components/TeamSeasonFormSection"
+import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
 import type { TDriverRow } from "./types"
 
 type TSessionResultResponse = {
@@ -13,6 +13,7 @@ type TSessionResultResponse = {
     timestamp_end: Date | null
     start_time: Date
     end_time: Date | null
+    session_type_id: "Race" | "Sprint"
 }
 
 const fetchTeamSeasonForm = async (season: string, team: string) => {
@@ -71,7 +72,7 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
     //     }),
     // ])
 
-    const [results, events] = await Promise.all([
+    const [results, sessions] = await Promise.all([
         dbClient.$queryRaw`
         SELECT e.season_year, 
                 e.event_name, 
@@ -82,7 +83,8 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
                 dtc.timestamp_start, 
                 dtc.timestamp_end, 
                 es.start_time, 
-                es.end_time
+                es.end_time,
+                es.session_type_id
         FROM race_session_results AS rsr
         INNER JOIN session_results AS sr ON sr.id = rsr.id
         INNER JOIN drivers AS d ON sr.driver_id = d.id
@@ -93,7 +95,6 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
         AND es.season_year = e.season_year
         AND es.session_type_id = sr.session_type_id
         WHERE e.season_year = ${parsedSeason}
-        AND sr.session_type_id = 'Race'
         AND dtc.team_id = ${parsedTeam}
         AND dtc.timestamp_start <= es.start_time
         AND (
@@ -102,56 +103,59 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
         )
         ORDER BY d.id ASC, es.start_time ASC
         ` as Promise<TSessionResultResponse[]>,
-        dbClient.events.findMany({
+        dbClient.event_sessions.findMany({
             where: {
                 season_year: parsedSeason,
-                event_format_name: {
-                    not: "testing",
+                session_type_id: {
+                    in: ["Race", "Sprint"],
                 },
             },
             orderBy: {
-                date_start: "asc",
+                start_time: "asc",
             },
         }),
     ])
 
-    const eventColumns: TDriverRow[] = []
-    events.forEach((event) => {
-        const eventResults = results.filter(
-            (res) => res.event_name === event.event_name && res.season_year === event.season_year,
+    const eventPoints: TDriverRow[] = []
+    const seasonEvents: string[] = []
+    sessions.forEach((event) => {
+        const raceResults = results.filter(
+            (res) =>
+                res.event_name === event.event_name &&
+                res.season_year === event.season_year &&
+                res.session_type_id === event.session_type_id,
         )
 
-        const eventForm: TDriverRow = eventResults.map((result) => ({
+        const racePoints: TDriverRow = raceResults.map((result) => ({
             points: result.points || 0,
             position: result.classified_position,
             driverId: result.driver_id || "",
         }))
 
-        eventColumns.push(eventForm)
-    })
-    const seasonEventAbbreviations = events.map((event) =>
-        event.event_name.slice(0, 3).toUpperCase(),
-    )
-    const driverCount = Math.max(...eventColumns.map((column) => column.length))
-    dbClient.$disconnect()
+        eventPoints.push(racePoints)
 
-    return { eventColumns, seasonEventAbbreviations, driverCount }
+        seasonEvents.push(`${event.event_name.split(" ")[0]} (${event.session_type_id})`)
+    })
+    const driverCount = Math.max(...eventPoints.map((column) => column.length))
+
+    console.log(seasonEvents)
+    console.log(eventPoints)
+    return { eventPoints, seasonEvents, driverCount }
 }
 
 export default async function TeamSeasonFormPage(props: {
     params: Promise<{ season: string; team: string }>
 }) {
     const { params } = props
-    const { eventColumns, seasonEventAbbreviations, driverCount } = await fetchTeamSeasonForm(
+    const { eventPoints, seasonEvents, driverCount } = await fetchTeamSeasonForm(
         (await params).season,
         (await params).team,
     )
-    console.log(eventColumns)
 
     return (
         <TeamSeasonFormSection
-            seasonForm={eventColumns}
-            events={seasonEventAbbreviations}
+            seasonForm={eventPoints}
+            events={seasonEvents}
             driverCount={driverCount}
         />
     )

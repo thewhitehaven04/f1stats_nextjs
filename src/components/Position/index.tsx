@@ -16,8 +16,11 @@ const getPositionColor = (position: string) =>
 
 export const Position = ({ position, points }: { position: string; points: number }) => {
     return (
-        <div className={getPositionColor(position)}>
-            {position} <sup>{points}</sup>
+        <div className={`${getPositionColor(position)} flex flex-col items-center justify-center`}>
+            <div>
+                {points}p
+                <sup>{position}</sup>
+            </div>
         </div>
     )
 }
