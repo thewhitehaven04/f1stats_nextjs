@@ -1,7 +1,7 @@
 import { Gap } from "@/components/Gap"
 import { Laptime } from "@/components/Laptime"
 import { SectorTime } from "@/components/SectorTime"
-import { ValueOrNa } from "@/components/ValueOrNa"
+import { NaLabel, ValueOrNa } from "@/components/ValueOrNa"
 import { createColumnHelper } from "@tanstack/react-table"
 import {
     ESessionType,
@@ -11,6 +11,7 @@ import {
     type IRaceData,
 } from "./types"
 import { Checkbox } from "@/components/ui/checkbox"
+import Link from "next/link"
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()
 const practiceHelper = createColumnHelper<IPracticeData>()
@@ -54,6 +55,16 @@ const PRACTICE_COLUMNS_DEF = [
     practiceHelper.accessor("teamName", {
         header: () => <span>Team</span>,
         enableSorting: true,
+        cell: (info) => {
+            const value = info.getValue()
+            return value ? (
+                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                    {value.name}
+                </Link>
+            ) : (
+                <NaLabel />
+            )
+        },
     }),
     practiceHelper.accessor("time", {
         header: () => <span>Time</span>,
@@ -82,7 +93,16 @@ const QUALI_COLUMNS_DEF = [
     qualiHelper.accessor("teamName", {
         header: () => <span>Team</span>,
         enableSorting: true,
-        cell: (info) => <ValueOrNa value={info.getValue()} />,
+        cell: (info) => {
+            const value = info.getValue()
+            return value ? (
+                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                    {value.name}
+                </Link>
+            ) : (
+                <NaLabel />
+            )
+        },
     }),
     qualiHelper.accessor("q1Time", {
         header: () => <span>Q1 Time</span>,
@@ -116,6 +136,16 @@ export const RACE_COLUMNS_DEF = [
     raceHelper.accessor("teamName", {
         header: () => <span>Team</span>,
         enableSorting: true,
+        cell: (info) => {
+            const value = info.getValue()
+            return value ? (
+                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                    {value.name}
+                </Link>
+            ) : (
+                <NaLabel />
+            )
+        },
     }),
     raceHelper.accessor("gridPosition", {
         header: () => <span>Grid</span>,

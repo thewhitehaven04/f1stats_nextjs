@@ -1,6 +1,6 @@
 export interface IBaseResultsData {
-    driver: { name: string; country: string, id: string }
-    teamName: string
+    driver: { name: string; country: string; id: string }
+    teamName: { name: string; id: number } | null
 }
 
 export interface IPracticeData extends IBaseResultsData {

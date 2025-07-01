@@ -40,7 +40,7 @@ export const LapsTabs = () => {
     }))
 
     const { data } = useSuspenseQuery({
-        queryKey: ["laps", year, event, session],
+        queryKey: ["laps", year, event, session, queries],
         queryFn: () =>
             getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost({
                 client: ApiClient,

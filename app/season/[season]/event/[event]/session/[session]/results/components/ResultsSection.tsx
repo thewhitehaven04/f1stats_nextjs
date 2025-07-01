@@ -6,9 +6,9 @@ import type { TFetchSessionResults } from "../fetcher"
 
 export const ResultsSection = (props: {
     sessionResults: TFetchSessionResults
-    sessionType: string 
+    sessionType: string
 }) => {
-    const { sessionResults, sessionType} = props
+    const { sessionResults, sessionType } = props
     let tableData: ComponentProps<typeof ResultsTable>
     if (sessionType.toLowerCase().includes("practice")) {
         tableData = {
@@ -19,7 +19,14 @@ export const ResultsSection = (props: {
                         name: `${result.drivers?.first_name} ${result.drivers?.last_name}` || "",
                         id: result.drivers?.id || "",
                     },
-                    teamName: result.drivers?.driver_team_changes[0].teams.team_display_name || "",
+                    teamName: result.drivers?.driver_team_changes[0].teams
+                        ? {
+                              name:
+                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
+                                  "",
+                              id: result.drivers?.driver_team_changes[0].teams.id,
+                          }
+                        : null,
                     time: result.practice_session_results
                         ? result.practice_session_results.laptime
                         : 0,
@@ -41,7 +48,14 @@ export const ResultsSection = (props: {
                         name: `${result.drivers?.first_name} ${result.drivers?.last_name}` || "",
                         id: result.drivers?.id || "",
                     },
-                    teamName: result.drivers?.driver_team_changes[0].teams.team_display_name || "",
+                    teamName: result.drivers?.driver_team_changes[0].teams
+                        ? {
+                              name:
+                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
+                                  "",
+                              id: result.drivers?.driver_team_changes[0].teams.id,
+                          }
+                        : null,
                     q1Time: result.qualifying_session_results?.q1_laptime ?? null,
                     q2Time: result.qualifying_session_results?.q2_laptime ?? null,
                     q3Time: result.qualifying_session_results?.q3_laptime ?? null,
@@ -59,7 +73,14 @@ export const ResultsSection = (props: {
                         id: result.drivers?.id || "",
                     },
                     gap: result.race_session_results ? result.race_session_results.gap : null,
-                    teamName: result.drivers?.driver_team_changes[0].teams.team_display_name || "",
+                    teamName: result.drivers?.driver_team_changes[0].teams
+                        ? {
+                              name:
+                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
+                                  "",
+                              id: result.drivers?.driver_team_changes[0].teams.id,
+                          }
+                        : null,
                     time: result.race_session_results
                         ? result.race_session_results.total_time
                         : null,
