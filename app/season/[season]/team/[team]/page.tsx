@@ -1,6 +1,7 @@
 import dbClient from "@/client/db"
 import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
 import type { TDriverRow } from "./types"
+import { TeamSeasonFormChart } from "./components/TeamSeasonFormChart"
 
 type TSessionResultResponse = {
     season_year: number
@@ -14,6 +15,7 @@ type TSessionResultResponse = {
     start_time: Date
     end_time: Date | null
     session_type_id: "Race" | "Sprint"
+    team_display_name: string
 }
 
 const fetchTeamSeasonForm = async (season: string, team: string) => {
@@ -84,12 +86,14 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
                 dtc.timestamp_end, 
                 es.start_time, 
                 es.end_time,
-                es.session_type_id
+                es.session_type_id,
+                t.team_display_name 
         FROM race_session_results AS rsr
         INNER JOIN session_results AS sr ON sr.id = rsr.id
         INNER JOIN drivers AS d ON sr.driver_id = d.id
         INNER JOIN driver_team_changes AS dtc ON d.id = dtc.driver_id
         INNER JOIN events AS e ON e.event_name = sr.event_name
+        INNER JOIN teams AS t ON t.id = dtc.team_id
         AND e.season_year = sr.season_year
         INNER JOIN event_sessions AS es ON es.event_name = e.event_name
         AND es.season_year = e.season_year
@@ -108,6 +112,13 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
                 season_year: parsedSeason,
                 session_type_id: {
                     in: ["Race", "Sprint"],
+                },
+            },
+            include: {
+                events: {
+                    select: {
+                        country: true,
+                    },
                 },
             },
             orderBy: {
@@ -134,29 +145,40 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
 
         eventPoints.push(racePoints)
 
-        seasonEvents.push(`${event.event_name.split(" ")[0]} (${event.session_type_id})`)
+        seasonEvents.push(
+            event.session_type_id === "Sprint"
+                ? `${event.events.country} (${event.session_type_id})`
+                : event.events.country,
+        )
     })
     const driverCount = Math.max(...eventPoints.map((column) => column.length))
 
-    console.log(seasonEvents)
-    console.log(eventPoints)
-    return { eventPoints, seasonEvents, driverCount }
+    return { eventPoints, seasonEvents, driverCount, teamName: results[0].team_display_name }
 }
 
 export default async function TeamSeasonFormPage(props: {
     params: Promise<{ season: string; team: string }>
 }) {
     const { params } = props
-    const { eventPoints, seasonEvents, driverCount } = await fetchTeamSeasonForm(
+    const { eventPoints, seasonEvents, driverCount, teamName } = await fetchTeamSeasonForm(
         (await params).season,
         (await params).team,
     )
 
     return (
-        <TeamSeasonFormSection
-            seasonForm={eventPoints}
-            events={seasonEvents}
-            driverCount={driverCount}
-        />
+        <div className="flex flex-col gap-4">
+            <TeamSeasonFormSection
+                seasonForm={eventPoints}
+                events={seasonEvents}
+                driverCount={driverCount}
+            >
+                {teamName} {(await params).season} form
+            </TeamSeasonFormSection>
+            <TeamSeasonFormChart
+                events={seasonEvents}
+                points={eventPoints}
+                driverCount={driverCount}
+            />
+        </div>
     )
 }
