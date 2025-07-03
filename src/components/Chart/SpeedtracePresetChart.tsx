@@ -36,8 +36,8 @@ export const SpeedtracePresetChart = (
                 },
                 tooltip: {
                     includeInvisible: false,
-                    axis: "x",
-                    mode: "nearest",
+                    axis: "r",
+                    mode: "x",
                     intersect: false,
                     yAlign: "top",
                     xAlign: "center",
