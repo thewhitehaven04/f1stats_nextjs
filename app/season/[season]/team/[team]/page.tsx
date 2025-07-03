@@ -1,78 +1,12 @@
 import dbClient from "@/client/db"
 import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
-import type { TDriverRow } from "./types"
-import { TeamSeasonFormChart } from "./components/TeamSeasonFormChart"
+import type { TDriverRow, TSessionResultResponse } from "./types"
+import { TeamSeasonFormChart } from './components/TeamSeasonFormChart'
 
-type TSessionResultResponse = {
-    season_year: number
-    event_name: string
-    driver_id: string
-    points: number
-    classified_position: string | null
-    gap: number | null
-    timestamp_start: Date
-    timestamp_end: Date | null
-    start_time: Date
-    end_time: Date | null
-    session_type_id: "Race" | "Sprint"
-    team_display_name: string
-}
 
 const fetchTeamSeasonForm = async (season: string, team: string) => {
     const parsedTeam = Number.parseInt(team)
     const parsedSeason = Number.parseInt(season)
-
-    /** TODO: replace raw query with orm */
-    // const [results, events] = await Promise.all([
-    //     dbClient.race_session_results.findMany({
-    //         include: {
-    //             session_results: {
-    //                 include: {
-    //                     drivers: {
-    //                         where: {
-    //                             driver_team_changes: {
-    //                                 every: {
-    //                                     team_id: {
-    //                                         equals: parsedTeam,
-    //                                     },
-    //                                     timestamp_start: {
-    //                                         lte: yearEnd,
-    //                                     },
-    //                                     OR: [
-    //                                         {
-    //                                             timestamp_end: {
-    //                                                 gte: yearStart,
-    //                                             },
-    //                                         },
-    //                                         {
-    //                                             timestamp_end: {
-    //                                                 equals: null,
-    //                                             },
-    //                                         },
-    //                                     ],
-    //                                 },
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //         where: {
-    //             session_results: {
-    //                 season_year: parsedSeason,
-    //                 session_type_id: "Race",
-    //             },
-    //         },
-    //     }),
-    //     dbClient.events.findMany({
-    //         where: {
-    //             season_year: parsedSeason,
-    //             event_format_name: {
-    //                 not: "testing",
-    //             },
-    //         },
-    //     }),
-    // ])
 
     const [results, sessions] = await Promise.all([
         dbClient.$queryRaw`
@@ -152,6 +86,8 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
         )
     })
     const driverCount = Math.max(...eventPoints.map((column) => column.length))
+
+    dbClient.$disconnect()
 
     return { eventPoints, seasonEvents, driverCount, teamName: results[0].team_display_name }
 }

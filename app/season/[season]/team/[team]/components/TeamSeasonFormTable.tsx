@@ -24,12 +24,13 @@ export const TeamSeasonFormSection = (props: {
             <CardHeader>
                 <CardTitle>{children}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='overflow-x-scroll'>
                 <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Driver</TableHead>
                             {events.map((event, index) => (
+                                // biome-ignore lint/suspicious/noArrayIndexKey: static array 
                                 <TableHead key={index}>{event}</TableHead>
                             ))}
                         </TableRow>
