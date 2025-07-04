@@ -29,35 +29,43 @@ function lapsTable(
         getCoreRowModel: getCoreRowModel(),
     })
 
-    const [showScroll, setShowScroll] = useState(false)
-
-    const tableRef = useRef<HTMLTableElement>(null)
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    const intersectionObserverRef = useRef<IntersectionObserver | null>(
-        new IntersectionObserver((entries) => {
-            const hasIntersectingEntries = entries.find((entry) => entry.isIntersecting)
-            if (hasIntersectingEntries) {
-                setShowScroll(true)
-            } else {
-                setShowScroll(false)
-            }
-        }),
-    )
-
     const { getHeaderGroups, getRowModel } = table
 
     const headerGroups = getHeaderGroups()
     const rowModel = getRowModel().rows
 
+    const [showScroll, setShowScroll] = useState(false)
+
+    const tableRef = useRef<HTMLTableElement>(null)
+    const scrollerRef = useRef<HTMLDivElement>(null)
+
+    const sideIntersectObsRef = useRef<IntersectionObserver | null>(
+        new IntersectionObserver(
+            (entries) => {
+                const isIntersectWidthGtBb =
+                    entries[0].boundingClientRect.width > entries[0].intersectionRect.width
+
+                if (isIntersectWidthGtBb) {
+                    setShowScroll(true)
+                } else {
+                    setShowScroll(false)
+                }
+            },
+            {
+                root: scrollerRef.current,
+            },
+        ),
+    )
+
+
     useEffect(() => {
-        if (tableRef.current) intersectionObserverRef.current?.observe(tableRef.current)
+        if (tableRef.current) sideIntersectObsRef.current?.observe(tableRef.current)
     }, [])
 
     const handleScroll = (direction: "left" | "right") => {
-        containerRef.current?.scrollBy({
+        scrollerRef.current?.scrollBy({
             behavior: "smooth",
-            left: direction === "left" ? -300 : 300,
+            left: direction === "right" ? 360 : -360,
         })
     }
 
@@ -68,7 +76,7 @@ function lapsTable(
                 <div className="flex flex-row justify-end gap-4 mb-2">
                     <ColumnVisibilityButton />
                 </div>
-                <div className="overflow-auto max-h-[720px]" ref={containerRef}>
+                <div className="overflow-auto max-h-[720px]" ref={scrollerRef}>
                     <table
                         data-slot="table"
                         className="w-full caption-bottom text-sm relative"
@@ -95,7 +103,7 @@ function lapsTable(
                                 </TableRow>
                             ))}
                         </TableHeader>
-                        <TableBody className="relative">
+                        <TableBody className="relative bg-[linear-gradient(rgba(0,0,0,0.05)_0,_white_0.6%,_white_99.4%,rgba(0,0,0,0.05))] bg-fixed">
                             {rowModel.map((row) => (
                                 <TableRow key={row.id}>
                                     {row.getVisibleCells().map((cell) => {
