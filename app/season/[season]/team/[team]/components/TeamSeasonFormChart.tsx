@@ -36,5 +36,11 @@ export const TeamSeasonFormChart = ({
         }),
         [points, events, driverCount],
     )
-    return <Chart type="line" data={data} options={{ interaction: { mode: 'index', intersect: false } }} />
+    return (
+        <Chart
+            type="line"
+            data={data}
+            options={{ interaction: { mode: "index", intersect: false } }}
+        />
+    )
 }

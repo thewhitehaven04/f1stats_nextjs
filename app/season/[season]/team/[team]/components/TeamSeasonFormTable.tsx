@@ -24,14 +24,18 @@ export const TeamSeasonFormSection = (props: {
             <CardHeader>
                 <CardTitle>{children}</CardTitle>
             </CardHeader>
-            <CardContent className='overflow-x-scroll'>
-                <Table>
+            <CardContent>
+                <Table className="overflow-x-scroll">
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Driver</TableHead>
+                            <TableHead className="sticky left-0 bg-white z-50 outline-[1px] outline-neutral-200 pl-2 pr-4">
+                                Driver
+                            </TableHead>
                             {events.map((event, index) => (
-                                // biome-ignore lint/suspicious/noArrayIndexKey: static array 
-                                <TableHead key={index}>{event}</TableHead>
+                                // biome-ignore lint/suspicious/noArrayIndexKey: static array
+                                <TableHead key={index} className="">
+                                    {event}
+                                </TableHead>
                             ))}
                         </TableRow>
                     </TableHeader>
@@ -39,11 +43,13 @@ export const TeamSeasonFormSection = (props: {
                         {Array.from({ length: driverCount }).map((_, index) => (
                             // biome-ignore lint/suspicious/noArrayIndexKey: Not a dynamic array, hence indices as keys are perfectly acceptable
                             <TableRow key={index}>
-                                <TableCell>{seasonForm[0][index].driverId}</TableCell>
+                                <TableCell className="sticky left-0 bg-white z-50 outline-[1px] outline-neutral-200 pl-2 pr-4">
+                                    {seasonForm[0][index].driverId}
+                                </TableCell>
                                 {seasonForm.map((_, roundNumber) => {
                                     return (
                                         // biome-ignore lint/suspicious/noArrayIndexKey: SAME
-                                        <TableCell key={roundNumber} className="align-middle">
+                                        <TableCell key={roundNumber} className="align-middle p-0">
                                             {seasonForm[roundNumber][index] ? (
                                                 <Position
                                                     position={

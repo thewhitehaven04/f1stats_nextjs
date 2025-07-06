@@ -44,7 +44,7 @@ export const ResultsTable = <T extends IBaseResultsData>(
             >
                 View lap information
             </TooltipButton>
-            <Table>
+            <Table className='rounded-md overflow-hidden'>
                 <TableHeader>
                     <TableRow>
                         {getFlatHeaders().map(({ column, id, getContext }) => (
