@@ -59,8 +59,8 @@ export function DeltaCircuitMap(props: {
             <svg
                 width={HEIGHT * aspect_ratio}
                 height={HEIGHT}
-                className="overflow-visible my-10"
-                transform={`rotate(${geometry.rotation})`}
+                className="overflow-visible my-4"
+                transform={`rotate(${-geometry.rotation})`}
             >
                 <title>Driver speed comparison</title>
                 {geometry.geojson.geometry?.coordinates.map((pos, index) => {
@@ -79,7 +79,8 @@ export function DeltaCircuitMap(props: {
                     const yEnd = second[1] - minY
                     return (
                         <path
-                            key={yStart - xStart}
+                            // biome-ignore lint/suspicious/noArrayIndexKey: static array
+                            key={index}
                             d={getPath({
                                 xStart,
                                 yStart,
@@ -91,7 +92,7 @@ export function DeltaCircuitMap(props: {
                             })}
                             fill="white"
                             stroke="black"
-                            strokeWidth="5"
+                            strokeWidth="5.5"
                         />
                     )
                 })}
@@ -107,7 +108,8 @@ export function DeltaCircuitMap(props: {
                     const yEnd = second[1] - minY
                     return (
                         <path
-                            key={yStart - xStart}
+                            // biome-ignore lint/suspicious/noArrayIndexKey: static array
+                            key={index}
                             d={getPath({
                                 xStart,
                                 yStart,
@@ -123,7 +125,7 @@ export function DeltaCircuitMap(props: {
                                     ? getAlternativeColor(colorMap[pos.driver].color)
                                     : colorMap[pos.driver].color
                             }
-                            strokeWidth="3.5"
+                            strokeWidth="4"
                         />
                     )
                 })}

@@ -97,6 +97,8 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         setTab(newTab)
     }
 
+    console.log('Delta: ', telemetry?.delta)
+
     return (
         <>
             <LapsTableSection key={tab} laps={laps} onUpdateSelection={updateSelection} />

@@ -229,7 +229,7 @@ class TelemetryResolver:
                 relative_distance=avg_telemetries[index][
                     "raw_telemetry"
                 ].relative_distance.iat[i],
-                point=(points[index].latitude, points[index].longitude),
+                point=(points[i].latitude, points[i].longitude),
             )
             for i, index in enumerate(indices)
         ]
