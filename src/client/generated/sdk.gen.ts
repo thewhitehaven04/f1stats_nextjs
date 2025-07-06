@@ -8,9 +8,9 @@ import type {
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData,
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostError,
-    GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostData,
-    GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
-    GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostError,
+    GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostData,
+    GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
+    GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostError,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
@@ -106,7 +106,7 @@ export const getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPo
 }
 
 /**
- * Get Averaged Telemetry
+ * Get Average Lap Telemetries
  * Retrieve averaged telemetry data for a specific Formula 1 session.
  *
  * Args:
@@ -119,17 +119,17 @@ export const getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPo
  * Returns:
  * Averaged telemetry measurements for the specified session based on the provided filter.
  */
-export const getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost = <
+export const getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostData,
+        GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? _heyApiClient).post<
-        GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
-        GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostError,
+        GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
+        GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostError,
         ThrowOnError
     >({
         url: "/api/season/{year}/event/{event}/session/{session}/telemetry/average",

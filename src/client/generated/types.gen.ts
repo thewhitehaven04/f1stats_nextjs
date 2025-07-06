@@ -27,14 +27,8 @@ export type CircuitFeatureProperties = {
 }
 
 export type CircuitGeometryDto = {
-    bbox?:
-        | [number, number, number, number]
-        | [number, number, number, number, number, number]
-        | null
-    type: "Feature"
-    geometry: LineString | null
-    properties: CircuitFeatureProperties | null
-    id?: number | string | null
+    geojson: FeatureLineStringCircuitFeatureProperties
+    rotation: number
 }
 
 export type Compound =
@@ -75,6 +69,17 @@ export type FastestDelta = {
     driver: string
     relative_distance: number
     point: [number, number]
+}
+
+export type FeatureLineStringCircuitFeatureProperties = {
+    bbox?:
+        | [number, number, number, number]
+        | [number, number, number, number, number, number]
+        | null
+    type: "Feature"
+    geometry: LineString | null
+    properties: CircuitFeatureProperties | null
+    id?: number | string | null
 }
 
 export type HttpValidationError = {
@@ -269,36 +274,38 @@ export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPos
 export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse =
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponses[keyof GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponses]
 
-export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostData = {
-    body: SessionQueryFilter
-    path: {
-        year: string
-        event: string
-        session:
-            | "Race"
-            | "Qualifying"
-            | "Sprint"
-            | "Sprint Qualifying"
-            | "Sprint Shootout"
-            | "Practice 1"
-            | "Practice 2"
-            | "Practice 3"
+export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostData =
+    {
+        body: SessionQueryFilter
+        path: {
+            year: string
+            event: string
+            session:
+                | "Race"
+                | "Qualifying"
+                | "Sprint"
+                | "Sprint Qualifying"
+                | "Sprint Shootout"
+                | "Practice 1"
+                | "Practice 2"
+                | "Practice 3"
+        }
+        query?: never
+        url: "/api/season/{year}/event/{event}/session/{session}/telemetry/average"
     }
-    query?: never
-    url: "/api/season/{year}/event/{event}/session/{session}/telemetry/average"
-}
 
-export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError
-}
+export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors =
+    {
+        /**
+         * Validation Error
+         */
+        422: HttpValidationError
+    }
 
-export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostError =
-    GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors[keyof GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors]
+export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostError =
+    GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors[keyof GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostErrors]
 
-export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses =
+export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses =
     {
         /**
          * Successful Response
@@ -306,8 +313,8 @@ export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAv
         200: AverageTelemetriesResponseDto
     }
 
-export type GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse =
-    GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses[keyof GetAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses]
+export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse =
+    GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses[keyof GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponses]
 
 export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData = {
     body?: never

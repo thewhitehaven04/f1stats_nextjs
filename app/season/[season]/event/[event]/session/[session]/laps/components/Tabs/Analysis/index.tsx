@@ -1,5 +1,5 @@
 import {
-    getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
+    getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
     getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     type AverageTelemetryPlotData,
@@ -55,7 +55,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         queryKey: [tab, year, event, session, selection],
         queryFn: async () =>
             (tab === "averageTelemetry"
-                ? await getAveragedTelemetryApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
+                ? await getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
                       {
                           client: ApiClient,
                           body: {
@@ -113,27 +113,27 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="telemetry">
+                    <DeltaCircuitMap
+                        geometry={geometry}
+                        driverDeltas={telemetry?.delta || []}
+                        colorMap={telemetry?.color_map || {}}
+                    />
                     <TelemetryChartSection
                         data={(telemetry?.telemetries as DriverTelemetryPlotData[]) || null}
                         colorMap={telemetry?.color_map || {}}
                         ref={ref}
                     />
+                </TabsContent>
+                <TabsContent value="averageTelemetry">
                     <DeltaCircuitMap
                         geometry={geometry}
                         driverDeltas={telemetry?.delta || []}
                         colorMap={telemetry?.color_map || {}}
                     />
-                </TabsContent>
-                <TabsContent value="averageTelemetry">
                     <AverageTelemetrySection
                         data={(telemetry?.telemetries as AverageTelemetryPlotData[]) || null}
                         colorMap={telemetry?.color_map || {}}
                         ref={ref}
-                    />
-                    <DeltaCircuitMap
-                        geometry={geometry}
-                        driverDeltas={telemetry?.delta || []}
-                        colorMap={telemetry?.color_map || {}}
                     />
                 </TabsContent>
             </Tabs>

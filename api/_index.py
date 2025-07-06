@@ -94,7 +94,7 @@ async def get_lap_telemetries(
     "/api/season/{year}/event/{event}/session/{session}/telemetry/average",
     response_model=AverageTelemetriesResponseDto,
 )
-async def populate_database_with_session_data(
+async def get_average_lap_telemetries(
     year: str,
     event: str,
     session: SessionIdentifier,
@@ -127,9 +127,5 @@ async def populate_database_with_session_data(
     "/api/season/{year}/event/{event}/circuit/geojson",
     response_model=CircuitGeometryDto,
 )
-async def get_circuit_geojson(
-    year: str, event: str, connection: Annotated[Connection, Depends(get_connection)]
-):
-    return CircuitResolver(
-        db_connection=connection, event=unquote(event), season=year
-    ).get_circuit_geometry()
+async def get_circuit_geojson(year: str, event: str):
+    return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()

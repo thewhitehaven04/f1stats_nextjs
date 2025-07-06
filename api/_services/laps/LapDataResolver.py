@@ -17,7 +17,6 @@ from api._services.laps.models.laps import (
     DriverLapData,
     LapSelectionData,
     StintData,
-    TeamPlotStyleDto,
 )
 
 

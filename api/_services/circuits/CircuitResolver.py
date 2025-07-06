@@ -1,16 +1,17 @@
 from functools import cache
 from itertools import pairwise
-from sqlalchemy import Connection, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 
 from api._repository.repository import Circuits, Events
+from api._repository.engine import postgres
 from geopy.distance import geodesic, Point
+
+from api._services.circuits.models import CircuitGeometryDto
 
 
 class CircuitResolver:
 
-    def __init__(self, db_connection: Connection, event: str, season: str):
-        self.session = sessionmaker(db_connection)
+    def __init__(self, event: str, season: str):
         self.event = event
         self.season = season
 
@@ -23,27 +24,31 @@ class CircuitResolver:
 
     @cache
     def get_circuit_record(self):
-        with self.session() as session:
-            circuit = session.execute(
-                select(Circuits)
+        with Session(postgres) as session:
+            circuit = (
+                session.query(Circuits)
                 .join(Events, Events.circuit_id == Circuits.id)
-                .where(
-                    Events.event_name == self.event,
-                    Events.season_year == self.season,
+                .filter_by(
+                    event_name=self.event,
+                    season_year=self.season,
                 )
-            ).fetchone()
+                .first()
+            )
             if circuit:
                 return circuit
             raise ValueError("No circuit found")
 
     def get_circuit_geometry(self):
-        return self.get_circuit_record()[0].geojson["features"][0]
+        record = self.get_circuit_record()
+        return CircuitGeometryDto(
+            geojson=record.geojson["features"][0], rotation=record.rotation
+        )
 
     def _get_circuit_geometry_points(self) -> list[Point]:
         return list(
             map(
                 Point,
-                self.get_circuit_record()[0].geojson["features"][0]["geometry"][
+                self.get_circuit_record().geojson["features"][0]["geometry"][
                     "coordinates"
                 ],
             )
@@ -99,5 +104,5 @@ class CircuitResolver:
 
     def calculate_geodesic_distance(self):
         circuit_tuple = self.get_circuit_record()
-        coordinates = circuit_tuple[0].geojson["features"][0]["geometry"]["coordinates"]
+        coordinates = circuit_tuple.geojson["features"][0]["geometry"]["coordinates"]
         return self._distance_to_finish(coordinates)

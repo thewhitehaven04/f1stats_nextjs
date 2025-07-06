@@ -63,7 +63,7 @@ class TelemetryResolver:
             event,
             session_identifier,
         )
-        self.circuit_resolver = CircuitResolver(db_connection, event, season)
+        self.circuit_resolver = CircuitResolver(event, season)
 
     def _interpolate_telemetry(
         self, telemetry: DataFrame, lattice: ndarray, ref_laptime: float | None = None

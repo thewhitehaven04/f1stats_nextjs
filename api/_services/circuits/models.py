@@ -12,5 +12,6 @@ class CircuitFeatureProperties(BaseModel):
     altitude: int
 
 
-class CircuitGeometryDto(Feature[LineString, CircuitFeatureProperties]):
-    pass
+class CircuitGeometryDto(BaseModel):
+    geojson: Feature[LineString, CircuitFeatureProperties]
+    rotation: float

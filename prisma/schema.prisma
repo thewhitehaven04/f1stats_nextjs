@@ -69,6 +69,7 @@ model circuits {
   id      String @id @db.VarChar(8)
   name    String
   geojson Json 
+  rotation Int       @db.SmallInt @default(0)
 
   events  events[]
 }

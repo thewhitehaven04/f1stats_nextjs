@@ -51,6 +51,7 @@ class Circuits(Base):
     id: Mapped[str] = mapped_column(String(8), primary_key=True)
     name: Mapped[str] = mapped_column(Text)
     geojson: Mapped[dict] = mapped_column(JSONB)
+    rotation: Mapped[int] = mapped_column(SmallInteger, server_default=text('0'))
 
     events: Mapped[List["Events"]] = relationship("Events", back_populates="circuit")
 
