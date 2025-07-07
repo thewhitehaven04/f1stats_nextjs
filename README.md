@@ -10,11 +10,13 @@ Implemented features:
 - Table view of session results;
 - Head-to-head laptime comparison;
 - Head-to-head laptime comparisons visualized in box, violin and line plots.
-
-## Planned features:
 - Colour coded circuit map based on which driver is quicker at a given point of the circuit;
 - Team stats;
-- Driver stats.
+
+## Planned features:
+- Driver stats;
+- Offline mode;
+- Notifications;
 
 If you have any suggestions, questions or you've found an issue, feel free to open a GitHub issue.
 
