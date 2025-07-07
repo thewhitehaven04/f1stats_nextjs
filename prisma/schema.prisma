@@ -66,12 +66,11 @@ model event_sessions {
 }
 
 model circuits {
-  id      String @id @db.VarChar(8)
-  name    String
-  geojson Json 
-  rotation Int       @db.SmallInt @default(0)
-
-  events  events[]
+  id       String   @id @db.VarChar(8)
+  name     String
+  geojson  Json
+  rotation Int      @default(0) @db.SmallInt
+  events   events[]
 }
 
 model events {
@@ -81,12 +80,12 @@ model events {
   country             String           @db.VarChar(3)
   season_year         Int              @db.SmallInt
   event_format_name   String           @db.VarChar(32)
+  circuit_id          String           @db.VarChar(8)
   event_sessions      event_sessions[]
+  circuits            circuits         @relation(fields: [circuit_id], references: [id], onUpdate: NoAction, map: "fk_circuit_id")
   event_formats       event_formats    @relation(fields: [event_format_name], references: [event_format_name], onUpdate: NoAction, map: "fk_event_format_name")
   seasons             seasons          @relation(fields: [season_year], references: [season_year], onUpdate: NoAction, map: "fk_season_year")
   laps                laps[]
-  circuit_id          String           @db.VarChar(8)
-  circuits            circuits?        @relation(fields: [circuit_id], references: [id], onUpdate: NoAction, map: "fk_circuit_id")
 
   @@id([event_name, season_year])
 }
@@ -119,6 +118,7 @@ model laps {
 
   @@unique([session_type_id, season_year, event_name, driver_id, lap_number], map: "session_type_id_event_name_season_year_driver_id_lap_number_uni")
 }
+
 model practice_session_results {
   id              Int             @id @default(autoincrement())
   laptime         Float?          @db.Real
@@ -219,37 +219,4 @@ model telemetry_measurements {
   laps       laps   @relation(fields: [lap_id], references: [id], onUpdate: NoAction, map: "fk_lap_id")
 
   @@id([lap_id, laptime_at])
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view laps_with_analytics {
-  event_name      String
-  session_type_id String @db.VarChar(32)
-  season_year     Int    @db.SmallInt
-  min_s1          Float  @db.Real
-  min_s2          Float  @db.Real
-  min_s3          Float  @db.Real
-  best_st1        Int    @db.SmallInt
-  best_st2        Int    @db.SmallInt
-  best_stfl       Int    @db.SmallInt
-  best_laptime    Float  @db.Real
-
-  @@unique([event_name, session_type_id, season_year])
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view driver_laps_with_analytics {
-  driver_id       String? @db.VarChar(64)
-  event_name      String?
-  session_type_id String? @db.VarChar(32)
-  season_year     Int?    @db.SmallInt
-  pb_s1           Float?  @db.Real
-  pb_s2           Float?  @db.Real
-  pb_s3           Float?  @db.Real
-  pb_st1          Int?    @db.SmallInt
-  pb_st2          Int?    @db.SmallInt
-  pb_stfl         Int?    @db.SmallInt
-  pb_laptime      Float?  @db.Real
-
-  @@ignore
 }

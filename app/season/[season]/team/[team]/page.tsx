@@ -1,8 +1,19 @@
 import dbClient from "@/client/db"
 import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
 import type { TDriverRow, TSessionResultResponse } from "./types"
-import { TeamSeasonFormChart } from './components/TeamSeasonFormChart'
+import { TeamSeasonFormChart } from "./components/TeamSeasonFormChart"
 
+export async function generateMetadata({
+    params,
+}: { params: Promise<{ season: string; team: string }> }) {
+    const team = await dbClient.teams.findUniqueOrThrow({
+        where: { id: Number.parseInt((await params).team) },
+    })
+
+    return {
+        title: `${team.team_display_name} ${(await params).season} season form`,
+    }
+}
 
 const fetchTeamSeasonForm = async (season: string, team: string) => {
     const parsedTeam = Number.parseInt(team)
@@ -86,8 +97,6 @@ const fetchTeamSeasonForm = async (season: string, team: string) => {
         )
     })
     const driverCount = Math.max(...eventPoints.map((column) => column.length))
-
-    dbClient.$disconnect()
 
     return { eventPoints, seasonEvents, driverCount, teamName: results[0].team_display_name }
 }
