@@ -5,7 +5,7 @@ import { Suspense } from "react"
 import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
 import dynamic from "next/dynamic"
 
-export const TeamSeasonFormChart = dynamic(
+const TeamSeasonFormChart = dynamic(
     async () => (await import("./components/TeamSeasonFormChart")).TeamSeasonFormChart,
 )
 

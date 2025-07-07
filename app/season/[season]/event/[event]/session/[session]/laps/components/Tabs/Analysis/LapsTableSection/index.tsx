@@ -5,12 +5,16 @@ import type { LapSelectionData, LapTimingData } from "@/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
 import { NaLabel } from "@/components/ValueOrNa"
-import { LapsTable } from "./table"
 import { LapsTableTelemetryTutorial } from "./TelemetryTutorial"
 import { Laptime } from "@/components/Laptime"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
+import dynamic from "next/dynamic"
+
+const LapsTable = dynamic(async () => (await import("./table")).LapsTable, {
+    ssr: false,
+})
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
