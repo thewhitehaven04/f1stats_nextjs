@@ -58,7 +58,14 @@ export const LineLapsChart = (
                                 text: "Lap time (s)",
                                 display: true,
                             },
-                            bounds: "data",
+                            bounds: "ticks",
+                            ticks: {
+                                callback(tickValue) {
+                                    return typeof tickValue === "number"
+                                        ? formatTime(tickValue)
+                                        : tickValue
+                                },
+                            },
                         },
                         x: {
                             type: "linear",
@@ -71,7 +78,7 @@ export const LineLapsChart = (
                                 maxTicksLimit: 20,
                                 stepSize: 3,
                             },
-                            bounds: "data",
+                            bounds: "ticks",
                         },
                     },
                     plugins: {

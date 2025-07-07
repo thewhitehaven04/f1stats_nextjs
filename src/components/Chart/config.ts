@@ -52,5 +52,5 @@ export const initGlobalChartConfig = () => {
     }
 
     Chart.defaults.elements.line.borderWidth = 2
-    Chart.defaults.color = 'var(--foreground)'
+    Chart.defaults.color = "var(--foreground)"
 }

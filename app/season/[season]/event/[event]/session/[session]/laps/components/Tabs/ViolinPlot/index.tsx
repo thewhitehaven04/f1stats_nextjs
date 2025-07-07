@@ -14,6 +14,7 @@ import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
+import { formatTime } from '@/core/helpers/formatTime'
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
@@ -58,12 +59,18 @@ export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
                 options={{
                     scales: {
                         y: {
-                            min: isOutliersShown
-                                ? Math.floor(laps.min_time || 0)
-                                : Math.floor(laps.min_time || 0),
+                            bounds: 'ticks',
+                            ticks: {
+                                callback(tickValue) {
+                                    return typeof tickValue === "number"
+                                        ? formatTime(tickValue)
+                                        : tickValue
+                                },
+                            },
+                            min: Math.floor(laps.min_time || 0),
                             max: isOutliersShown
                                 ? Math.ceil(laps.max_time || 0)
-                                : Math.ceil(laps.high_decile || 0) + 0.5,
+                                : Math.ceil(laps.high_decile || 0) + 1,
                         },
                     },
                     elements: {

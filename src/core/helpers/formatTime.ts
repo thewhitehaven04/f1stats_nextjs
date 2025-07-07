@@ -1,8 +1,8 @@
-export const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600) 
-    const minutes = Math.floor((time % 3600) / 60)
-    const seconds = Math.floor(time % 60).toString()
-    const thousandths = Math.floor((time % 1) * 1000)
+export const formatTime = (time_s: number) => {
+    const hours = Math.floor(time_s / 3600) 
+    const minutes = Math.floor((time_s % 3600) / 60)
+    const seconds = Math.floor(time_s % 60).toString()
+    const thousandths = Math.floor((time_s % 1) * 1000)
         .toString()
         .padStart(3, "0")
 

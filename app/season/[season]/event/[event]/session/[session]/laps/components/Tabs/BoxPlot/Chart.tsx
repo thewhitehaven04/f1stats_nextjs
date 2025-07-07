@@ -61,21 +61,11 @@ export function LapsBoxChart({
         [laps, selectedStints, color_map],
     ) satisfies ChartConfiguration<"boxplot">["data"]
 
-    const selectionMax = isOutliersShown
-        ? laps.high_decile || 0
-        : Math.max(
-              ...sessionData.datasets.flatMap((dataset) =>
-                  dataset.data.flatMap((data) => data.items),
-              ),
-          ) + 0.1
-
     const selectionMin = isOutliersShown
-        ? laps.low_decile || 0
-        : Math.min(
-              ...sessionData.datasets.flatMap((dataset) =>
-                  dataset.data.flatMap((data) => data.items),
-              ),
+        ? Math.min(
+              ...sessionData.datasets.flatMap((dataset) => dataset.data.map((data) => data.min)),
           ) - 0.1
+        : laps.low_decile || 0
 
     return (
         <Chart
@@ -86,8 +76,15 @@ export function LapsBoxChart({
                 responsive: true,
                 scales: {
                     x: {
+                        bounds: "ticks",
                         min: selectionMin,
-                        max: selectionMax,
+                        ticks: {
+                            callback(tickValue) {
+                                return typeof tickValue === "number"
+                                    ? formatTime(tickValue)
+                                    : tickValue
+                            },
+                        },
                     },
                 },
                 elements: {
