@@ -1,7 +1,13 @@
 import dbClient from "@/client/db"
 import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
 import type { TDriverRow, TSessionResultResponse } from "./types"
-import { TeamSeasonFormChart } from "./components/TeamSeasonFormChart"
+import { Suspense } from "react"
+import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
+import dynamic from "next/dynamic"
+
+export const TeamSeasonFormChart = dynamic(
+    async () => (await import("./components/TeamSeasonFormChart")).TeamSeasonFormChart,
+)
 
 export async function generateMetadata({
     params,
@@ -13,6 +19,21 @@ export async function generateMetadata({
     return {
         title: `${team.team_display_name} ${(await params).season} season form`,
     }
+}
+
+export async function generateStaticParams() {
+    const teams = (
+        await dbClient.team_season_colors.findMany({
+            where: {
+                season_year: 2024,
+            },
+        })
+    ).map((team) => team.team_id)
+
+    return teams.map((team) => ({
+        team: team.toString(),
+        season: "2024",
+    }))
 }
 
 const fetchTeamSeasonForm = async (season: string, team: string) => {
@@ -119,11 +140,13 @@ export default async function TeamSeasonFormPage(props: {
             >
                 {teamName} {(await params).season} form
             </TeamSeasonFormSection>
-            <TeamSeasonFormChart
-                events={seasonEvents}
-                points={eventPoints}
-                driverCount={driverCount}
-            />
+            <Suspense fallback={<LoadingSpinner />}>
+                <TeamSeasonFormChart
+                    events={seasonEvents}
+                    points={eventPoints}
+                    driverCount={driverCount}
+                />
+            </Suspense>
         </div>
     )
 }
