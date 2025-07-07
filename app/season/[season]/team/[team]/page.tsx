@@ -21,21 +21,6 @@ export async function generateMetadata({
     }
 }
 
-export async function generateStaticParams() {
-    const teams = (
-        await dbClient.team_season_colors.findMany({
-            where: {
-                season_year: 2024,
-            },
-        })
-    ).map((team) => team.team_id)
-
-    return teams.map((team) => ({
-        team: team.toString(),
-        season: "2024",
-    }))
-}
-
 const fetchTeamSeasonForm = async (season: string, team: string) => {
     const parsedTeam = Number.parseInt(team)
     const parsedSeason = Number.parseInt(season)
