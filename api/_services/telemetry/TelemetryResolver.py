@@ -1,6 +1,6 @@
 import sys
 from typing import Sequence
-from numpy import array, interp, linspace, ndarray, trunc
+from numpy import arange, array, interp, linspace, ndarray, nonzero, trunc
 from pandas import DataFrame, read_sql, to_numeric
 from sqlalchemy import Connection, and_, or_, select
 
@@ -87,12 +87,27 @@ class TelemetryResolver:
         df["throttle"] = interp(lattice, rel_dist_xp, telemetry["throttle"].to_numpy())
         df["brake"] = interp(lattice, rel_dist_xp, telemetry["brake"].to_numpy())
         df["gear"] = interp(lattice, rel_dist_xp, telemetry["gear"].to_numpy())
-        df["laptime_at"] = interp(
+
+        laptime_at = interp(
             lattice, rel_dist_xp, telemetry["laptime_at"].to_numpy(), left=0
         )
-        df["distance"] = interp(
+        first_nonzero = nonzero(laptime_at)[0][0]
+        if first_nonzero > 0:
+            laptime_at[:first_nonzero] = laptime_at[first_nonzero] * (
+                arange(first_nonzero) / first_nonzero
+            )
+        df["laptime_at"] = laptime_at
+
+        distance = interp(
             lattice, rel_dist_xp, telemetry["distance"].to_numpy(), left=0
         )
+        first_nonzero = nonzero(distance)[0][0]
+        if first_nonzero > 0:
+            distance[:first_nonzero] = distance[first_nonzero] * (
+                arange(first_nonzero) / first_nonzero
+            )
+        df["distance"] = distance
+
         df["laptime_dt"] = df["laptime_at"].diff()
         return df
 
