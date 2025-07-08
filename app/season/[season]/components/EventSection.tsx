@@ -16,7 +16,7 @@ export const EventSection = ({ events }: { events: TEventWithSessions[] }) => {
                             ),
                     )
                 ) : (
-                    <div className="flex flex-col text-neutral-500 font-medium">
+                    <div className="flex flex-col text-muted-foreground font-medium">
                         No timing data available
                     </div>
                 )}
@@ -31,7 +31,7 @@ export const EventSection = ({ events }: { events: TEventWithSessions[] }) => {
                             ),
                     )
                 ) : (
-                    <div className="flex flex-col text-neutral-500 font-medium">
+                    <div className="flex flex-col font-medium">
                         No timing data available
                     </div>
                 )}

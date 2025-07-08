@@ -1,24 +1,25 @@
 "use client"
 import type { TooltipItem } from "chart.js"
 import type { ComponentProps } from "react"
-import { Chart, type ChartProps } from "react-chartjs-2"
+import type { ChartProps } from "react-chartjs-2"
 import { formatTime } from "@/core/helpers/formatTime"
 import { merge } from "ts-deepmerge"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { TYRE_COLOR_MAP } from "../../helpers/colorMap"
 import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import type { TLapsLinePlotDataset, TLinePlotTabBoxChartDataset } from "./LinePlotTab"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
 
 initGlobalChartConfig()
 
 export const LineLapsChart = (
-    props: Omit<ComponentProps<typeof Chart>, "type"> & {
+    props: Omit<ComponentProps<typeof ThemedChart>, "type"> & {
         data: {
             datasets: TLinePlotTabBoxChartDataset[]
         }
     },
 ) => (
-    <Chart
+    <ThemedChart
         {...merge(
             {
                 type: "line" as const,

@@ -3,9 +3,9 @@ import { PopupCard } from "@/components/PopupCard"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
-import type { TEventWithSessions } from "../../page"
 import { Input } from "@/components/ui/input"
 import { useDebouncedState } from '@/core/hooks/useDebouncedState'
+import type { TEventWithSessions } from '../season/[season]/page'
 
 
 export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {

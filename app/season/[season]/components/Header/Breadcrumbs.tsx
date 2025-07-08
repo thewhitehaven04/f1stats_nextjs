@@ -48,8 +48,7 @@ const SEGMENTS = [
     },
     {
         expression: /\/season\/(\d{4})\/team\/(\d+)/,
-        getText: (matchArray: RegExpMatchArray | null) =>
-            `${matchArray ? matchArray[2] : ""} form`,
+        getText: (matchArray: RegExpMatchArray | null) => `${matchArray ? matchArray[2] : ""} form`,
         getHref: (matchArray: RegExpMatchArray | null) => {
             return matchArray ? `/season/${matchArray[1]}` : ""
         },

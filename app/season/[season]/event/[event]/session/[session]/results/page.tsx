@@ -1,3 +1,4 @@
+import { Card, CardContent } from "@/components/ui/card"
 import type { ISessionPathnameParams } from "../types"
 import { ResultsSection } from "./components/ResultsSection"
 import { fetchSessionResults } from "./fetcher"

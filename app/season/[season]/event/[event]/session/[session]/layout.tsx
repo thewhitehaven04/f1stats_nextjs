@@ -4,12 +4,15 @@ import dbClient from "@/client/db"
 import type { ISessionPathnameParams } from "./types"
 import { SummaryItem } from "./SummaryItem"
 import { Suspense } from "react"
+import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
+import {
+    LucideDroplets,
+    LucideThermometer,
+    LucideThermometerSun,
+    LucideTimer,
+} from "lucide-react"
 
-const fetchSessionDataWithWeather = async (
-    session: string,
-    season: number,
-    event: string,
-) => {
+const fetchSessionDataWithWeather = async (session: string, season: number, event: string) => {
     const eventSession = await dbClient.event_sessions.findFirstOrThrow({
         where: {
             session_type_id: session,
@@ -56,39 +59,49 @@ export default async function SummaryLayout({
     return (
         <>
             <section className="flex flex-col gap-2 w-full overflow-x-visible">
-                <Card className="mb-4">
-                    <CardHeader>
-                        <CardTitle>
-                            {sessionData.eventName} - {sessionData.sessionType}
-                        </CardTitle>
-                        <CardDescription>Track conditions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 gap-4">
-                            <SummaryItem
-                                label="Session run time"
-                                value={`${format(sessionData.startTime, "MMM dd, yyyy HH:MM")} - ${format(sessionData.endTime, "HH:MM")}`}
-                            />
+                <h1 className="text-xl font-medium">
+                    {sessionData.eventName} - {sessionData.sessionType}
+                </h1>
+                <div className="grid grid-cols-2 gap-4">
+                    <SummaryItem
+                        label={
+                            <>
+                                <LucideTimer />
+                                Session time
+                            </>
+                        }
+                        value={`${format(sessionData.startTime, "MMM dd, yyyy HH:MM")} — ${format(sessionData.endTime, "HH:MM")}`}
+                    />
 
-                            <SummaryItem
-                                label="Air temp (start - end)"
-                                value={`${weather.airTempStart} - ${weather.airTempEnd}°C`}
-                            />
+                    <SummaryItem
+                        label={
+                            <>
+                                <LucideThermometerSun /> Air temp
+                            </>
+                        }
+                        value={`${weather.airTempStart} — ${weather.airTempEnd}°C`}
+                    />
 
-                            <SummaryItem
-                                label="Track temp (start - end)"
-                                value={`${weather.trackTempStart} - ${weather.trackTempEnd}°C`}
-                            />
+                    <SummaryItem
+                        label={
+                            <>
+                                <LucideThermometer /> Tarmac temp
+                            </>
+                        }
+                        value={`${weather.trackTempStart} — ${weather.trackTempEnd}°C`}
+                    />
 
-                            <SummaryItem
-                                label="Humidity (start - end)"
-                                value={`${weather.humidityStart} - ${weather.humidityEnd}%`}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+                    <SummaryItem
+                        label={
+                            <>
+                                <LucideDroplets /> Humidity
+                            </>
+                        }
+                        value={`${weather.humidityStart} — ${weather.humidityEnd}%`}
+                    />
+                </div>
             </section>
-            <Suspense fallback={<div>Loading</div>}>{children}</Suspense>
+            <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
         </>
     )
 }

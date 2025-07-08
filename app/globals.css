@@ -5,17 +5,15 @@
 
 html,
 body {
-    @apply bg-white dark:bg-gray-900;
-
     @media (prefers-color-scheme: dark) {
         color-scheme: dark;
     }
 }
 
 @theme inline {
-    --color-non-personal-best: #F8D30B;
-    --color-best: #AA3CDC;
-    --color-personal-best: #4DD346;
+    --color-non-personal-best: #f8d30b;
+    --color-best: #aa3cdc;
+    --color-personal-best: #4dd346;
     --color-hard-tyre: #fdfffe;
     --color-medium-tyre: #ffe826;
     --color-soft-tyre: #e32526;

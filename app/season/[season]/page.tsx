@@ -1,13 +1,14 @@
 import dbClient from "@/client/db"
 import { EventSection } from "./components/EventSection"
 import type { Metadata } from "next"
+import { fetchEventsWithSessions } from './fetcher'
 
 // revalidate calendar data every 30 minutes
 export const revalidate = 1800
 
 export async function generateMetadata({
     params,
-}: { params: { season: string } }): Promise<Metadata> {
+}: { params: Promise<{ season: string }> }): Promise<Metadata> {
     return {
         title: `F1Stats | Season ${(await params).season}`,
     }
@@ -26,38 +27,6 @@ export async function generateStaticParams() {
     }))
 }
 
-export const fetchEventsWithSessions = async (season: number) => {
-    return (
-        await dbClient.events.findMany({
-            where: {
-                season_year: season,
-                event_format_name: {
-                    not: "testing",
-                },
-            },
-            include: {
-                event_sessions: {
-                    select: {
-                        session_type_id: true,
-                    },
-                },
-            },
-            orderBy: {
-                date_start: "asc",
-            },
-        })
-    ).map((evt) => ({
-        name: evt.event_name,
-        officialName: evt.event_official_name,
-        format: evt.event_format_name,
-        sessions: evt.event_sessions.map((session) => ({
-            type: session.session_type_id,
-        })),
-        dateStart: evt.date_start,
-        country: evt.country,
-        season: evt.season_year,
-    }))
-}
 
 export type TEventWithSessions = Awaited<ReturnType<typeof fetchEventsWithSessions>>[number]
 

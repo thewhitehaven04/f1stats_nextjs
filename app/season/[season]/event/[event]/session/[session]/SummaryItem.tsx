@@ -10,8 +10,8 @@ export function SummaryItem(props: ISummaryItemProps) {
 
     return (
         <div className="flex flex-col justify-center text-card-foreground">
-            <span className='font-medium'>{label}</span>
-            <span>{value}</span>
+            <div className="font-medium flex flex-row gap-2">{label}</div>
+            <span className='pl-8'>{value}</span>
         </div>
     )
 }

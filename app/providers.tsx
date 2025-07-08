@@ -1,7 +1,8 @@
 "use client"
 
 import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { type ReactNode } from "react"
+import type { ReactNode } from "react"
+import { ThemeProvider } from "next-themes"
 
 const getQueryClient = () => {
     return new QueryClient({
@@ -25,5 +26,16 @@ const provideClient = () => {
 
 export const Providers = ({ children }: { children: ReactNode }) => {
     const queryClient = provideClient()
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+            >
+                {children}
+            </ThemeProvider>
+        </QueryClientProvider>
+    )
 }

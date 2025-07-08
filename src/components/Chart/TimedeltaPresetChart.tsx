@@ -1,7 +1,8 @@
 import clsx from "clsx"
-import { Chart, type ChartProps } from "react-chartjs-2"
+import type { ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
 
 export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">) => {
     const hasData = !!props.data.datasets.length
@@ -80,7 +81,7 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     <h1 className="text-center text-lg font-bold">No laps selected</h1>
                 </div>
             )}
-            <Chart {...merge(baseChartProps, props)} />
+            <ThemedChart {...merge(baseChartProps, props)} />
         </div>
     )
 }

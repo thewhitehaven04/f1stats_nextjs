@@ -2,10 +2,11 @@ import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
 import clsx from "clsx"
 import { useRef, type ComponentProps } from "react"
-import { type ChartProps, Chart } from "react-chartjs-2"
+import type { ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 import type { Chart as ChartJS } from "chart.js"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
 
 initGlobalChartConfig()
 
@@ -123,7 +124,7 @@ export const SpeedtracePresetChart = (
                     <h1 className="text-center text-lg font-bold">No laps selected</h1>
                 </div>
             )}
-            <Chart
+            <ThemedChart
                 {...mergedProps}
                 className={clsx(mergedProps.className, "z-0")}
                 ref={speedChartRef}

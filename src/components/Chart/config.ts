@@ -30,6 +30,9 @@ Chart.register([
     BoxPlotController,
 ])
 
+export const getCssVar = (name: string) =>
+    getComputedStyle(document.documentElement).getPropertyValue(name)
+
 export const initGlobalChartConfig = () => {
     Chart.defaults.font.family = '"Archivo", sans-serif'
     Chart.defaults.font.size = 13
@@ -50,7 +53,8 @@ export const initGlobalChartConfig = () => {
     Chart.defaults.plugins.tooltip.bodyFont = {
         size: 14,
     }
+    Chart.defaults.scale.grid.lineWidth = 1.5
+    Chart.defaults.scale.grid.tickWidth = 1.5
 
     Chart.defaults.elements.line.borderWidth = 2
-    Chart.defaults.color = "var(--foreground)"
 }

@@ -19,8 +19,8 @@ export default async function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
-            <body className={appFont.className}>
+        <html lang="en" suppressHydrationWarning>
+            <body className={`${appFont.className} bg-background text-foreground`}>
                 <Providers>
                     <div className="grid grid-cols-1 grid-rows-[min-content] overflow-y-scroll min-h-screen">
                         {children}

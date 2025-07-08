@@ -5,7 +5,7 @@ import type { ChartData } from "chart.js"
 import { useMemo } from "react"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { rollingSum } from "@/core/helpers/rollingSum"
-import { Chart } from "react-chartjs-2"
+import dynamic from "next/dynamic"
 
 initGlobalChartConfig()
 
@@ -17,11 +17,22 @@ const getBackgroundColor = (stringInput: string) => {
     return `hsl(${stringUniqueHash % 360}, 90%, 70%)`
 }
 
+const ThemedChart = dynamic(
+    async () => (await import("@/components/Chart/ThemedChart")).ThemedChart,
+    {
+        ssr: false,
+    },
+)
+
 export const TeamSeasonFormChart = ({
     points,
     events,
     driverCount,
-}: { points: TDriverRow[]; events: string[]; driverCount: number }) => {
+}: {
+    points: TDriverRow[]
+    events: string[]
+    driverCount: number
+}) => {
     const data: ChartData<"line"> = useMemo(
         () => ({
             labels: events,
@@ -37,10 +48,13 @@ export const TeamSeasonFormChart = ({
         [points, events, driverCount],
     )
     return (
-        <Chart
+        <ThemedChart
             type="line"
             data={data}
-            options={{ interaction: { mode: "index", intersect: false } }}
+            options={{
+                interaction: { mode: "index", intersect: false },
+                scales: { y: { beginAtZero: true } },
+            }}
         />
     )
 }

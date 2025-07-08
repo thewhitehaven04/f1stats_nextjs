@@ -1,5 +1,4 @@
 "use client"
-import { Chart } from "react-chartjs-2"
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -15,6 +14,7 @@ import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { formatTime } from '@/core/helpers/formatTime'
+import { ThemedChart } from '@/components/Chart/ThemedChart'
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
@@ -53,7 +53,7 @@ export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
                     {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
             </div>
-            <Chart
+            <ThemedChart
                 type="violin"
                 data={plotData}
                 options={{
