@@ -28,6 +28,4 @@ app.add_middleware(
 async def get_circuit_geojson(
     year: str, event: str, connection: Annotated[Connection, Depends(get_connection)]
 ):
-    return CircuitResolver(
-        db_connection=connection, event=unquote(event), season=year
-    ).get_circuit_geometry()
+    return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()

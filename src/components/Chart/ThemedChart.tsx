@@ -1,14 +1,14 @@
 import { useTheme } from "next-themes"
 import { useEffect, useRef, type ComponentProps } from "react"
 import { Chart } from "react-chartjs-2"
-import type { Chart as ChartJS } from "chart.js"
+import type { Chart as ChartJS, ChartTypeRegistry } from "chart.js"
 import { getCssVar } from "@/components/Chart/config"
 import { merge } from "ts-deepmerge"
 
 export const ThemedChart = (props: ComponentProps<typeof Chart>) => {
     const { theme } = useTheme()
 
-    const chartRef = useRef<ChartJS>(null)
+    const chartRef = useRef<ChartJS<keyof ChartTypeRegistry, unknown, unknown>>(null)
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: subscription to theme changes
     useEffect(() => {
@@ -21,10 +21,10 @@ export const ThemedChart = (props: ComponentProps<typeof Chart>) => {
         ref: (chart) => {
             if (chart) {
                 chartRef.current = chart
-            }
-
-            if (props.ref) {
-                props.ref = chart
+                if (props.ref) {
+                    /** @ts-ignore mismatch between actual refs and refs defined in the ComponentProps<typeof Chart> */
+                    props.ref = chart
+                }
             }
         },
         options: {
@@ -58,5 +58,6 @@ export const ThemedChart = (props: ComponentProps<typeof Chart>) => {
         },
     } as Partial<ComponentProps<typeof Chart>>)
 
+    // @ts-ignore ref weirdness /
     return <Chart {...merged} />
 }
