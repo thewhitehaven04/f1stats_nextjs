@@ -5,12 +5,7 @@ import type { ISessionPathnameParams } from "./types"
 import { SummaryItem } from "./SummaryItem"
 import { Suspense } from "react"
 import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
-import {
-    LucideDroplets,
-    LucideThermometer,
-    LucideThermometerSun,
-    LucideTimer,
-} from "lucide-react"
+import { LucideDroplets, LucideThermometer, LucideThermometerSun, LucideTimer } from "lucide-react"
 
 const fetchSessionDataWithWeather = async (session: string, season: number, event: string) => {
     const eventSession = await dbClient.event_sessions.findFirstOrThrow({
@@ -64,39 +59,26 @@ export default async function SummaryLayout({
                 </h1>
                 <div className="grid grid-cols-2 gap-4">
                     <SummaryItem
-                        label={
-                            <>
-                                <LucideTimer />
-                                Session time
-                            </>
-                        }
+                        icon={<LucideTimer size={32} />}
+                        label="Session time"
                         value={`${format(sessionData.startTime, "MMM dd, yyyy HH:MM")} — ${format(sessionData.endTime, "HH:MM")}`}
                     />
 
                     <SummaryItem
-                        label={
-                            <>
-                                <LucideThermometerSun /> Air temp
-                            </>
-                        }
+                        icon={<LucideThermometerSun size={32} />}
+                        label="Air temp"
                         value={`${weather.airTempStart} — ${weather.airTempEnd}°C`}
                     />
 
                     <SummaryItem
-                        label={
-                            <>
-                                <LucideThermometer /> Tarmac temp
-                            </>
-                        }
+                        icon={<LucideThermometer size={32} />}
+                        label="Tarmac temp"
                         value={`${weather.trackTempStart} — ${weather.trackTempEnd}°C`}
                     />
 
                     <SummaryItem
-                        label={
-                            <>
-                                <LucideDroplets /> Humidity
-                            </>
-                        }
+                        icon={<LucideDroplets size={32} />}
+                        label="Humidity"
                         value={`${weather.humidityStart} — ${weather.humidityEnd}%`}
                     />
                 </div>

@@ -88,7 +88,7 @@ function lapsTable(
                                     {group.headers.map((header) => (
                                         <TableHead
                                             className={clsx(
-                                                "text-center sticky z-20 bg-white",
+                                                "text-center sticky z-20 bg-primary",
                                                 group.depth === 0 ? "top-0" : "top-10",
                                             )}
                                             key={header.id}
@@ -103,7 +103,7 @@ function lapsTable(
                                 </TableRow>
                             ))}
                         </TableHeader>
-                        <TableBody className="relative bg-[linear-gradient(rgba(0,0,0,0.05)_0,_white_0.6%,_white_99.4%,rgba(0,0,0,0.05))] bg-fixed">
+                        <TableBody className="relative">
                             {rowModel.map((row) => (
                                 <TableRow key={row.id}>
                                     {row.getVisibleCells().map((cell) => {
@@ -112,7 +112,7 @@ function lapsTable(
                                                 className={clsx(
                                                     "text-center",
                                                     cell.column.getIsPinned() === "left"
-                                                        ? "sticky left-0 border-r-[1px] border-zinc-200 bg-white z-10"
+                                                        ? "sticky left-0 border-r-[1px] z-10"
                                                         : "",
                                                 )}
                                                 key={cell.id}

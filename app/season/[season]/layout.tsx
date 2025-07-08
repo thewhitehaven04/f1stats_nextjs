@@ -21,7 +21,7 @@ export default async function Layout({
                     </div>
                 }
             />
-            <main className="mt-8 w-[calc(100vw-36px)] xl:w-[1200px] justify-self-center self-start">
+            <main className="mt-8 w-[calc(100vw-36px)] xl:w-[1200px] justify-self-center self-start flex flex-col gap-8">
                 {children}
             </main>
             <div className="flex flex-col justify-end h-full mt-4">
