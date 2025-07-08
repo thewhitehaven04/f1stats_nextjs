@@ -88,7 +88,7 @@ function lapsTable(
                                     {group.headers.map((header) => (
                                         <TableHead
                                             className={clsx(
-                                                "text-center sticky z-20 bg-primary",
+                                                "text-center sticky z-20 bg-primary-foreground",
                                                 group.depth === 0 ? "top-0" : "top-10",
                                             )}
                                             key={header.id}
