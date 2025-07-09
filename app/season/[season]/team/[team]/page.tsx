@@ -3,8 +3,7 @@ import { TeamSeasonFormSection } from "./components/TeamSeasonFormTable"
 import type { TDriverRow, TSessionResultResponse } from "./types"
 import { Suspense } from "react"
 import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
-import { Card, CardContent } from "@/components/ui/card"
-import { TeamSeasonFormChart } from './components/TeamSeasonFormChart'
+import { TeamSeasonFormChart } from "./components/TeamSeasonFormChart"
 
 export async function generateMetadata({
     params,
@@ -122,17 +121,13 @@ export default async function TeamSeasonFormPage(props: {
             >
                 {teamName} {(await params).season} form
             </TeamSeasonFormSection>
-            <Card>
-                <CardContent>
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <TeamSeasonFormChart
-                            events={seasonEvents}
-                            points={eventPoints}
-                            driverCount={driverCount}
-                        />
-                    </Suspense>
-                </CardContent>
-            </Card>
+            <Suspense fallback={<LoadingSpinner />}>
+                <TeamSeasonFormChart
+                    events={seasonEvents}
+                    points={eventPoints}
+                    driverCount={driverCount}
+                />
+            </Suspense>
         </div>
     )
 }

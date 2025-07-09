@@ -1,11 +1,12 @@
 "use client"
-import type { ChartData, ChartDataset } from "chart.js"
-import { useMemo, type RefObject } from "react"
+import type { Chart, ChartData, ChartDataset, ChartTypeRegistry } from "chart.js"
+import { useCallback, useMemo, useRef, type RefObject } from "react"
 import type { DriverTelemetryPlotData, PlotColor } from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
+import { Button } from '@/components/ui/button'
 
 export type TSpeedDataset = ChartDataset<
     "scatter",
@@ -105,8 +106,31 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
+    const chartRefs = useRef<Chart<keyof ChartTypeRegistry, unknown, unknown>[]>([])
+
+    const pushRef = useCallback(
+        (chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null) => {
+            if (chart) {
+                chartRefs.current.push(chart)
+            }
+        },
+        [],
+    )
+
     return (
         <section ref={ref} className="flex flex-col gap-2">
+            <div className="flex flex-col justify-end">
+                <Button
+                    type="button"
+                    size="md"
+                    variant="secondary"
+                    onClick={() => {
+                        chartRefs.current.forEach((chart) => chart.resetZoom())
+                    }}
+                >
+                    Reset zoom
+                </Button>
+            </div>
             <SpeedtracePresetChart
                 data={{
                     labels: distanceLabels,

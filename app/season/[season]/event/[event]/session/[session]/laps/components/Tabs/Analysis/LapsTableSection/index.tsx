@@ -10,12 +10,8 @@ import { Laptime } from "@/components/Laptime"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
-import dynamic from "next/dynamic"
 import { LapsTable } from './table'
 
-// const LapsTable = dynamic(async () => (await import("./table")).LapsTable, {
-//     ssr: false,
-// })
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]

@@ -1,11 +1,12 @@
-import type { ChartData } from "chart.js"
-import { useMemo, type RefObject } from "react"
+import type { Chart, ChartData, ChartTypeRegistry } from "chart.js"
+import { useCallback, useMemo, useRef, type RefObject } from "react"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData, PlotColor } from "@/client/generated"
 import type { TSpeedDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
-import { getColorFromColorMap } from '@/components/Chart/helpers'
+import { getColorFromColorMap } from "@/components/Chart/helpers"
+import { Button } from "@/components/ui/button"
 
 export default (props: {
     data: AverageTelemetryPlotData[] | null
@@ -97,18 +98,43 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
+    const chartRefs = useRef<Chart<keyof ChartTypeRegistry, unknown, unknown>[]>([])
+
+    const pushRef = useCallback(
+        (chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null) => {
+            if (chart) {
+                chartRefs.current.push(chart)
+            }
+        },
+        [],
+    )
+
     return (
         <section className="flex flex-col gap-4" ref={ref}>
+            <div className="flex flex-row justify-end">
+                <Button
+                    type="button"
+                    size="md"
+                    variant="secondary"
+                    onClick={() => {
+                        chartRefs.current.forEach((chart) => chart.resetZoom())
+                    }}
+                >
+                    Reset zoom
+                </Button>
+            </div>
             <SpeedtracePresetChart
                 data={{
                     labels: distanceLabels || [],
                     datasets: speedDatasets,
                 }}
                 height={150}
+                ref={pushRef}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels || [], datasets: timeDeltaDatasets }}
                 height={60}
+                ref={pushRef}
             />
             <TelemetryPresetChart
                 data={{
@@ -119,6 +145,7 @@ export default (props: {
                 options={{
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
+                ref={pushRef}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
@@ -126,6 +153,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Throttle %" } } },
                 }}
                 height={40}
+                ref={pushRef}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
@@ -133,6 +161,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Brake %" } } },
                 }}
                 height={40}
+                ref={pushRef}
             />
         </section>
     )

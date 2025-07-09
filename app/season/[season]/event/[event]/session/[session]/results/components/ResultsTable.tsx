@@ -44,11 +44,11 @@ export const ResultsTable = <T extends IBaseResultsData>(
             >
                 View lap information
             </TooltipButton>
-            <Table className='rounded-md overflow-hidden'>
+            <Table className="rounded-md overflow-hidden">
                 <TableHeader>
                     <TableRow>
                         {getFlatHeaders().map(({ column, id, getContext }) => (
-                            <TableHead className="text-start px-1" key={id}>
+                            <TableHead className="text-start px-1 bg-primary-foreground" key={id}>
                                 {flexRender(column.columnDef.header, getContext())}
                             </TableHead>
                         ))}

@@ -3,6 +3,7 @@ import { ResultsTable } from "./ResultsTable"
 import type { ComponentProps } from "react"
 import { ESessionType, type IPracticeData, type IQualifyingData, type IRaceData } from "./types"
 import type { TFetchSessionResults } from "../fetcher"
+import { Card, CardContent } from "@/components/ui/card"
 
 export const ResultsSection = (props: {
     sessionResults: TFetchSessionResults
