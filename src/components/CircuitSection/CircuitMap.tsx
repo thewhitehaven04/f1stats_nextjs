@@ -91,7 +91,7 @@ export function DeltaCircuitMap(props: {
                                 aspect_ratio,
                             })}
                             fill="white"
-                            stroke="black"
+                            stroke="var(--foreground)"
                             strokeWidth="5.5"
                         />
                     )

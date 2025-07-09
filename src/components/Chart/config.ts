@@ -53,8 +53,6 @@ export const initGlobalChartConfig = () => {
     Chart.defaults.plugins.tooltip.bodyFont = {
         size: 14,
     }
-    Chart.defaults.scale.grid.lineWidth = 1.5
-    Chart.defaults.scale.grid.tickWidth = 1.5
 
     Chart.defaults.elements.line.borderWidth = 2
 }

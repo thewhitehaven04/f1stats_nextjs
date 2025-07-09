@@ -14,7 +14,6 @@ export const ThemeSelector = () => {
                 value={theme}
                 variant="outline"
                 onValueChange={setTheme}
-                defaultValue="system"
             >
                 <ToggleGroupItem value="light">
                     <LucideSun />

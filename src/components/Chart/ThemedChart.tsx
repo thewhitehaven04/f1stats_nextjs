@@ -13,24 +13,24 @@ export const ThemedChart = (props: ComponentProps<typeof Chart>) => {
     // biome-ignore lint/correctness/useExhaustiveDependencies: subscription to theme changes
     useEffect(() => {
         if (chartRef.current) {
-            chartRef.current.update()
+            chartRef.current.update('none')
         }
     }, [theme])
 
+
     const merged = merge(props, {
-        ref: (chart) => {
-            if (chart) {
-                chartRef.current = chart
-                if (props.ref) {
-                    /** @ts-ignore mismatch between actual refs and refs defined in the ComponentProps<typeof Chart> */
-                    props.ref = chart
-                }
-            }
-        },
+        ref: props.ref || chartRef,
         options: {
             backgroundColor: getCssVar("--background"),
             borderColor: getCssVar("--border"),
             color: getCssVar("--foreground"),
+            plugins: {
+                legend: {
+                    labels: {
+                        color: getCssVar("--foreground"),
+                    }
+                }
+            },
             scales: {
                 x: {
                     border: {
