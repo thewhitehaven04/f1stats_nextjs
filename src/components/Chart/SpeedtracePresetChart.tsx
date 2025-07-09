@@ -1,17 +1,15 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
-import { Button } from "@/components/ui/button"
 import clsx from "clsx"
-import { useRef, type ComponentProps } from "react"
+import type { ComponentProps } from "react"
 import type { ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
-import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-import type { Chart as ChartJS } from "chart.js"
+import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 import { ThemedChart } from "@/components/Chart/ThemedChart"
 
 initGlobalChartConfig()
 
 export const SpeedtracePresetChart = (
-    props: Omit<ComponentProps<typeof Chart>, "type"> & { data: { datasets: TSpeedDataset } },
+    props: Omit<ComponentProps<typeof Chart>, "type"> & { data: { datasets: TTelemetryDataset } },
 ) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
@@ -44,11 +42,12 @@ export const SpeedtracePresetChart = (
                     xAlign: "center",
                     callbacks: {
                         title(tooltipItem) {
-                            const raw = tooltipItem[0].raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem[0]
+                                .raw as TTelemetryDataset[number]["data"][number]
                             return `${Math.trunc(raw.x).toString()} m`
                         },
                         label(tooltipItem) {
-                            const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem.raw as TTelemetryDataset[number]["data"][number]
                             return `${tooltipItem.dataset.label}: ${Math.trunc(raw?.y as number).toString()} kph`
                         },
                     },
@@ -101,34 +100,15 @@ export const SpeedtracePresetChart = (
 
     const mergedProps = merge(baseChartProps, props)
 
-    const speedChartRef = useRef<ChartJS>(null)
     return (
         <div className="relative">
-            <div className="flex flex-row justify-end">
-                <Button
-                    type="button"
-                    size="md"
-                    variant="secondary"
-                    onClick={() => {
-                        if (speedChartRef.current) {
-                            speedChartRef.current.resetZoom()
-                        }
-                    }}
-                >
-                    Reset zoom
-                </Button>
-            </div>
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
                 <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">
                     <h1 className="text-center text-lg font-bold">No laps selected</h1>
                 </div>
             )}
-            <ThemedChart
-                {...mergedProps}
-                className={clsx(mergedProps.className, "z-0")}
-                ref={speedChartRef}
-            />
+            <ThemedChart {...mergedProps} className={clsx(mergedProps.className, "z-0")} />
         </div>
     )
 }

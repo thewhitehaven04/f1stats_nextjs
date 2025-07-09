@@ -28,8 +28,11 @@ export const TeamSeasonFormSection = (props: {
                             Driver
                         </TableHead>
                         {events.map((event, index) => (
-                            // biome-ignore lint/suspicious/noArrayIndexKey: static array
-                            <TableHead key={index} className="w-8 whitespace-normal text-center">
+                            <TableHead
+                                // biome-ignore lint/suspicious/noArrayIndexKey: static array
+                                key={index}
+                                className="w-8 whitespace-normal text-center bg-primary-foreground"
+                            >
                                 {event}
                             </TableHead>
                         ))}

@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, type RefObject } from "react"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import type { AverageTelemetryPlotData, PlotColor } from "@/client/generated"
-import type { TSpeedDataset } from "../ChartSection"
+import type { TTelemetryDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { Button } from "@/components/ui/button"
@@ -30,7 +30,7 @@ export default (props: {
         [averageTelemetry, colorMap],
     )
 
-    const speedDatasets: TSpeedDataset = useMemo(
+    const speedDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: `${stint.driver}, ${stint.stint_length} laps`,
@@ -43,7 +43,7 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
-    const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const timeDeltaDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry
                 ?.map((tel, index) => ({
@@ -59,7 +59,7 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
-    const rpmDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -72,7 +72,7 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
-    const throttleDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -85,7 +85,7 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
-    const brakeDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
                 label: stint.driver,
@@ -98,12 +98,27 @@ export default (props: {
         [averageTelemetry, presets],
     )
 
-    const chartRefs = useRef<Chart<keyof ChartTypeRegistry, unknown, unknown>[]>([])
+    const chartRefs = useRef<
+        Record<string, Chart<keyof ChartTypeRegistry, unknown, unknown> | null>
+    >({
+        speedtrace: null,
+        rpm: null,
+        throttle: null,
+        brake: null,
+        timedeltas: null,
+    })
 
     const pushRef = useCallback(
-        (chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null) => {
+        (
+            type: keyof typeof chartRefs.current,
+            chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null,
+        ) => {
             if (chart) {
-                chartRefs.current.push(chart)
+                chartRefs.current[type] = chart
+            }
+
+            return () => {
+                chartRefs.current[type] = null
             }
         },
         [],
@@ -117,7 +132,9 @@ export default (props: {
                     size="md"
                     variant="secondary"
                     onClick={() => {
-                        chartRefs.current.forEach((chart) => chart.resetZoom())
+                        Object.values(chartRefs.current).forEach((chart) =>
+                            chart ? chart.resetZoom() : null,
+                        )
                     }}
                 >
                     Reset zoom
@@ -129,12 +146,12 @@ export default (props: {
                     datasets: speedDatasets,
                 }}
                 height={150}
-                ref={pushRef}
+                ref={(chart) => pushRef("speedtrace", chart)}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels || [], datasets: timeDeltaDatasets }}
                 height={60}
-                ref={pushRef}
+                ref={(chart) => pushRef("timedelta", chart)}
             />
             <TelemetryPresetChart
                 data={{
@@ -145,7 +162,7 @@ export default (props: {
                 options={{
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
-                ref={pushRef}
+                ref={(chart) => pushRef("rpm", chart)}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
@@ -153,7 +170,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Throttle %" } } },
                 }}
                 height={40}
-                ref={pushRef}
+                ref={(chart) => pushRef("throttle", chart)}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
@@ -161,7 +178,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Brake %" } } },
                 }}
                 height={40}
-                ref={pushRef}
+                ref={(chart) => pushRef("brake", chart)}
             />
         </section>
     )

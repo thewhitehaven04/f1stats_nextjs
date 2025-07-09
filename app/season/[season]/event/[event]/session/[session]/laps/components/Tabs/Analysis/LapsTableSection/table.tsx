@@ -79,7 +79,7 @@ function lapsTable(
                 <div className="overflow-auto max-h-[720px]" ref={scrollerRef}>
                     <table
                         data-slot="table"
-                        className="w-full caption-bottom text-sm relative"
+                        className="w-full caption-bottom text-sm relative rounded-md"
                         ref={tableRef}
                     >
                         <TableHeader className="border-b-[1px]">

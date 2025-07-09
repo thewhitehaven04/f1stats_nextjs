@@ -1,10 +1,15 @@
 import clsx from "clsx"
 import type { ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
-import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
+import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 import { ThemedChart } from "@/components/Chart/ThemedChart"
+import type { ComponentProps } from "react"
 
-export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">) => {
+export const TimedeltaPresetChart = (
+    props: Omit<ComponentProps<typeof ThemedChart>, "type"> & {
+        data: { datasets: TTelemetryDataset }
+    },
+) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "scatter",
@@ -46,11 +51,12 @@ export const TimedeltaPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     intersect: false,
                     callbacks: {
                         title(tooltipItem) {
-                            const raw = tooltipItem[0].raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem[0]
+                                .raw as TTelemetryDataset[number]["data"][number]
                             return `${Math.trunc(raw.x).toString()} m`
                         },
                         label(tooltipItem) {
-                            const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem.raw as TTelemetryDataset[number]["data"][number]
                             return `${tooltipItem.dataset.label} ${raw.y.toFixed(3)}`
                         },
                     },

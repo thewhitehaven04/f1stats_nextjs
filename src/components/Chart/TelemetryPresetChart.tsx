@@ -1,12 +1,17 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import clsx from "clsx"
-import { type ChartProps, Chart } from "react-chartjs-2"
+import { Chart, type ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
-import type { TSpeedDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-import { ThemedChart } from '@/components/Chart/ThemedChart'
+import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
+import type { ThemedChart } from "@/components/Chart/ThemedChart"
+import type { ComponentProps } from "react"
 initGlobalChartConfig()
 
-export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">) => {
+export const TelemetryPresetChart = (
+    props: Omit<ComponentProps<typeof ThemedChart>, "type"> & {
+        data: { datasets: TTelemetryDataset }
+    },
+) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
         type: "scatter",
@@ -52,11 +57,12 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     intersect: false,
                     callbacks: {
                         title(tooltipItem) {
-                            const raw = tooltipItem[0].raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem[0]
+                                .raw as TTelemetryDataset[number]["data"][number]
                             return `${Math.trunc(raw.x).toString()} m`
                         },
                         label(tooltipItem) {
-                            const raw = tooltipItem.raw as TSpeedDataset[number]["data"][number]
+                            const raw = tooltipItem.raw as TTelemetryDataset[number]["data"][number]
                             return `${tooltipItem.dataset.label}: ${Math.trunc(raw.y as number).toString()}`
                         },
                     },
@@ -87,7 +93,7 @@ export const TelemetryPresetChart = (props: Omit<ChartProps<"scatter">, "type">)
                     <h1 className="text-center text-lg font-bold">No laps selected</h1>
                 </div>
             )}
-            <ThemedChart {...merge(baseChartProps, props)} />
+            <Chart {...merge(baseChartProps, props)} />
         </div>
     )
 }

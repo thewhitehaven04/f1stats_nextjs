@@ -6,9 +6,9 @@ import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 
-export type TSpeedDataset = ChartDataset<
+export type TTelemetryDataset = ChartDataset<
     "scatter",
     {
         x: number
@@ -38,7 +38,7 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, colorMap],
     )
 
-    const speedDatasets: TSpeedDataset = useMemo(
+    const speedDatasets: TTelemetryDataset = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -51,7 +51,7 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const rpmDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -64,7 +64,7 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const throttleDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -77,7 +77,7 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const brakeDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
             telemetryMeasurements?.map((lap, index) => ({
                 label: lap.driver,
@@ -90,7 +90,7 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const timeDeltaDatasets: ChartData<"scatter">["datasets"] = useMemo(
+    const timeDeltaDatasets: TTelemetryDataset = useMemo(
         () =>
             telemetryMeasurements
                 ?.map((comp, index) => ({
@@ -106,12 +106,27 @@ export default function TelemetryChartSection(props: {
         [telemetryMeasurements, presets],
     )
 
-    const chartRefs = useRef<Chart<keyof ChartTypeRegistry, unknown, unknown>[]>([])
+    const chartRefs = useRef<
+        Record<string, Chart<keyof ChartTypeRegistry, unknown, unknown> | null>
+    >({
+        speedtrace: null,
+        rpm: null,
+        throttle: null,
+        brake: null,
+        timedeltas: null,
+    })
 
     const pushRef = useCallback(
-        (chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null) => {
+        (
+            type: keyof typeof chartRefs.current,
+            chart?: Chart<keyof ChartTypeRegistry, unknown, unknown> | null,
+        ) => {
             if (chart) {
-                chartRefs.current.push(chart)
+                chartRefs.current[type] = chart
+            }
+
+            return () => {
+                chartRefs.current[type] = null
             }
         },
         [],
@@ -119,13 +134,15 @@ export default function TelemetryChartSection(props: {
 
     return (
         <section ref={ref} className="flex flex-col gap-2">
-            <div className="flex flex-col justify-end">
+            <div className="flex flex-row justify-end">
                 <Button
                     type="button"
                     size="md"
                     variant="secondary"
                     onClick={() => {
-                        chartRefs.current.forEach((chart) => chart.resetZoom())
+                        Object.values(chartRefs.current).forEach((chart) =>
+                            chart ? chart.resetZoom() : null,
+                        )
                     }}
                 >
                     Reset zoom
@@ -137,10 +154,12 @@ export default function TelemetryChartSection(props: {
                     datasets: speedDatasets,
                 }}
                 height={150}
+                ref={(chart) => pushRef("speedtrace", chart)}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
                 height={60}
+                ref={(chart) => pushRef("timedelta", chart)}
             />
             <TelemetryPresetChart
                 data={{
@@ -158,6 +177,7 @@ export default function TelemetryChartSection(props: {
                     },
                 }}
                 height={50}
+                ref={(chart) => pushRef("rpm", chart)}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: throttleDatasets }}
@@ -174,6 +194,7 @@ export default function TelemetryChartSection(props: {
                     },
                 }}
                 height={30}
+                ref={(chart) => pushRef("throttle", chart)}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: brakeDatasets }}
@@ -190,6 +211,7 @@ export default function TelemetryChartSection(props: {
                     },
                 }}
                 height={30}
+                ref={(chart) => pushRef("brake", chart)}
             />
         </section>
     )
