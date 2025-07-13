@@ -1,9 +1,9 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import clsx from "clsx"
-import { Chart, type ChartProps } from "react-chartjs-2"
+import { type ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-import type { ThemedChart } from "@/components/Chart/ThemedChart"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
 import type { ComponentProps } from "react"
 initGlobalChartConfig()
 
@@ -93,7 +93,7 @@ export const TelemetryPresetChart = (
                     <h1 className="text-center text-lg font-bold">No laps selected</h1>
                 </div>
             )}
-            <Chart {...merge(baseChartProps, props)} />
+            <ThemedChart {...merge(baseChartProps, props)} />
         </div>
     )
 }
