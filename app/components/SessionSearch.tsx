@@ -4,11 +4,10 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
-import { useDebouncedState } from '@/core/hooks/useDebouncedState'
-import type { TEventWithSessions } from '../season/[season]/page'
+import { useDebouncedState } from "@/core/hooks/useDebouncedState"
+import type { TSeasonEvent } from "../season/[season]/fetcher/fetcher"
 
-
-export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
+export const SessionSearch = ({ events }: { events: TSeasonEvent[] }) => {
     const { season } = useParams<{ season: string }>()
 
     const [searchQuery, setSearchQuery] = useDebouncedState("")
@@ -22,8 +21,8 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
                   terms.every((term) => {
                       const lowercaseTerm = term.toLowerCase()
                       return (
-                          event.officialName.toLowerCase().includes(lowercaseTerm) ||
-                          event.name.toLowerCase().includes(lowercaseTerm) ||
+                          event.event_official_name.toLowerCase().includes(lowercaseTerm) ||
+                          event.event_name.toLowerCase().includes(lowercaseTerm) ||
                           event.country.toLowerCase().includes(lowercaseTerm)
                       )
                   }),
@@ -55,56 +54,56 @@ export const SessionSearch = ({ events }: { events: TEventWithSessions[] }) => {
                 >
                     <div className="flex flex-col gap-3">
                         {results.map((result) => (
-                            <div key={result.name} className="flex flex-col gap-2">
+                            <div key={result.event_name} className="flex flex-col gap-2">
                                 <ul className="menu">
-                                    <li className="text-lg font-medium">{result.name}</li>
+                                    <li className="text-lg font-medium">{result.event_name}</li>
                                     <ul>
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[0].type}/results`}
+                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[0].session_type_id}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.sessions[0].type}
+                                                {result.event_sessions[0].session_type_id}
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[1].type}/results`}
+                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[1].session_type_id}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.sessions[1].type}
+                                                {result.event_sessions[1].session_type_id}
                                             </Link>
                                         </li>
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[2].type}/results`}
+                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[2].session_type_id}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.sessions[2].type}
-                                            </Link>
-                                        </li>
-
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[3].type}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.sessions[3].type}
+                                                {result.event_sessions[2].session_type_id}
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link
                                                 className="link-hover"
-                                                href={`/season/${season}/event/${result.name}/session/${result.sessions[4].type}/results`}
+                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[3].session_type_id}/results`}
                                                 onClick={onLinkClick}
                                             >
-                                                {result.sessions[4].type}
+                                                {result.event_sessions[3].session_type_id}
+                                            </Link>
+                                        </li>
+
+                                        <li>
+                                            <Link
+                                                className="link-hover"
+                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[4].session_type_id}/results`}
+                                                onClick={onLinkClick}
+                                            >
+                                                {result.event_sessions[4].session_type_id}
                                             </Link>
                                         </li>
                                     </ul>

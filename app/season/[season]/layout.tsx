@@ -1,7 +1,7 @@
 import { SeasonSelector } from "../../components/SeasonSelector"
 import { SessionSearch } from "../../components/SessionSearch"
 import { ThemeSelector } from "../../components/ThemeSelector"
-import { fetchEventsWithSessions } from "./fetcher"
+import { fetchEventsWithSessions } from "./fetcher/fetcher"
 import { Footer } from "./Footer"
 import { Header } from "./Header"
 
@@ -9,12 +9,12 @@ export default async function Layout({
     children,
     params,
 }: { children: React.ReactNode; params: Promise<{ season: string }> }) {
-    const events = await fetchEventsWithSessions(Number.parseInt((await params).season))
+    const events = await fetchEventsWithSessions((await params).season)
     return (
         <>
             <Header
                 rightSlot={
-                    <div className='flex flex-row gap-4 ml-12'>
+                    <div className="flex flex-row gap-4 ml-12">
                         <SessionSearch events={events} />
                         <SeasonSelector />
                         <ThemeSelector />

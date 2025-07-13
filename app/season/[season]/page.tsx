@@ -1,7 +1,7 @@
 import dbClient from "@/client/db"
 import { EventSection } from "./components/EventSection"
 import type { Metadata } from "next"
-import { fetchEventsWithSessions } from './fetcher'
+import { fetchSeasonEvents } from "./fetcher"
 
 // revalidate calendar data every 30 minutes
 export const revalidate = 1800
@@ -27,11 +27,7 @@ export async function generateStaticParams() {
     }))
 }
 
-
-export type TEventWithSessions = Awaited<ReturnType<typeof fetchEventsWithSessions>>[number]
-
 export default async function SeasonPage({ params }: { params: Promise<{ season: string }> }) {
-    const seasonInt = Number.parseInt((await params).season)
-    const events = await fetchEventsWithSessions(seasonInt)
+    const events = await fetchSeasonEvents({ season: (await params).season })
     return <EventSection events={events} />
 }

@@ -1,10 +1,10 @@
 import dbClient from "@/client/db"
 import { cache } from "react"
-export const fetchEventsWithSessions = cache(async (season: number) => {
+export const fetchEventsWithSessions = cache(async (season: string) => {
     return (
         await dbClient.events.findMany({
             where: {
-                season_year: season,
+                season_year: Number.parseInt(season),
                 event_format_name: {
                     not: "testing",
                 },
@@ -20,15 +20,7 @@ export const fetchEventsWithSessions = cache(async (season: number) => {
                 date_start: "asc",
             },
         })
-    ).map((evt) => ({
-        name: evt.event_name,
-        officialName: evt.event_official_name,
-        format: evt.event_format_name,
-        sessions: evt.event_sessions.map((session) => ({
-            type: session.session_type_id,
-        })),
-        dateStart: evt.date_start,
-        country: evt.country,
-        season: evt.season_year,
-    }))
+    ).filter((e) => e.event_sessions.length > 0)
 })
+
+export type TSeasonEvent = Awaited<ReturnType<typeof fetchEventsWithSessions>>[number]
