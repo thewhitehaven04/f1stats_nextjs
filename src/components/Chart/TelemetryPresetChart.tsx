@@ -1,6 +1,6 @@
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import clsx from "clsx"
-import { type ChartProps } from "react-chartjs-2"
+import type { ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 import { ThemedChart } from "@/components/Chart/ThemedChart"

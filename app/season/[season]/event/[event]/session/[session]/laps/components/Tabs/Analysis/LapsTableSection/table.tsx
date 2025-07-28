@@ -57,7 +57,6 @@ function lapsTable(
         ),
     )
 
-
     useEffect(() => {
         if (tableRef.current) sideIntersectObsRef.current?.observe(tableRef.current)
     }, [])
@@ -88,7 +87,7 @@ function lapsTable(
                                     {group.headers.map((header) => (
                                         <TableHead
                                             className={clsx(
-                                                "text-center sticky z-20 bg-primary-foreground",
+                                                `text-center sticky z-20 bg-primary-foreground ${header.column.getIsPinned() === "left" ? "border-r-[1px] left-0" : ""}`,
                                                 group.depth === 0 ? "top-0" : "top-10",
                                             )}
                                             key={header.id}
@@ -112,7 +111,7 @@ function lapsTable(
                                                 className={clsx(
                                                     "text-center",
                                                     cell.column.getIsPinned() === "left"
-                                                        ? "sticky left-0 border-r-[1px] z-10"
+                                                        ? "sticky left-0 bg-background border-r-[1px] z-10"
                                                         : "",
                                                 )}
                                                 key={cell.id}

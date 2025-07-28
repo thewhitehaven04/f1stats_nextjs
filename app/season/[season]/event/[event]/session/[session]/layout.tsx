@@ -1,4 +1,3 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { format } from "date-fns/format"
 import dbClient from "@/client/db"
 import type { ISessionPathnameParams } from "./types"

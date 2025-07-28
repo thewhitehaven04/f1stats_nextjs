@@ -78,7 +78,7 @@ class TeamPlotStyleResolver:
             if result.team_id == team_id:
                 return (
                     TeamPlotData(
-                        style="default",
+                        style="alternative",
                         team=TeamDto(
                             id_=result.team_id,
                             name=result.team_display_name,
@@ -88,7 +88,7 @@ class TeamPlotStyleResolver:
                     )
                     if result.driver_id == driver_id
                     else TeamPlotData(
-                        style="alternative",
+                        style="default",
                         team=TeamDto(
                             id_=result.team_id,
                             name=result.team_display_name,
