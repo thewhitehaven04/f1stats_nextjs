@@ -1,10 +1,6 @@
 import dbClient from "@/client/db"
 
-export const fetchSessionResults = async (
-    season: string,
-    event: string,
-    session: string,
-) => {
+export const fetchSessionResults = async (season: string, event: string, session: string) => {
     const { start_time: sessionStartTime } = await dbClient.event_sessions.findFirstOrThrow({
         where: {
             season_year: Number.parseInt(season),
@@ -18,6 +14,11 @@ export const fetchSessionResults = async (
                 season_year: Number.parseInt(season),
                 event_name: event,
                 session_type_id: session,
+            },
+            orderBy: {
+                // a ridiculuous crutch; fix later. it's there because classified_position 
+                // is a string since it has non-numeric values like R, W */
+                id: 'asc'
             },
             include: {
                 race_session_results: session === "Race" || session === "Sprint",
