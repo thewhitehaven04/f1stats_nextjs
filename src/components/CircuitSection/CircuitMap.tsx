@@ -1,10 +1,39 @@
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
-import type { CircuitGeometryDto, FastestDelta, PlotColor } from "@/client/generated"
-import { getAlternativeColor } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/helpers/getAlternativeColor"
+import type { CircuitGeometryDto, FastestDelta } from "@/client/generated"
 
-const HEIGHT = 400
+const WIDTH = 500
 
-export function getPath({
+const rotate = ({ x, y, rotation }: { x: number; y: number; rotation: number }) => {
+    const cos = Math.cos(rotation)
+    const sin = Math.sin(rotation)
+    return {
+        x: x * cos - y * sin,
+        y: -x * sin - y * cos,
+    }
+}
+
+const getRotatedCoordinates = ({
+    x,
+    y,
+    midX,
+    midY,
+    rotation,
+}: { x: number; y: number; midX: number; midY: number; rotation: number }) => {
+    const xCentered = x - midX
+    const yCentered = y - midY
+
+    const shiftRotated = rotate({
+        x: xCentered,
+        y: yCentered,
+        rotation: (Math.PI * rotation) / 180,
+    })
+    return {
+        x: shiftRotated.x + midX,
+        y: shiftRotated.y + midY,
+    }
+}
+
+function getPath({
     xStart,
     yStart,
     xEnd,
@@ -21,19 +50,19 @@ export function getPath({
     Y: number
     aspect_ratio: number
 }) {
-    const width = HEIGHT * aspect_ratio
+    const height = WIDTH / aspect_ratio
     return encodeSVGPath([
         {
             type: SVGPathData.MOVE_TO,
             relative: false,
-            x: (xStart / X) * width,
-            y: (yStart / Y) * HEIGHT,
+            x: (xStart / X) * WIDTH,
+            y: (yStart / Y) * height,
         },
         {
             type: SVGPathData.LINE_TO,
             relative: false,
-            x: (xEnd / X) * width,
-            y: (yEnd / Y) * HEIGHT,
+            x: (xEnd / X) * WIDTH,
+            y: (yEnd / Y) * height,
         },
     ])
 }
@@ -41,42 +70,63 @@ export function getPath({
 export function DeltaCircuitMap(props: {
     geometry: CircuitGeometryDto
     driverDeltas: FastestDelta[]
-    colorMap: Record<string, PlotColor>
+    colorMap: Record<string, string>
 }) {
     const { geometry, driverDeltas, colorMap } = props
-    const minX = geometry.geojson.bbox?.[0] || 0 - 10
-    const maxY = geometry.geojson.bbox?.[1] || 0 - 10
-    const maxX = geometry.geojson.bbox?.[2] || 0 + 10
-    const minY = geometry.geojson.bbox?.[3] || 0 + 10
+    const bboxMinX = geometry.geojson.bbox?.[0] || 0
+    const bboxMaxY = geometry.geojson.bbox?.[1] || 0
+    const bboxMaxX = geometry.geojson.bbox?.[2] || 0
+    const bboxMinY = geometry.geojson.bbox?.[3] || 0
 
-    const X = maxX - minX
-    const Y = maxY - minY
-    const aspect_ratio = Math.abs(X / Y)
+    const X = bboxMaxX - bboxMinX
+    const Y = bboxMaxY - bboxMinY
+
+    const midX = bboxMinX + X / 2
+    const midY = bboxMinY + Y / 2
+
+    const preparedCoordinates =
+        geometry.geojson.geometry?.coordinates.map((pos) =>
+            getRotatedCoordinates({
+                x: pos[0],
+                y: pos[1],
+                midX,
+                midY,
+                rotation: geometry.rotation,
+            }),
+        ) || []
+
+    const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
+    const minY = Math.min(...preparedCoordinates.map((pos) => pos.y))
+    const maxX = Math.max(...preparedCoordinates.map((pos) => pos.x))
+    const maxY = Math.max(...preparedCoordinates.map((pos) => pos.y))
+    const rotatedX = maxX - minX
+    const rotatedY = maxY - minY
+
+    const aspect_ratio = Math.abs(rotatedX / rotatedY)
+    const scale = aspect_ratio > 1 ? 1 : aspect_ratio
 
     return (
         <section className="w-full h-full flex flex-col justify-center items-center p-2 gap-4">
             <h2 className="text-lg font-bold">Circuit map</h2>
             <svg
-                width={HEIGHT * aspect_ratio}
-                height={HEIGHT}
+                width={WIDTH}
+                height={WIDTH / aspect_ratio}
                 className="overflow-visible my-4"
-                transform={`rotate(${-geometry.rotation})`}
+                transform={`scale(${scale})`}
             >
                 <title>Driver speed comparison</title>
-                {geometry.geojson.geometry?.coordinates.map((pos, index) => {
+                {preparedCoordinates.map((pos, index) => {
                     const first = pos
                     const second =
-                        geometry.geojson.geometry?.coordinates[
-                            index === geometry.geojson.geometry?.coordinates.length - 1
-                                ? index
-                                : index + 1
+                        preparedCoordinates[
+                            index === preparedCoordinates.length - 1 ? index : index + 1
                         ]
 
-                    const xStart = first[0] - minX
-                    const yStart = first[1] - minY
+                    const xStart = first.x - minX
+                    const yStart = first.y - minY
                     if (!second) return null
-                    const xEnd = second[0] - minX
-                    const yEnd = second[1] - minY
+                    const xEnd = second.x - minX
+                    const yEnd = second.y - minY
                     return (
                         <path
                             // biome-ignore lint/suspicious/noArrayIndexKey: static array
@@ -86,8 +136,8 @@ export function DeltaCircuitMap(props: {
                                 yStart,
                                 xEnd,
                                 yEnd,
-                                X,
-                                Y,
+                                X: rotatedX,
+                                Y: rotatedY,
                                 aspect_ratio,
                             })}
                             fill="white"
@@ -115,16 +165,12 @@ export function DeltaCircuitMap(props: {
                                 yStart,
                                 xEnd,
                                 yEnd,
-                                X,
-                                Y,
+                                X: rotatedX,
+                                Y: rotatedY,
                                 aspect_ratio,
                             })}
                             fill="white"
-                            stroke={
-                                colorMap[pos.driver].style === "alternative"
-                                    ? getAlternativeColor(colorMap[pos.driver].color)
-                                    : colorMap[pos.driver].color
-                            }
+                            stroke={colorMap[pos.driver]}
                             strokeWidth="4"
                         />
                     )
@@ -137,10 +183,7 @@ export function DeltaCircuitMap(props: {
                             <div
                                 className="h-3 w-9 border-2 border-black"
                                 style={{
-                                    backgroundColor:
-                                        colorMap[driver].style === "alternative"
-                                            ? getAlternativeColor(plotColor.color)
-                                            : plotColor.color,
+                                    backgroundColor: colorMap[driver],
                                 }}
                             />
                             <div>{driver}</div>
