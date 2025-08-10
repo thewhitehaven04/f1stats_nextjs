@@ -58,54 +58,65 @@ export const SessionSearch = ({ events }: { events: TSeasonEvent[] }) => {
                                 <ul className="menu">
                                     <li className="text-lg font-medium">{result.event_name}</li>
                                     <ul>
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[0].session_type_id}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.event_sessions[0].session_type_id}
-                                            </Link>
-                                        </li>
+                                        {result.event_sessions[0]?.session_type_id && (
+                                            <li>
+                                                <Link
+                                                    className="link-hover"
+                                                    href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[0].session_type_id}/results`}
+                                                    onClick={onLinkClick}
+                                                >
+                                                    {result.event_sessions[0].session_type_id}
+                                                </Link>
+                                            </li>
+                                        )}
 
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[1].session_type_id}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.event_sessions[1].session_type_id}
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[2].session_type_id}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.event_sessions[2].session_type_id}
-                                            </Link>
-                                        </li>
+                                        {result.event_sessions[1]?.session_type_id && (
+                                            <li>
+                                                <Link
+                                                    className="link-hover"
+                                                    href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[1].session_type_id}/results`}
+                                                    onClick={onLinkClick}
+                                                >
+                                                    {result.event_sessions[1].session_type_id}
+                                                </Link>
+                                            </li>
+                                        )}
 
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[3].session_type_id}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.event_sessions[3].session_type_id}
-                                            </Link>
-                                        </li>
+                                        {result.event_sessions[2]?.session_type_id && (
+                                            <li>
+                                                <Link
+                                                    className="link-hover"
+                                                    href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[2].session_type_id}/results`}
+                                                    onClick={onLinkClick}
+                                                >
+                                                    {result.event_sessions[2].session_type_id}
+                                                </Link>
+                                            </li>
+                                        )}
 
-                                        <li>
-                                            <Link
-                                                className="link-hover"
-                                                href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[4].session_type_id}/results`}
-                                                onClick={onLinkClick}
-                                            >
-                                                {result.event_sessions[4].session_type_id}
-                                            </Link>
-                                        </li>
+                                        {result.event_sessions[3]?.session_type_id && (
+                                            <li>
+                                                <Link
+                                                    className="link-hover"
+                                                    href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[3].session_type_id}/results`}
+                                                    onClick={onLinkClick}
+                                                >
+                                                    {result.event_sessions[3].session_type_id}
+                                                </Link>
+                                            </li>
+                                        )}
+
+                                        {result.event_sessions[4]?.session_type_id && (
+                                            <li>
+                                                <Link
+                                                    className="link-hover"
+                                                    href={`/season/${season}/event/${result.event_name}/session/${result.event_sessions[4].session_type_id}/results`}
+                                                    onClick={onLinkClick}
+                                                >
+                                                    {result.event_sessions[4].session_type_id}
+                                                </Link>
+                                            </li>
+                                        )}
                                     </ul>
                                 </ul>
                             </div>
