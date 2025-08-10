@@ -39,14 +39,14 @@ class TestingQueryRequest(BaseModel):
     day: int
 
 
-class GroupRequest(BaseModel):
+class GroupDto(BaseModel):
     name: str
     color: str
 
 class SessionQuery(BaseModel):
     driver: str
     lap_filter: list[int] | None
-    group: GroupRequest | None 
+    group: GroupDto | None 
 
 
 class SessionQueryFilter(BaseModel):

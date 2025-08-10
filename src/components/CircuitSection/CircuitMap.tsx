@@ -18,7 +18,13 @@ const getRotatedCoordinates = ({
     midX,
     midY,
     rotation,
-}: { x: number; y: number; midX: number; midY: number; rotation: number }) => {
+}: {
+    x: number
+    y: number
+    midX: number
+    midY: number
+    rotation: number
+}) => {
     const xCentered = x - midX
     const yCentered = y - midY
 
@@ -95,6 +101,16 @@ export function DeltaCircuitMap(props: {
             }),
         ) || []
 
+    const preparedDeltas = driverDeltas.map((d) =>
+        getRotatedCoordinates({
+            x: d.point[0],
+            y: d.point[1],
+            midX,
+            midY,
+            rotation: geometry.rotation,
+        }),
+    )
+
     const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
     const minY = Math.min(...preparedCoordinates.map((pos) => pos.y))
     const maxX = Math.max(...preparedCoordinates.map((pos) => pos.x))
@@ -146,16 +162,16 @@ export function DeltaCircuitMap(props: {
                         />
                     )
                 })}
-                {driverDeltas.map((pos, index) => {
-                    const first = pos.point
+                {preparedDeltas.map((pos, index) => {
+                    const first = pos
                     const second =
-                        driverDeltas[index === driverDeltas.length - 1 ? index : index + 1].point
+                        preparedDeltas[index === driverDeltas.length - 1 ? index : index + 1]
 
-                    const xStart = first[0] - minX
-                    const yStart = first[1] - minY
+                    const xStart = first.x - minX
+                    const yStart = first.y - minY
                     if (!second) return null
-                    const xEnd = second[0] - minX
-                    const yEnd = second[1] - minY
+                    const xEnd = second.x - minX
+                    const yEnd = second.y - minY
                     return (
                         <path
                             // biome-ignore lint/suspicious/noArrayIndexKey: static array

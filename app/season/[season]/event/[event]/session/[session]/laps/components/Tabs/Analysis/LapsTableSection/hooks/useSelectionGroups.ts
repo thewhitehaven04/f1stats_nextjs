@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
+import { set } from 'zod'
 
 export type TGroup = {
     name: string
@@ -27,12 +28,22 @@ export const useSelectionGroups = () => {
         [activeGroupIndex, groups],
     )
 
-    const activeGroup = groups.length ? groups[activeGroupIndex] : undefined
+    const activeGroup = useMemo(
+        () => (groups.length ? groups[activeGroupIndex] : undefined),
+        [activeGroupIndex, groups],
+    )
 
-    const setActiveGroup = (groupName: string) => {
-        const index = groups.findIndex((g) => g.name === groupName)
-        setActiveGroupIndex(index)
-    }
+    const setActiveGroup = useCallback(
+        (groupName: string) => {
+            const index = groups.findIndex((g) => g.name === groupName)
+            setActiveGroupIndex(index)
+        },
+        [groups.findIndex],
+    )
+    
+    const resetGroups = useCallback(() => {
+        setGroups([])
+    }, [])
 
     return {
         activeGroup,
@@ -40,5 +51,6 @@ export const useSelectionGroups = () => {
         groups,
         addGroup,
         removeGroup,
+        resetGroups
     }
 }

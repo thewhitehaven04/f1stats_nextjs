@@ -1,11 +1,12 @@
+"use client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@radix-ui/react-select"
 import { Plus } from "lucide-react"
-import { Form, useForm } from "react-hook-form"
 import type { TGroup } from "../hooks/useSelectionGroups"
 import Color from "color"
+import { useForm, type SubmitHandler } from "react-hook-form"
 
 export const SelectionCard = ({
     groups,
@@ -18,21 +19,20 @@ export const SelectionCard = ({
     activeGroup: string | undefined
     setActiveGroup: (group: string) => void
 }) => {
-    const { register } = useForm<TGroup>({
+    const { register, handleSubmit, reset } = useForm<TGroup>({
         defaultValues: {
             name: "",
             color: "#FFF",
         },
     })
 
+    const onSubmit: SubmitHandler<TGroup> = (data) => {
+        addGroup({ ...data, color: data.color.toUpperCase() })
+        reset()
+    }
+
     return (
-        <Form<TGroup>
-            className="flex flex-row gap-2"
-            onSubmit={({ event, data }) => {
-                event?.preventDefault()
-                addGroup(data)
-            }}
-        >
+        <form className="flex flex-row gap-2" onSubmit={handleSubmit(onSubmit)}>
             <Input
                 {...register("name")}
                 required
@@ -40,7 +40,7 @@ export const SelectionCard = ({
                 className="w-48"
                 placeholder="Group"
             />
-            <Input {...register("color")} required type="color" />
+            <Input {...register("color")} required type="color" className="w-12" />
             <div className="flex flex-col justify-end">
                 <Button variant="ghost" type="submit">
                     <Plus />
@@ -52,16 +52,18 @@ export const SelectionCard = ({
                     <Badge
                         key={name}
                         onClick={() => setActiveGroup(name)}
+                        variant="default"
+                        style={{ backgroundColor: color }}
                         className={`h-9 text-sm hover:cursor-pointer 
                             ${activeGroup === name ? "brightness-75" : ""} 
-                            hover:brightness-90 bg-[${color}] 
-                            text-[${Color(color).isDark() ? "#FFF" : "#000"}]
+                            hover:brightness-90 
+                            text-[${Color().hex(color).isDark() ? "#FFF" : "#000"}]
                         `}
                     >
                         {name}
                     </Badge>
                 ))}
             </div>
-        </Form>
+        </form>
     )
 }

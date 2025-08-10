@@ -11,7 +11,7 @@ export type AverageTelemetriesResponseDto = {
 
 export type AverageTelemetryPlotData = {
     driver: string
-    group: string
+    group: GroupDto
     stint_length: number
     telemetry: Array<TelemetryMeasurementDto>
     delta: DriverTelemetryDelta | null
@@ -83,7 +83,7 @@ export type FeatureLineStringCircuitFeatureProperties = {
     id?: number | string | null
 }
 
-export type GroupRequest = {
+export type GroupDto = {
     name: string
     color: string
 }
@@ -168,7 +168,7 @@ export type Position3D = [number, number, number]
 export type SessionQuery = {
     driver: string
     lap_filter: Array<number> | null
-    group: GroupRequest | null
+    group: GroupDto | null
 }
 
 export type SessionQueryFilter = {

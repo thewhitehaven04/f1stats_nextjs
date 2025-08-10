@@ -184,8 +184,7 @@ class TelemetryResolver:
                 ),
             )
             telemetry_data.laptime_at = to_numeric(telemetry_data.laptime_at)
-            style = self.plot_style_resolver.get_driver_style(driver_id=driver_id)
-            color_map.set(driver_id, PlotColor(color=style.color, style=style.style))
+            color_map.set(group.name, PlotColor(color=group.color, style="default"))
             avg_telemetry_data = self.average_telemetry_for_driver(
                 telemetry_data, np_lat
             )
@@ -200,7 +199,7 @@ class TelemetryResolver:
                 {
                     "raw_telemetry": avg_telemetry_data,
                     "driver": driver_id,
-                    "group": group, 
+                    "group": group,
                     "stint_length": len(lap_ids),
                 }
             )
@@ -215,7 +214,7 @@ class TelemetryResolver:
                         ),
                         driver=avg_telemetry["driver"],
                         stint_length=avg_telemetry["stint_length"],
-                        group=avg_telemetry['group'],
+                        group=avg_telemetry["group"],
                         delta=(
                             DriverTelemetryDelta(
                                 reference=reference_driver,

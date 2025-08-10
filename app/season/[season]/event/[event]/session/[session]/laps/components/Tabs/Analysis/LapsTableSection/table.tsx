@@ -75,7 +75,7 @@ function lapsTable(
                 <div className="flex flex-row justify-end gap-4 mb-2">
                     <ColumnVisibilityButton />
                 </div>
-                <div className="overflow-auto max-h-[720px]" ref={scrollerRef}>
+                <div className="overflow-auto max-h-[900px]" ref={scrollerRef}>
                     <table
                         data-slot="table"
                         className="w-full caption-bottom text-sm relative rounded-md"

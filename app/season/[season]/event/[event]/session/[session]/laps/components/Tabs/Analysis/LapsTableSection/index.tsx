@@ -11,7 +11,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
 import { LapsTable } from "./table"
-import type { TGroup } from "./hooks/useSelectionGroups"
 import type { TLapSelectionInstance } from "./hooks/useLapSelection"
 
 export interface ILapData {
@@ -77,17 +76,12 @@ function lapsTableSection(props: {
                                         name={driverName}
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
-                                        checked={
-                                            !!selection.find(
-                                                (s) => s.driver === driverName && s.lap === lap,
-                                            )
-                                        }
                                         onCheckedChange={(checked) =>
                                             onUpdateSelection({
                                                 driver: driverName,
                                                 lap: lap,
                                                 state: !!checked,
-                                                group: activeGroup,
+                                                group: activeGroup ?? "",
                                             })
                                         }
                                     />
@@ -190,7 +184,7 @@ function lapsTableSection(props: {
                 }),
             ),
         ],
-        [laps, onUpdateSelection, activeGroup, selection],
+        [laps, onUpdateSelection, activeGroup],
     )
 
     const initialState = useMemo(

@@ -2,7 +2,7 @@
 # distributed in python serverless functions
 from typing import Annotated
 from urllib.parse import unquote
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, logger
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import SessionIdentifier, SessionQueryFilter

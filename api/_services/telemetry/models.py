@@ -1,6 +1,7 @@
 from typing import Sequence
 from pydantic import BaseModel, ConfigDict
 
+from api._core.models.queries import GroupDto
 from api._services.color_resolver.models import ColorMap
 
 
@@ -46,7 +47,7 @@ class AverageTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
-    group: str
+    group: GroupDto 
     stint_length: int
     telemetry: Sequence[TelemetryMeasurementDto]
     delta: DriverTelemetryDelta | None

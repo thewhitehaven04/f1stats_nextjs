@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from "react"
 export type TLapSelectionInstance = {
     driver: string
     lap: number
-    group: string
+    group?: string
 }
 
 export const useLapSelection = () => {
@@ -51,7 +51,7 @@ export const useLapSelection = () => {
                     setLapSelection((prev) =>
                         prev.filter(
                             (item) =>
-                                item.driver !== driver || item.lap !== lap || item.group.label !== group.label,
+                                item.driver !== driver || item.lap !== lap || item.group !== group,
                         ),
                     )
                 })
@@ -60,10 +60,10 @@ export const useLapSelection = () => {
         [flushBatchUpdates, clearIfTimeout],
     )
 
-    const resetSelection = () => {
+    const resetSelection = useCallback(() => {
         clearIfTimeout()
         setLapSelection([])
-    }
+    }, [clearIfTimeout])
 
     return { selection: lapSelection, updateSelection, resetSelection }
 }
