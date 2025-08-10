@@ -5,18 +5,25 @@ import {
     type AverageTelemetryPlotData,
     type DriverTelemetryPlotData,
     type LapSelectionData,
+    type SessionQuery,
     type SessionQueryFilter,
 } from "@/client/generated"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"
-import { useLapSelection } from "./LapsTableSection/hooks/useLapSelection"
+import {
+    useLapSelection,
+    type TLapSelectionInstance,
+} from "./LapsTableSection/hooks/useLapSelection"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ApiClient } from "@/client"
 import { useSession } from "../../../../hooks/useSession"
 import { ChartLoading } from "./ChartLoading"
 import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
+import { useSelectionGroups, type TGroup } from "./LapsTableSection/hooks/useSelectionGroups"
+import { SelectionCard } from "./LapsTableSection/components/SelectionCard"
+import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 
 const AverageTelemetrySection = dynamic(() => import("./AverageTelemetrySection/index"), {
     ssr: false,
@@ -28,28 +35,27 @@ const TelemetryChartSection = dynamic(() => import("./ChartSection/index"), {
     loading: () => <ChartLoading />,
 })
 
-export const getQueries = (selection: [string, number][]) =>
-    selection.reduce(
-        (acc, [key, value]) => {
-            const driverLapArray = acc.find((query) => query.driver === key)
-            if (driverLapArray) {
-                driverLapArray.lap_filter?.push(value)
-            } else {
-                acc.push({
-                    driver: key,
-                    lap_filter: [value],
-                })
-            }
-            return acc
-        },
-        [] as SessionQueryFilter["queries"],
-    )
+export const getQueries = (selection: TLapSelectionInstance[], groups: TGroup[]) =>
+    selection.reduce((acc, { driver, lap, group }) => {
+        const driverLapArray = acc.find((query) => query.group?.name === group)
+        if (driverLapArray) {
+            driverLapArray.lap_filter?.push(lap)
+        } else {
+            const selectedGroup = groups.find((g) => g.name === selectedGroup)
+            acc.push({
+                driver,
+                lap_filter: [lap],
+                group: selectedGroup || null,
+            })
+        }
+        return acc
+    }, [] as SessionQuery[])
 
 export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
-    const ref = useRef<HTMLElement>(null)
     const { selection, updateSelection, resetSelection } = useLapSelection()
     const { event, season: year, session } = useSession()
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
+    const { groups, activeGroup, setActiveGroup, addGroup } = useSelectionGroups()
 
     const { data: telemetry } = useQuery({
         queryKey: [tab, year, event, session, selection],
@@ -59,7 +65,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                       {
                           client: ApiClient,
                           body: {
-                              queries: getQueries(selection),
+                              queries: getQueries(selection, groups),
                           },
                           path: {
                               event,
@@ -71,7 +77,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                   )
                 : await getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
                       client: ApiClient,
-                      body: { queries: getQueries(selection) },
+                      body: { queries: getQueries(selection, groups) },
                       path: {
                           event,
                           session,
@@ -80,6 +86,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                       throwOnError: true,
                   })
             ).data,
+        enabled: tab === "telemetry" ? true : groups.length > 0,
     })
 
     const { data: geometry } = useSuspenseQuery({
@@ -97,9 +104,19 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         setTab(newTab)
     }
 
+    const map = telemetry?.color_map || {}
+
+    const colorMap = Object.fromEntries(
+        Object.keys(map).map((driver) => [
+            driver,
+            map[driver].style === "default"
+                ? map[driver].color
+                : getAlternativeColor(map[driver].color || ""),
+        ]),
+    )
+
     return (
         <>
-            <LapsTableSection key={tab} laps={laps} onUpdateSelection={updateSelection} />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
                     <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>
@@ -112,28 +129,39 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                         Average telemetry
                     </TabsTrigger>
                 </TabsList>
+                <LapsTableSection
+                    key={tab}
+                    laps={laps}
+                    selection={selection}
+                    onUpdateSelection={updateSelection}
+                    activeGroup={activeGroup?.name}
+                />
                 <TabsContent value="telemetry">
                     <DeltaCircuitMap
                         geometry={geometry}
                         driverDeltas={telemetry?.delta || []}
-                        colorMap={telemetry?.color_map || {}}
+                        colorMap={colorMap}
                     />
                     <TelemetryChartSection
                         data={(telemetry?.telemetries as DriverTelemetryPlotData[]) || null}
                         colorMap={telemetry?.color_map || {}}
-                        ref={ref}
                     />
                 </TabsContent>
                 <TabsContent value="averageTelemetry">
+                    <SelectionCard
+                        groups={groups}
+                        addGroup={addGroup}
+                        activeGroup={activeGroup ? activeGroup.name : undefined}
+                        setActiveGroup={setActiveGroup}
+                    />
                     <DeltaCircuitMap
                         geometry={geometry}
                         driverDeltas={telemetry?.delta || []}
-                        colorMap={telemetry?.color_map || {}}
+                        colorMap={colorMap}
                     />
                     <AverageTelemetrySection
                         data={(telemetry?.telemetries as AverageTelemetryPlotData[]) || null}
-                        colorMap={telemetry?.color_map || {}}
-                        ref={ref}
+                        colorMap={colorMap}
                     />
                 </TabsContent>
             </Tabs>

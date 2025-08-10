@@ -46,6 +46,7 @@ class AverageTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver: str
+    group: str
     stint_length: int
     telemetry: Sequence[TelemetryMeasurementDto]
     delta: DriverTelemetryDelta | None

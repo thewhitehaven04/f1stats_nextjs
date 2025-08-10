@@ -1,7 +1,15 @@
 import { useCallback, useRef, useState } from "react"
 
+
+
+export type TLapSelectionInstance = {
+    driver: string
+    lap: number
+    group: string
+}
+
 export const useLapSelection = () => {
-    const [selection, setSelection] = useState<[string, number][]>([])
+    const [lapSelection, setLapSelection] = useState<TLapSelectionInstance[]>([])
 
     const batch = useRef<(() => void)[]>([])
     const timeoutRef = useRef<NodeJS.Timeout>(null)
@@ -11,33 +19,51 @@ export const useLapSelection = () => {
         }
     }, [])
 
-    const flushBatch = useCallback(() => {
+    const flushBatchUpdates = useCallback(() => {
         batch.current.forEach((fn) => fn())
         batch.current = []
     }, [])
 
     const updateSelection = useCallback(
-        ({ driver, lap, state }: { driver: string; lap: number; state: boolean }) => {
+        (instance: {
+            driver: string
+            lap: number
+            state: boolean
+            group: string 
+        }) => {
+            const { driver, lap, group, state } = instance
             clearIfTimeout()
 
             if (state) {
-                batch.current.push(() => setSelection((prev) => [...prev, [driver, lap]]))
-                timeoutRef.current = setTimeout(flushBatch, 1000)
+                batch.current.push(() =>
+                    setLapSelection((prev) => [
+                        ...prev,
+                        {
+                            driver,
+                            lap,
+                            group 
+                        },
+                    ]),
+                )
+                timeoutRef.current = setTimeout(flushBatchUpdates, 1000)
             } else {
                 batch.current.push(() => {
-                    setSelection((prev) =>
-                        prev.filter(([key, value]) => key !== driver || value !== lap),
+                    setLapSelection((prev) =>
+                        prev.filter(
+                            (item) =>
+                                item.driver !== driver || item.lap !== lap || item.group.label !== group.label,
+                        ),
                     )
                 })
             }
         },
-        [flushBatch, clearIfTimeout],
+        [flushBatchUpdates, clearIfTimeout],
     )
 
     const resetSelection = () => {
         clearIfTimeout()
-        setSelection([])
+        setLapSelection([])
     }
 
-    return { selection, updateSelection, resetSelection }
+    return { selection: lapSelection, updateSelection, resetSelection }
 }

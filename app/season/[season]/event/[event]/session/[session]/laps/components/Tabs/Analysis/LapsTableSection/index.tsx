@@ -1,6 +1,6 @@
 "use client"
 import { createColumnHelper } from "@tanstack/react-table"
-import { useMemo } from "react"
+import { memo, useMemo } from "react"
 import type { LapSelectionData, LapTimingData } from "@/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
@@ -10,8 +10,9 @@ import { Laptime } from "@/components/Laptime"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
-import { LapsTable } from './table'
-
+import { LapsTable } from "./table"
+import type { TGroup } from "./hooks/useSelectionGroups"
+import type { TLapSelectionInstance } from "./hooks/useLapSelection"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -36,21 +37,18 @@ export interface ILapData {
 }
 export const columnHelper = createColumnHelper<ILapData>()
 
-export function LapsTableSection({
-    laps,
-    onUpdateSelection,
-}: {
+function lapsTableSection(props: {
     laps: LapSelectionData
-    onUpdateSelection: ({
-        driver,
-        lap,
-        state,
-    }: {
+    selection: TLapSelectionInstance[]
+    onUpdateSelection: (instance: {
         driver: string
         lap: number
         state: boolean
+        group: string
     }) => void
+    activeGroup: string | undefined
 }) {
+    const { laps, selection, onUpdateSelection, activeGroup } = props
     const flattenedLaps = useMemo(() => mapLapsToTableLapData(laps.driver_lap_data), [laps])
 
     const tableColumns = useMemo(
@@ -79,11 +77,17 @@ export function LapsTableSection({
                                         name={driverName}
                                         value={lap}
                                         disabled={!cell.row.original[`${driverName}.LapTime`]}
+                                        checked={
+                                            !!selection.find(
+                                                (s) => s.driver === driverName && s.lap === lap,
+                                            )
+                                        }
                                         onCheckedChange={(checked) =>
                                             onUpdateSelection({
                                                 driver: driverName,
                                                 lap: lap,
                                                 state: !!checked,
+                                                group: activeGroup,
                                             })
                                         }
                                     />
@@ -186,7 +190,7 @@ export function LapsTableSection({
                 }),
             ),
         ],
-        [laps, onUpdateSelection],
+        [laps, onUpdateSelection, activeGroup, selection],
     )
 
     const initialState = useMemo(
@@ -212,3 +216,5 @@ export function LapsTableSection({
         </>
     )
 }
+
+export const LapsTableSection = memo(lapsTableSection)

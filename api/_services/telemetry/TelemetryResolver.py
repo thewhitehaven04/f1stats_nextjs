@@ -146,6 +146,7 @@ class TelemetryResolver:
         driver_lap_id_entries = [
             [
                 query.driver,
+                query.group,
                 [
                     lap_tuple[0]
                     for lap_tuple in self.db_connection.execute(
@@ -175,7 +176,7 @@ class TelemetryResolver:
         )
         np_lat = array(lat)
 
-        for driver_id, lap_ids in driver_lap_id_entries:
+        for driver_id, group, lap_ids in driver_lap_id_entries:
             telemetry_data = read_sql(
                 con=self.db_connection,
                 sql=select(TelemetryMeasurements).where(
@@ -199,6 +200,7 @@ class TelemetryResolver:
                 {
                     "raw_telemetry": avg_telemetry_data,
                     "driver": driver_id,
+                    "group": group, 
                     "stint_length": len(lap_ids),
                 }
             )
@@ -213,6 +215,7 @@ class TelemetryResolver:
                         ),
                         driver=avg_telemetry["driver"],
                         stint_length=avg_telemetry["stint_length"],
+                        group=avg_telemetry['group'],
                         delta=(
                             DriverTelemetryDelta(
                                 reference=reference_driver,

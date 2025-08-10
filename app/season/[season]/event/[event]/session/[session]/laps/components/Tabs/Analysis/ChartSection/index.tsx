@@ -19,9 +19,8 @@ export type TTelemetryDataset = ChartDataset<
 export default function TelemetryChartSection(props: {
     data: DriverTelemetryPlotData[] | null
     colorMap: Record<string, PlotColor>
-    ref: RefObject<HTMLElement | null>
 }) {
-    const { data: telemetryMeasurements, colorMap, ref } = props
+    const { data: telemetryMeasurements, colorMap } = props
     const distanceLabels = telemetryMeasurements
         ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)))
         .sort((a, b) => a - b)
@@ -133,7 +132,7 @@ export default function TelemetryChartSection(props: {
     )
 
     return (
-        <section ref={ref} className="flex flex-col gap-2">
+        <section className="flex flex-col gap-2">
             <div className="flex flex-row justify-end">
                 <Button
                     type="button"

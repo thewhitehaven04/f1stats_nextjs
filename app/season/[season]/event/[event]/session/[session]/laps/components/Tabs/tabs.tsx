@@ -3,7 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation"
 import { AnalysisTab } from "./Analysis"
-import { getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost } from "@/client/generated"
+import {
+    getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
+    type SessionQuery,
+} from "@/client/generated"
 import dynamic from "next/dynamic"
 import { ChartLoading } from "./Analysis/ChartLoading"
 import { useSession } from "../../../hooks/useSession"
@@ -37,7 +40,8 @@ export const LapsTabs = () => {
     const queries = search.getAll("driver").map((driver) => ({
         driver,
         lap_filter: null,
-    }))
+        group: null,
+    })) satisfies SessionQuery[]
 
     const { data } = useSuspenseQuery({
         queryKey: ["laps", year, event, session, queries],

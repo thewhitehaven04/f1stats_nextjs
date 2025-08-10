@@ -1,19 +1,17 @@
-import type { Chart, ChartData, ChartTypeRegistry } from "chart.js"
-import { useCallback, useMemo, useRef, type RefObject } from "react"
+import type { Chart, ChartTypeRegistry } from "chart.js"
+import { useCallback, useMemo, useRef } from "react"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import type { AverageTelemetryPlotData, PlotColor } from "@/client/generated"
+import type { AverageTelemetryPlotData } from "@/client/generated"
 import type { TTelemetryDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
-import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { Button } from "@/components/ui/button"
 
 export default (props: {
     data: AverageTelemetryPlotData[] | null
-    colorMap: Record<string, PlotColor>
-    ref: RefObject<HTMLElement | null>
+    colorMap: Record<string, string>
 }) => {
-    const { data: averageTelemetry, ref, colorMap } = props
+    const { data: averageTelemetry, colorMap } = props
     const distanceLabels =
         averageTelemetry?.length &&
         averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
@@ -21,11 +19,7 @@ export default (props: {
     const presets = useMemo(
         () =>
             averageTelemetry?.map((driverMeasurements) => ({
-                borderColor: getColorFromColorMap(colorMap, driverMeasurements.driver),
-                borderDash:
-                    colorMap[driverMeasurements.driver].style === "alternative"
-                        ? [6, 1.5]
-                        : undefined,
+                borderColor: colorMap[driverMeasurements.group],
             })) || [],
         [averageTelemetry, colorMap],
     )
@@ -33,7 +27,7 @@ export default (props: {
     const speedDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: `${stint.driver}, ${stint.stint_length} laps`,
+                label: stint.group,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.speed,
@@ -62,7 +56,7 @@ export default (props: {
     const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.driver,
+                label: stint.group,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.rpm,
@@ -75,7 +69,7 @@ export default (props: {
     const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.driver,
+                label: stint.group,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.throttle,
@@ -88,7 +82,7 @@ export default (props: {
     const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.driver,
+                label: stint.group,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.brake,
@@ -125,7 +119,7 @@ export default (props: {
     )
 
     return (
-        <section className="flex flex-col gap-4" ref={ref}>
+        <section className="flex flex-col gap-4">
             <div className="flex flex-row justify-end">
                 <Button
                     type="button"
