@@ -109,7 +109,7 @@ export function DeltaCircuitMap(props: {
             midY,
             rotation: geometry.rotation,
         }),
-        key: d.group?.name ?? d.driver
+        key: d.group?.name ?? d.driver,
     }))
 
     const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
@@ -119,7 +119,7 @@ export function DeltaCircuitMap(props: {
     const rotatedX = maxX - minX
     const rotatedY = maxY - minY
 
-    const aspect_ratio = Math.abs(rotatedX / rotatedY)
+    const aspect_ratio = Math.abs(rotatedY / rotatedX)
     const scale = aspect_ratio > 1 ? 1 : aspect_ratio
 
     return (
@@ -129,7 +129,7 @@ export function DeltaCircuitMap(props: {
                 width={WIDTH}
                 height={WIDTH / aspect_ratio}
                 className="overflow-visible my-4"
-                transform={`scale(${scale})`}
+                transform={`scale(${scale}) translateY(${((aspect_ratio - 1) * WIDTH) / 2})`}
             >
                 <title>Driver speed comparison</title>
                 {preparedCoordinates.map((pos, index) => {
@@ -159,7 +159,7 @@ export function DeltaCircuitMap(props: {
                             })}
                             fill="white"
                             stroke="var(--foreground)"
-                            strokeWidth="5.5"
+                            strokeWidth="6"
                         />
                     )
                 })}
@@ -188,7 +188,7 @@ export function DeltaCircuitMap(props: {
                             })}
                             fill="white"
                             stroke={colorMap[pos.key]}
-                            strokeWidth="4"
+                            strokeWidth="4.5"
                         />
                     )
                 })}

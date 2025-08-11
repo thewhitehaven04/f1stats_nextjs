@@ -86,8 +86,15 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                       throwOnError: true,
                   })
             ).data,
-        enabled: () =>
-            tab === "telemetry" ? true : !!(groups.length >= 1 && selection.length >= 1),
+        enabled: () => {
+            if (selection.length > 0) {
+                if (tab === "telemetry") {
+                    return true
+                }
+                return groups.length > 0
+            }
+            return false
+        },
     })
 
     const { data: geometry } = useSuspenseQuery({
@@ -111,7 +118,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
             key,
             telemetry?.color_map[key].style === "alternative"
                 ? getAlternativeColor(telemetry?.color_map[key].color)
-                : telemetry?.color_map[key].color,
+                : telemetry?.color_map[key].color || "#FFF",
         ]),
     )
 
@@ -148,14 +155,12 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                     />
                 </TabsContent>
                 <TabsContent value="averageTelemetry">
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <SelectionCard
-                            groups={groups}
-                            addGroup={addGroup}
-                            activeGroup={activeGroup ? activeGroup.name : undefined}
-                            setActiveGroup={setActiveGroup}
-                        />
-                    </Suspense>
+                    <SelectionCard
+                        groups={groups}
+                        addGroup={addGroup}
+                        activeGroup={activeGroup ? activeGroup.name : undefined}
+                        setActiveGroup={setActiveGroup}
+                    />
                     <DeltaCircuitMap
                         geometry={geometry}
                         driverDeltas={telemetry?.delta || []}

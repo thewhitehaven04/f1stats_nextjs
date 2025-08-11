@@ -53,11 +53,13 @@ export const SelectionCard = ({
                         key={name}
                         onClick={() => setActiveGroup(name)}
                         variant="default"
-                        style={{ backgroundColor: color }}
+                        style={{
+                            backgroundColor: color,
+                            color: Color().hex(color).isDark() ? "#FFF" : "#000",
+                        }}
                         className={`h-9 text-sm hover:cursor-pointer 
                             ${activeGroup === name ? "brightness-75" : ""} 
                             hover:brightness-90 
-                            text-[${Color().hex(color).isDark() ? "#FFF" : "#000"}]
                         `}
                     >
                         {name}
