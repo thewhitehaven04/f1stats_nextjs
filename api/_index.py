@@ -10,7 +10,7 @@ from api._repository.engine import get_connection
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
 from api._services.laps.LapDataResolver import LapDataResolver
-from api._services.laps.models.laps import LapSelectionData
+from api._services.laps.models.laps import SessionLapsData
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import (
     AverageTelemetriesResponseDto,
@@ -29,7 +29,7 @@ app.add_middleware(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/laps",
-    response_model=LapSelectionData,
+    response_model=SessionLapsData,
 )
 async def get_session_laptimes_filtered(
     year: str,

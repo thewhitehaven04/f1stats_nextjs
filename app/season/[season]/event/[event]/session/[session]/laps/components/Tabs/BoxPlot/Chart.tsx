@@ -1,11 +1,11 @@
 "use client"
-import type { LapSelectionData } from "@/client/generated"
 import { formatTime } from "@/core/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
+import type { SessionLapsData } from '@/client/generated'
 initGlobalChartConfig()
 
 export function LapsBoxChart({
@@ -15,7 +15,7 @@ export function LapsBoxChart({
 }: {
     isOutliersShown: boolean
     selectedStints: Record<string, number | undefined>
-    laps: LapSelectionData
+    laps: SessionLapsData 
 }) {
     const { color_map } = laps
     const sessionData = useMemo(

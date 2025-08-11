@@ -4,16 +4,14 @@ import {
     getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     type AverageTelemetryPlotData,
     type DriverTelemetryPlotData,
-    type LapSelectionData,
-    type SessionQuery,
+    type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
+    type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
+    type SessionLapsData,
 } from "@/client/generated"
-import { Suspense, useState } from "react"
+import { useDeferredValue, useMemo, useRef, useState } from "react"
 import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"
-import {
-    useLapSelection,
-    type TLapSelectionInstance,
-} from "./LapsTableSection/hooks/useLapSelection"
+import { useLapSelection } from "./LapsTableSection/hooks/useLapSelection"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ApiClient } from "@/client"
@@ -21,9 +19,10 @@ import { useSession } from "../../../../hooks/useSession"
 import { ChartLoading } from "./ChartLoading"
 import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
 import { useSelectionGroups, type TGroup } from "./LapsTableSection/hooks/useSelectionGroups"
-import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
 import { SelectionCard } from "./LapsTableSection/components/SelectionCard"
 import { getAlternativeColor } from "../../helpers/getAlternativeColor"
+import { getQueries } from "./helpers"
+import { LapSelectionContext } from "./LapsTableSection/context"
 
 const AverageTelemetrySection = dynamic(() => import("./AverageTelemetrySection/index"), {
     ssr: false,
@@ -35,23 +34,7 @@ const TelemetryChartSection = dynamic(() => import("./ChartSection/index"), {
     loading: () => <ChartLoading />,
 })
 
-export const getQueries = (selection: TLapSelectionInstance[], groups: TGroup[]) =>
-    selection.reduce((acc, { driver, lap, group }) => {
-        const driverLapArray = acc.find((query) => query.group?.name === group)
-        if (driverLapArray) {
-            driverLapArray.lap_filter?.push(lap)
-        } else {
-            const selectedGroup = groups.find((g) => g.name === group)
-            acc.push({
-                driver,
-                lap_filter: [lap],
-                group: selectedGroup || null,
-            })
-        }
-        return acc
-    }, [] as SessionQuery[])
-
-export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
+export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
     const { selection, updateSelection, resetSelection } = useLapSelection()
     const { event, season: year, session } = useSession()
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
@@ -59,33 +42,49 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
 
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
+    const timeoutRef = useRef<NodeJS.Timeout>(null)
+
     const { data: telemetry } = useQuery({
         queryKey: [tab, year, event, session, selection],
         queryFn: async () =>
-            (tab === "averageTelemetry"
-                ? await getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
-                      {
-                          client: ApiClient,
-                          body: { queries },
-                          path: {
-                              event,
-                              session,
-                              year,
-                          },
-                          throwOnError: true,
-                      },
-                  )
-                : await getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
-                      client: ApiClient,
-                      body: { queries },
-                      path: {
-                          event,
-                          session,
-                          year,
-                      },
-                      throwOnError: true,
-                  })
-            ).data,
+            new Promise<
+                | GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse
+                | GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse
+            >((resolve) => {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+                timeoutRef.current = setTimeout(() => {
+                    tab === "averageTelemetry"
+                        ? resolve(
+                              getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
+                                  {
+                                      client: ApiClient,
+                                      body: { queries },
+                                      path: {
+                                          event,
+                                          session,
+                                          year,
+                                      },
+                                      throwOnError: true,
+                                  },
+                              ).then((res) => res.data),
+                          )
+                        : resolve(
+                              getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost(
+                                  {
+                                      client: ApiClient,
+                                      body: { queries },
+                                      path: {
+                                          event,
+                                          session,
+                                          year,
+                                      },
+                                      throwOnError: true,
+                                  },
+                              ).then((res) => res.data),
+                          )
+                }, 1000)
+            }),
         enabled: () => {
             if (selection.length > 0) {
                 if (tab === "telemetry") {
@@ -96,6 +95,7 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
             return false
         },
     })
+    console.log(telemetry)
 
     const { data: geometry } = useSuspenseQuery({
         queryKey: [year, event],
@@ -122,15 +122,19 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         ]),
     )
 
+    const ctxValue = useMemo(
+        () => ({
+            activeGroup: activeGroup?.name ?? undefined,
+            updateLapSelection: updateSelection,
+            isLapSelected: (driver: string, lap: number, group: string) =>
+                !!selection.find((s) => s.driver === driver && s.lap === lap && s.group === group),
+        }),
+        [activeGroup, updateSelection, selection],
+    )
+
     return (
-        <>
-            <LapsTableSection
-                key={tab}
-                laps={laps}
-                selection={selection}
-                onUpdateSelection={updateSelection}
-                activeGroup={activeGroup?.name}
-            />
+        <LapSelectionContext.Provider value={ctxValue}>
+            <LapsTableSection key={tab} laps={laps} />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
                     <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>
@@ -172,6 +176,6 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                     />
                 </TabsContent>
             </Tabs>
-        </>
+        </LapSelectionContext.Provider>
     )
 }

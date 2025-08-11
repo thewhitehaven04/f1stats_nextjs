@@ -15,7 +15,7 @@ from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from api._services.color_resolver.models import PlotColor
 from api._services.laps.models.laps import (
     DriverLapData,
-    LapSelectionData,
+    SessionLapsData,
     StintData,
 )
 
@@ -249,7 +249,7 @@ class LapDataResolver:
         flying_laps = formatted_laps[
             formatted_laps["laptime"] < formatted_laps["laptime"].min() * 1.07
         ]
-        return LapSelectionData(
+        return SessionLapsData(
             driver_lap_data=lap_data,
             color_map=color_map(),
             low_decile=flying_laps["laptime"].quantile(0.1),  # type: ignore

@@ -88,7 +88,7 @@ class DriverLapData(BaseModel):
     laps: Sequence[LapTimingData]
 
 
-class LapSelectionData(BaseModel):
+class SessionLapsData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     driver_lap_data: list[DriverLapData]

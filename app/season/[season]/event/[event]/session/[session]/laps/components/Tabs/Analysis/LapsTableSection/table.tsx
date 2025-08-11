@@ -40,21 +40,23 @@ function lapsTable(
     const scrollerRef = useRef<HTMLDivElement>(null)
 
     const sideIntersectObsRef = useRef<IntersectionObserver | null>(
-        new IntersectionObserver(
-            (entries) => {
-                const isIntersectWidthGtBb =
-                    entries[0].boundingClientRect.width > entries[0].intersectionRect.width
+        typeof window !== "undefined"
+            ? new IntersectionObserver(
+                  (entries) => {
+                      const isIntersectWidthGtBb =
+                          entries[0].boundingClientRect.width > entries[0].intersectionRect.width
 
-                if (isIntersectWidthGtBb) {
-                    setShowScroll(true)
-                } else {
-                    setShowScroll(false)
-                }
-            },
-            {
-                root: scrollerRef.current,
-            },
-        ),
+                      if (isIntersectWidthGtBb) {
+                          setShowScroll(true)
+                      } else {
+                          setShowScroll(false)
+                      }
+                  },
+                  {
+                      root: scrollerRef.current,
+                  },
+              )
+            : null,
     )
 
     useEffect(() => {

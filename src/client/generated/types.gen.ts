@@ -93,17 +93,6 @@ export type HttpValidationError = {
     detail?: Array<ValidationError>
 }
 
-export type LapSelectionData = {
-    driver_lap_data: Array<DriverLapData>
-    color_map: {
-        [key: string]: PlotColor
-    }
-    low_decile: number | null
-    high_decile: number | null
-    min_time: number | null
-    max_time: number | null
-}
-
 export type LapTelemetriesResponseDto = {
     telemetries: Array<DriverTelemetryPlotData>
     delta: Array<FastestDelta>
@@ -165,6 +154,17 @@ export type PlotColor = {
 export type Position2D = [number, number]
 
 export type Position3D = [number, number, number]
+
+export type SessionLapsData = {
+    driver_lap_data: Array<DriverLapData>
+    color_map: {
+        [key: string]: PlotColor
+    }
+    low_decile: number | null
+    high_decile: number | null
+    min_time: number | null
+    max_time: number | null
+}
 
 export type SessionQuery = {
     driver: string
@@ -237,7 +237,7 @@ export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsP
     /**
      * Successful Response
      */
-    200: LapSelectionData
+    200: SessionLapsData
 }
 
 export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponse =

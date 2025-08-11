@@ -1,7 +1,7 @@
 "use client"
-import { createColumnHelper } from "@tanstack/react-table"
-import { memo, useMemo } from "react"
-import type { LapSelectionData, LapTimingData } from "@/client/generated"
+import { createColumnHelper, type CellContext } from "@tanstack/react-table"
+import { memo, useContext, useMemo } from "react"
+import type { LapTimingData, SessionLapsData } from "@/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
 import { NaLabel } from "@/components/ValueOrNa"
@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { getTyreComponentByCompound } from "../../../helpers/getTyreIconByCompound"
 import { mapLapsToTableLapData } from "../../../helpers/mapLapsToTableLapData"
 import { LapsTable } from "./table"
-import type { TLapSelectionInstance } from "./hooks/useLapSelection"
+import { LapSelectionContext } from "./context"
 
 export interface ILapData {
     [key: `${string}.LapId`]: LapTimingData["id"]
@@ -36,18 +36,35 @@ export interface ILapData {
 }
 export const columnHelper = createColumnHelper<ILapData>()
 
-function lapsTableSection(props: {
-    laps: LapSelectionData
-    selection: TLapSelectionInstance[]
-    onUpdateSelection: (instance: {
-        driver: string
-        lap: number
-        state: boolean
-        group: string
-    }) => void
-    activeGroup: string | undefined
-}) {
-    const { laps, selection, onUpdateSelection, activeGroup } = props
+const LapCheckbox = ({
+    cell,
+    driverName,
+}: { cell: CellContext<ILapData, unknown>; driverName: string }) => {
+    const lap = cell.row.index + 1
+    const { updateLapSelection, activeGroup, isLapSelected } = useContext(LapSelectionContext)
+    const isSelected = isLapSelected(driverName, lap, activeGroup ?? "")
+    return (
+        <Checkbox
+            name={driverName}
+            value={lap}
+            disabled={!cell.row.original[`${driverName}.LapTime`]}
+            checked={isSelected}
+            onCheckedChange={() => {
+                if (activeGroup) {
+                    updateLapSelection({
+                        driver: driverName,
+                        lap: lap,
+                        state: !isSelected,
+                        group: activeGroup,
+                    })
+                }
+            }}
+        />
+    )
+}
+
+function lapsTableSection(props: { laps: SessionLapsData }) {
+    const { laps } = props
     const flattenedLaps = useMemo(() => mapLapsToTableLapData(laps.driver_lap_data), [laps])
 
     const tableColumns = useMemo(
@@ -70,22 +87,7 @@ function lapsTableSection(props: {
                         columnHelper.display({
                             id: `${driverName}.selector`,
                             cell: (cell) => {
-                                const lap = cell.row.index + 1
-                                return (
-                                    <Checkbox
-                                        name={driverName}
-                                        value={lap}
-                                        disabled={!cell.row.original[`${driverName}.LapTime`]}
-                                        onCheckedChange={(checked) =>
-                                            onUpdateSelection({
-                                                driver: driverName,
-                                                lap: lap,
-                                                state: !!checked,
-                                                group: activeGroup ?? "",
-                                            })
-                                        }
-                                    />
-                                )
+                                return <LapCheckbox cell={cell} driverName={driverName} />
                             },
                             enableHiding: false,
                         }),
@@ -184,7 +186,7 @@ function lapsTableSection(props: {
                 }),
             ),
         ],
-        [laps, onUpdateSelection, activeGroup],
+        [laps],
     )
 
     const initialState = useMemo(

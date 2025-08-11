@@ -5,7 +5,7 @@ from sqlalchemy import Connection
 from api._core.models.queries import SessionQueryFilter
 from api._repository.engine import get_connection
 from api._services.laps.LapDataResolver import LapDataResolver
-from api._services.laps.models.laps import LapSelectionData
+from api._services.laps.models.laps import SessionLapsData
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -22,7 +22,7 @@ app.add_middleware(
 
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/laps",
-    response_model=LapSelectionData,
+    response_model=SessionLapsData,
 )
 async def get_session_laptimes_filtered(
     year: str,
