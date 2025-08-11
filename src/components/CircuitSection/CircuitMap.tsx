@@ -101,15 +101,16 @@ export function DeltaCircuitMap(props: {
             }),
         ) || []
 
-    const preparedDeltas = driverDeltas.map((d) =>
-        getRotatedCoordinates({
-            x: d.point[0],
-            y: d.point[1],
+    const preparedDeltas = driverDeltas.map((d) => ({
+        point: getRotatedCoordinates({
+            x: d.point[1],
+            y: d.point[0],
             midX,
             midY,
             rotation: geometry.rotation,
         }),
-    )
+        key: d.group?.name ?? d.driver
+    }))
 
     const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
     const minY = Math.min(...preparedCoordinates.map((pos) => pos.y))
@@ -167,11 +168,11 @@ export function DeltaCircuitMap(props: {
                     const second =
                         preparedDeltas[index === driverDeltas.length - 1 ? index : index + 1]
 
-                    const xStart = first.x - minX
-                    const yStart = first.y - minY
+                    const xStart = first.point.x - minX
+                    const yStart = first.point.y - minY
                     if (!second) return null
-                    const xEnd = second.x - minX
-                    const yEnd = second.y - minY
+                    const xEnd = second.point.x - minX
+                    const yEnd = second.point.y - minY
                     return (
                         <path
                             // biome-ignore lint/suspicious/noArrayIndexKey: static array
@@ -186,7 +187,7 @@ export function DeltaCircuitMap(props: {
                                 aspect_ratio,
                             })}
                             fill="white"
-                            stroke={colorMap[pos.driver]}
+                            stroke={colorMap[pos.key]}
                             strokeWidth="4"
                         />
                     )
@@ -199,7 +200,7 @@ export function DeltaCircuitMap(props: {
                             <div
                                 className="h-3 w-9 border-2 border-black"
                                 style={{
-                                    backgroundColor: colorMap[driver],
+                                    backgroundColor: plotColor,
                                 }}
                             />
                             <div>{driver}</div>

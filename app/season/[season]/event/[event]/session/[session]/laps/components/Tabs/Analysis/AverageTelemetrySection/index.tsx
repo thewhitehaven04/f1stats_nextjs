@@ -19,7 +19,7 @@ export default (props: {
     const presets = useMemo(
         () =>
             averageTelemetry?.map((driverMeasurements) => ({
-                borderColor: colorMap[driverMeasurements.group],
+                borderColor: colorMap[driverMeasurements.group.name],
             })) || [],
         [averageTelemetry, colorMap],
     )
@@ -27,7 +27,7 @@ export default (props: {
     const speedDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.group,
+                label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.speed,
@@ -56,7 +56,7 @@ export default (props: {
     const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.group,
+                label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.rpm,
@@ -69,7 +69,7 @@ export default (props: {
     const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.group,
+                label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.throttle,
@@ -82,7 +82,7 @@ export default (props: {
     const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
             averageTelemetry?.map((stint, index) => ({
-                label: stint.group,
+                label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
                     y: measurement.brake,

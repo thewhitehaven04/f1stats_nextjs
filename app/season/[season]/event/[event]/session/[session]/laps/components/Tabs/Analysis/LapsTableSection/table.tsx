@@ -72,9 +72,7 @@ function lapsTable(
         /** @ts-ignore TanStack table types not being cooperative */
         <TableContext.Provider value={table}>
             <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-end gap-4 mb-2">
-                    <ColumnVisibilityButton />
-                </div>
+                <ColumnVisibilityButton />
                 <div className="overflow-auto max-h-[900px]" ref={scrollerRef}>
                     <table
                         data-slot="table"

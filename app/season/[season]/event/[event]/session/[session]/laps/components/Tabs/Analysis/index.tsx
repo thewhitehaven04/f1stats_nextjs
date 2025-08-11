@@ -21,9 +21,9 @@ import { useSession } from "../../../../hooks/useSession"
 import { ChartLoading } from "./ChartLoading"
 import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
 import { useSelectionGroups, type TGroup } from "./LapsTableSection/hooks/useSelectionGroups"
-import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
 import { SelectionCard } from "./LapsTableSection/components/SelectionCard"
+import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 
 const AverageTelemetrySection = dynamic(() => import("./AverageTelemetrySection/index"), {
     ssr: false,
@@ -54,10 +54,11 @@ export const getQueries = (selection: TLapSelectionInstance[], groups: TGroup[])
 export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
     const { selection, updateSelection, resetSelection } = useLapSelection()
     const { event, season: year, session } = useSession()
-    const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
-
     const queries = getQueries(selection, groups)
+
+    const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
+
     const { data: telemetry } = useQuery({
         queryKey: [tab, year, event, session, selection],
         queryFn: async () =>
@@ -89,9 +90,6 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
             tab === "telemetry" ? true : !!(groups.length >= 1 && selection.length >= 1),
     })
 
-    console.log(selection)
-    console.log(groups)
-
     const { data: geometry } = useSuspenseQuery({
         queryKey: [year, event],
         queryFn: () =>
@@ -108,21 +106,24 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
         setTab(newTab)
     }
 
-    const map = telemetry?.color_map || {}
-
     const colorMap = Object.fromEntries(
-        Object.keys(map).map((driver) => [
-            driver,
-            map[driver].style === "default"
-                ? map[driver].color
-                : getAlternativeColor(map[driver].color || ""),
+        Object.keys(telemetry?.color_map || {}).map((key) => [
+            key,
+            telemetry?.color_map[key].style === "alternative"
+                ? getAlternativeColor(telemetry?.color_map[key].color)
+                : telemetry?.color_map[key].color,
         ]),
     )
 
-    console.log("telemetry: ", telemetry)
-
     return (
         <>
+            <LapsTableSection
+                key={tab}
+                laps={laps}
+                selection={selection}
+                onUpdateSelection={updateSelection}
+                activeGroup={activeGroup?.name}
+            />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
                     <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>
@@ -135,13 +136,6 @@ export const AnalysisTab = ({ laps }: { laps: LapSelectionData }) => {
                         Average telemetry
                     </TabsTrigger>
                 </TabsList>
-                <LapsTableSection
-                    key={tab}
-                    laps={laps}
-                    selection={selection}
-                    onUpdateSelection={updateSelection}
-                    activeGroup={activeGroup?.name}
-                />
                 <TabsContent value="telemetry">
                     <DeltaCircuitMap
                         geometry={geometry}

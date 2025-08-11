@@ -32,6 +32,7 @@ class DeltaInstance(BaseModel):
 
 class FastestDelta(BaseModel):
     driver: str
+    group: GroupDto | None
     relative_distance: float
     point: tuple[float, float]
 

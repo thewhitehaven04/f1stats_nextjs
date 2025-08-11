@@ -57,7 +57,7 @@ export const useLapSelection = () => {
                 })
             }
         },
-        [flushBatchUpdates, clearIfTimeout],
+        [clearIfTimeout, flushBatchUpdates],
     )
 
     const resetSelection = useCallback(() => {

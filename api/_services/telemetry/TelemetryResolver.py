@@ -243,6 +243,7 @@ class TelemetryResolver:
         deltas = [
             FastestDelta(
                 driver=avg_telemetries[index]["driver"],
+                group=avg_telemetries[index]["group"],
                 relative_distance=avg_telemetries[index][
                     "raw_telemetry"
                 ].relative_distance.iat[i],
@@ -374,6 +375,7 @@ class TelemetryResolver:
                 deltas.append(
                     FastestDelta(
                         driver=ref_lap.driver_id,
+                        group=None,
                         relative_distance=np_lat[i],
                         point=(points[i].latitude, points[i].longitude),
                     )
@@ -383,6 +385,7 @@ class TelemetryResolver:
                 deltas.append(
                     FastestDelta(
                         driver=deltas_collection[index]["driver"],
+                        group=None,
                         relative_distance=np_lat[i],
                         point=(points[i].latitude, points[i].longitude),
                     )

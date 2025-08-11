@@ -68,6 +68,7 @@ export type DriverTelemetryPlotData = {
 
 export type FastestDelta = {
     driver: string
+    group: GroupDto | null
     relative_distance: number
     point: [number, number]
 }

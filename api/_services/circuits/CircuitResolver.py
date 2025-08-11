@@ -47,7 +47,7 @@ class CircuitResolver:
     def _get_circuit_geometry_points(self) -> list[Point]:
         return list(
             map(
-                Point,
+                lambda coord: Point(longitude=coord[0], latitude=coord[1]),
                 self.get_circuit_record().geojson["features"][0]["geometry"][
                     "coordinates"
                 ],
@@ -82,7 +82,7 @@ class CircuitResolver:
         next_split_abs_dist = 0
         for start, end in pairwise(points):
             next_split_abs_dist += geodesic(
-                (start.longitude, start.latitude), (end.longitude, end.latitude)
+                (start.latitude, start.longitude), (end.latitude, end.longitude)
             ).meters
 
             while peek() * max_distance < next_split_abs_dist:
@@ -90,8 +90,10 @@ class CircuitResolver:
                 coef = abs_dist / next_split_abs_dist
                 resampled_points.append(
                     Point(
-                        start[0] + (end[0] - start[0]) * coef,
-                        start[1] + (end[1] - start[1]) * coef,
+                        longitude=start.longitude
+                        + (end.longitude - start.longitude) * coef,
+                        latitude=start.latitude
+                        + (end.latitude - start.latitude) * coef,
                     )
                 )
 

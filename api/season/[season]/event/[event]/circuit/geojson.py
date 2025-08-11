@@ -25,7 +25,5 @@ app.add_middleware(
     "/api/season/{year}/event/{event}/circuit/geojson",
     response_model=CircuitGeometryDto,
 )
-async def get_circuit_geojson(
-    year: str, event: str, connection: Annotated[Connection, Depends(get_connection)]
-):
+async def get_circuit_geojson(year: str, event: str):
     return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()
