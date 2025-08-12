@@ -2,13 +2,13 @@
 import { useMemo, useState } from "react"
 import { StintSelector } from "../../StintSelector"
 import { LapsBoxChart } from "./Chart"
-import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
+import type { SessionLapsData } from '@/client/generated'
 
 initGlobalChartConfig()
 
-export default function BoxPlotTab({ laps }: { laps: LapSelectionData }) {
+export default function BoxPlotTab({ laps }: { laps: SessionLapsData }) {
     const { driver_lap_data: driverLapData } = laps
 
     const [isOutliersShown, setIsOutliersShown] = useState(true)

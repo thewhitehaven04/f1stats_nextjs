@@ -1,7 +1,7 @@
 "use client"
 import { useMemo, useState } from "react"
 import { LineLapsChart } from "./Chart"
-import type { Compound, LapSelectionData, PlotColor } from "@/client/generated"
+import type { Compound, PlotColor, SessionLapsData } from "@/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
 import { StintSelector } from "../../StintSelector"
@@ -18,9 +18,7 @@ export type TLinePlotTabBoxChartDataset = ChartData<
 >["datasets"][number] &
     PlotColor
 
-export default function LinePlotTab({
-    laps,
-}: { laps: LapSelectionData }) {
+export default function LinePlotTab({ laps }: { laps: SessionLapsData }) {
     const { driver_lap_data: driverLapData, color_map } = laps
     const [isOutliersShown, setIsOutliersShown] = useState(true)
 

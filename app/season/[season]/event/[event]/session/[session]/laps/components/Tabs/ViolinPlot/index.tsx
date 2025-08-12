@@ -9,17 +9,17 @@ import {
 } from "chart.js"
 import { useMemo, useState } from "react"
 import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
-import type { LapSelectionData } from "@/client/generated"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
-import { formatTime } from '@/core/helpers/formatTime'
-import { ThemedChart } from '@/components/Chart/ThemedChart'
+import { formatTime } from "@/core/helpers/formatTime"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
+import type { SessionLapsData } from "@/client/generated"
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
 
-export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
+export default function ViolinPlotTab({ laps }: { laps: SessionLapsData }) {
     const { color_map } = laps
     const [isOutliersShown, setIsOutliersShown] = useState(false)
 
@@ -59,7 +59,7 @@ export default function ViolinPlotTab({ laps }: { laps: LapSelectionData }) {
                 options={{
                     scales: {
                         y: {
-                            bounds: 'ticks',
+                            bounds: "ticks",
                             ticks: {
                                 callback(tickValue) {
                                     return typeof tickValue === "number"
