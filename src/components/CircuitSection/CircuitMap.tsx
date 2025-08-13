@@ -1,7 +1,7 @@
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
 import type { CircuitGeometryDto, FastestDelta } from "@/client/generated"
 
-const WIDTH = 500
+const MAX_DIMENSION = 600
 
 const rotate = ({ x, y, rotation }: { x: number; y: number; rotation: number }) => {
     const cos = Math.cos(rotation)
@@ -46,7 +46,8 @@ function getPath({
     yEnd,
     X,
     Y,
-    aspect_ratio,
+    smallDimensionScaleFactor,
+    isXSmall
 }: {
     xStart: number
     yStart: number
@@ -54,21 +55,22 @@ function getPath({
     yEnd: number
     X: number
     Y: number
-    aspect_ratio: number
+    smallDimensionScaleFactor: number
+    isXSmall: boolean
 }) {
-    const height = WIDTH / aspect_ratio
+    // const height = WIDTH / aspect_ratio
     return encodeSVGPath([
         {
             type: SVGPathData.MOVE_TO,
             relative: false,
-            x: (xStart / X) * WIDTH,
-            y: (yStart / Y) * height,
+            x: (xStart / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
+            y: (yStart / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
         },
         {
             type: SVGPathData.LINE_TO,
             relative: false,
-            x: (xEnd / X) * WIDTH,
-            y: (yEnd / Y) * height,
+            x: (xEnd / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
+            y: (yEnd / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
         },
     ])
 }
@@ -118,18 +120,19 @@ export function DeltaCircuitMap(props: {
     const maxY = Math.max(...preparedCoordinates.map((pos) => pos.y))
     const rotatedX = maxX - minX
     const rotatedY = maxY - minY
+    console.log(maxX, maxY, minX, minY)
 
-    const aspect_ratio = Math.abs(rotatedY / rotatedX)
-    const scale = aspect_ratio > 1 ? 1 : aspect_ratio
+    const scaleFactor = Math.min(rotatedX / rotatedY, rotatedY / rotatedX)
+    const isXSmallDimension = rotatedY > rotatedX
+    const translateY = (-MAX_DIMENSION + MAX_DIMENSION * scaleFactor) / 2
 
     return (
-        <section className="w-full h-full flex flex-col justify-center items-center p-2 gap-4">
+        <section className="w-full h-full flex flex-col items-center p-2 gap-4">
             <h2 className="text-lg font-bold">Circuit map</h2>
             <svg
-                width={WIDTH}
-                height={WIDTH / aspect_ratio}
+                width={MAX_DIMENSION}
+                height={MAX_DIMENSION * scaleFactor}
                 className="overflow-visible my-4"
-                transform={`scale(${scale}) translateY(${((aspect_ratio - 1) * WIDTH) / 2})`}
             >
                 <title>Driver speed comparison</title>
                 {preparedCoordinates.map((pos, index) => {
@@ -155,7 +158,8 @@ export function DeltaCircuitMap(props: {
                                 yEnd,
                                 X: rotatedX,
                                 Y: rotatedY,
-                                aspect_ratio,
+                                smallDimensionScaleFactor: scaleFactor,
+                                isXSmall: isXSmallDimension,
                             })}
                             fill="white"
                             stroke="var(--foreground)"
@@ -184,7 +188,8 @@ export function DeltaCircuitMap(props: {
                                 yEnd,
                                 X: rotatedX,
                                 Y: rotatedY,
-                                aspect_ratio,
+                                smallDimensionScaleFactor: scaleFactor,
+                                isXSmall: isXSmallDimension,
                             })}
                             fill="white"
                             stroke={colorMap[pos.key]}
