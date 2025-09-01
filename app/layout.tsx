@@ -22,7 +22,7 @@ export default async function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body className={`${appFont.className} bg-background text-foreground`}>
                 <Providers>
-                    <div className="grid grid-cols-1 grid-rows-[min-content] min-h-screen gap-y-4">
+                    <div className="grid grid-cols-1 grid-rows-[min-content] min-h-screen w-full gap-y-4">
                         {children}
                     </div>
                 </Providers>

@@ -48,7 +48,9 @@ const SEGMENTS = [
     },
     {
         expression: /\/season\/(\d{4})\/team\/(\d+)/,
-        getText: (matchArray: RegExpMatchArray | null) => `${matchArray ? matchArray[2] : ""} form`,
+        getText: (matchArray: RegExpMatchArray | null) => {
+            return "Team form"
+        },
         getHref: (matchArray: RegExpMatchArray | null) => {
             return matchArray ? `/season/${matchArray[1]}` : ""
         },
@@ -75,6 +77,7 @@ export const Breadcrumbs = () => {
         <Breadcrumb>
             <BreadcrumbList>
                 {crumbs.slice(0, -1).map((crumb, index) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static array
                     <Fragment key={index}>
                         {crumb}
                         <BreadcrumbSeparator>

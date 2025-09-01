@@ -1,7 +1,8 @@
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
 import type { CircuitGeometryDto, FastestDelta } from "@/client/generated"
 
-const MAX_DIMENSION = 500
+const padding = 16
+const MAX_DIMENSION = Math.min(480, document.body.getBoundingClientRect().width - padding)
 
 const rotate = ({ x, y, rotation }: { x: number; y: number; rotation: number }) => {
     const cos = Math.cos(rotation)
