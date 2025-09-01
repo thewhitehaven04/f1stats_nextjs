@@ -53,50 +53,55 @@ export default function ViolinPlotTab({ laps }: { laps: SessionLapsData }) {
                     {isOutliersShown ? "Hide outliers" : "Show outliers"}
                 </Button>
             </div>
-            <ThemedChart
-                type="violin"
-                data={plotData}
-                options={{
-                    scales: {
-                        y: {
-                            bounds: "ticks",
-                            ticks: {
-                                callback(tickValue) {
-                                    return typeof tickValue === "number"
-                                        ? formatTime(tickValue)
-                                        : tickValue
+            <div className="relative flex flex-col">
+                <ThemedChart
+                    type="violin"
+                    data={plotData}
+                    options={{
+                        responsive: true,
+                        resizeDelay: 100,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                bounds: "ticks",
+                                ticks: {
+                                    callback(tickValue) {
+                                        return typeof tickValue === "number"
+                                            ? formatTime(tickValue)
+                                            : tickValue
+                                    },
+                                },
+                                min: Math.floor(laps.min_time || 0),
+                                max: isOutliersShown
+                                    ? Math.ceil(laps.max_time || 0)
+                                    : Math.ceil(laps.high_decile || 0) + 1,
+                            },
+                        },
+                        elements: {
+                            violin: {
+                                borderWidth: 2,
+                                itemRadius: 5,
+                                itemHitRadius: 5,
+                                itemStyle: "circle",
+                                itemBorderWidth: 1.5,
+                                itemBorderColor(ctx) {
+                                    return typeof ctx.dataset.borderColor === "string"
+                                        ? ctx.dataset.borderColor
+                                        : "grey"
+                                },
+                                meanRadius: 10,
+                                meanBorderWidth: 1.5,
+                                meanBorderColor(ctx) {
+                                    return typeof ctx.dataset.borderColor === "string"
+                                        ? ctx.dataset.borderColor
+                                        : "grey"
                                 },
                             },
-                            min: Math.floor(laps.min_time || 0),
-                            max: isOutliersShown
-                                ? Math.ceil(laps.max_time || 0)
-                                : Math.ceil(laps.high_decile || 0) + 1,
                         },
-                    },
-                    elements: {
-                        violin: {
-                            borderWidth: 2,
-                            itemRadius: 5,
-                            itemHitRadius: 5,
-                            itemStyle: "circle",
-                            itemBorderWidth: 1.5,
-                            itemBorderColor(ctx) {
-                                return typeof ctx.dataset.borderColor === "string"
-                                    ? ctx.dataset.borderColor
-                                    : "grey"
-                            },
-                            meanRadius: 10,
-                            meanBorderWidth: 1.5,
-                            meanBorderColor(ctx) {
-                                return typeof ctx.dataset.borderColor === "string"
-                                    ? ctx.dataset.borderColor
-                                    : "grey"
-                            },
-                        },
-                    },
-                }}
-                height={160}
-            />
+                    }}
+                    height={160}
+                />
+            </div>
         </div>
     )
 }
