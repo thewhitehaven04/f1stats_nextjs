@@ -1,7 +1,7 @@
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
 import type { CircuitGeometryDto, FastestDelta } from "@/client/generated"
 
-const MAX_DIMENSION = 600
+const MAX_DIMENSION = 500
 
 const rotate = ({ x, y, rotation }: { x: number; y: number; rotation: number }) => {
     const cos = Math.cos(rotation)
@@ -47,7 +47,7 @@ function getPath({
     X,
     Y,
     smallDimensionScaleFactor,
-    isXSmall
+    isXSmall,
 }: {
     xStart: number
     yStart: number
@@ -58,7 +58,6 @@ function getPath({
     smallDimensionScaleFactor: number
     isXSmall: boolean
 }) {
-    // const height = WIDTH / aspect_ratio
     return encodeSVGPath([
         {
             type: SVGPathData.MOVE_TO,
@@ -120,18 +119,16 @@ export function DeltaCircuitMap(props: {
     const maxY = Math.max(...preparedCoordinates.map((pos) => pos.y))
     const rotatedX = maxX - minX
     const rotatedY = maxY - minY
-    console.log(maxX, maxY, minX, minY)
 
     const scaleFactor = Math.min(rotatedX / rotatedY, rotatedY / rotatedX)
     const isXSmallDimension = rotatedY > rotatedX
-    const translateY = (-MAX_DIMENSION + MAX_DIMENSION * scaleFactor) / 2
 
     return (
         <section className="w-full h-full flex flex-col items-center p-2 gap-4">
             <h2 className="text-lg font-bold">Circuit map</h2>
             <svg
-                width={MAX_DIMENSION}
-                height={MAX_DIMENSION * scaleFactor}
+                width={isXSmallDimension ? MAX_DIMENSION * scaleFactor : MAX_DIMENSION}
+                height={isXSmallDimension ? MAX_DIMENSION : MAX_DIMENSION * scaleFactor}
                 className="overflow-visible my-4"
             >
                 <title>Driver speed comparison</title>

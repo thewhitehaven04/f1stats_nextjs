@@ -1,7 +1,7 @@
 import { SeasonSelector } from "../../components/SeasonSelector"
 import { SessionSearch } from "../../components/SessionSearch"
 import { ThemeSelector } from "../../components/ThemeSelector"
-import { fetchEventsWithSessions } from "./fetcher/fetcher"
+import { fetchEventsWithSessions, type TSeasonEvent } from "./fetcher/fetcher"
 import { Footer } from "./Footer"
 import { Header } from "./Header"
 
@@ -14,11 +14,11 @@ export default async function Layout({
         <>
             <Header
                 rightSlot={
-                    <div className="flex flex-row gap-4 ml-12">
+                    <>
                         <SessionSearch events={events} />
                         <SeasonSelector />
                         <ThemeSelector />
-                    </div>
+                    </>
                 }
             />
             <main className="mt-8 w-[calc(100vw-36px)] xl:w-[1200px] justify-self-center self-start flex flex-col gap-8">

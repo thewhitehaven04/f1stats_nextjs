@@ -40,7 +40,7 @@ export const SessionSearch = ({ events }: { events: TSeasonEvent[] }) => {
     }
 
     return (
-        <div className="relative">
+        <div className="relative flex-[1] md:max-w-64">
             <Input
                 type="text"
                 onChange={(evt) => handleChange(evt.target.value)}
