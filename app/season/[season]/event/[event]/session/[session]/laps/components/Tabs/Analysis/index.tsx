@@ -39,6 +39,7 @@ export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
     const { event, season: year, session } = useSession()
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
     const queries = getQueries(selection, groups)
+    console.log(queries)
 
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
@@ -95,7 +96,6 @@ export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
             return false
         },
     })
-    console.log(telemetry)
 
     const { data: geometry } = useSuspenseQuery({
         queryKey: [year, event],
@@ -126,10 +126,15 @@ export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
         () => ({
             activeGroup: activeGroup?.name ?? undefined,
             updateLapSelection: updateSelection,
-            isLapSelected: (driver: string, lap: number, group: string) =>
-                !!selection.find((s) => s.driver === driver && s.lap === lap && s.group === group),
+            isLapSelected: (driver: string, lap: number, group?: string) =>
+                group
+                    ? !!selection.find(
+                          (s) => s.driver === driver && s.lap === lap && s.group === group,
+                      )
+                    : !!selection.find((s) => s.driver === driver && s.lap === lap),
+            tab,
         }),
-        [activeGroup, updateSelection, selection],
+        [activeGroup, updateSelection, selection, tab],
     )
 
     return (

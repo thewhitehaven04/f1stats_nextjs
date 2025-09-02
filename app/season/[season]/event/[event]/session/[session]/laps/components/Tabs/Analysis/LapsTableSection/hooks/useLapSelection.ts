@@ -14,7 +14,7 @@ export const useLapSelection = () => {
             driver: string
             lap: number
             state: boolean
-            group: string
+            group?: string
         }) => {
             const { driver, lap, group, state } = instance
 

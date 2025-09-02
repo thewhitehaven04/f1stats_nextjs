@@ -41,7 +41,7 @@ const LapCheckbox = ({
     driverName,
 }: { cell: CellContext<ILapData, unknown>; driverName: string }) => {
     const lap = cell.row.index + 1
-    const { updateLapSelection, activeGroup, isLapSelected } = useContext(LapSelectionContext)
+    const { updateLapSelection, activeGroup, isLapSelected, tab } = useContext(LapSelectionContext)
     const isSelected = isLapSelected(driverName, lap, activeGroup ?? "")
     return (
         <Checkbox
@@ -50,6 +50,13 @@ const LapCheckbox = ({
             disabled={!cell.row.original[`${driverName}.LapTime`]}
             checked={isSelected}
             onCheckedChange={() => {
+                if (tab === "telemetry") {
+                    updateLapSelection({
+                        driver: driverName,
+                        lap: lap,
+                        state: !isSelected,
+                    })
+                }
                 if (activeGroup) {
                     updateLapSelection({
                         driver: driverName,
