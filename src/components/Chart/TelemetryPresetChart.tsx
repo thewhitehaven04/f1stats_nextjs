@@ -16,6 +16,9 @@ export const TelemetryPresetChart = (
     const baseChartProps = {
         type: "scatter",
         options: {
+            responsive: true,
+            resizeDelay: 100,
+            maintainAspectRatio: false,
             showLine: true,
             elements: {
                 point: {
