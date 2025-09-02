@@ -15,6 +15,9 @@ export const SpeedtracePresetChart = (
     const baseChartProps = {
         type: "scatter",
         options: {
+            responsive: true,
+            resizeDelay: 100,
+            maintainAspectRatio: false,
             showLine: true,
             elements: {
                 point: {
