@@ -83,7 +83,7 @@ export const TimedeltaPresetChart = (
     } satisfies Partial<ChartProps<"scatter">>
 
     return (
-        <div className="relative">
+        <div className="relative h-[300px]">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
                 <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">

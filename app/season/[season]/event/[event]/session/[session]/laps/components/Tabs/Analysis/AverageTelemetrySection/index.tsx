@@ -139,12 +139,10 @@ export default (props: {
                     labels: distanceLabels || [],
                     datasets: speedDatasets,
                 }}
-                height={150}
                 ref={(chart) => pushRef("speedtrace", chart)}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels || [], datasets: timeDeltaDatasets }}
-                height={60}
                 ref={(chart) => pushRef("timedelta", chart)}
             />
             <TelemetryPresetChart
@@ -152,7 +150,6 @@ export default (props: {
                     labels: distanceLabels || [],
                     datasets: rpmDatasets,
                 }}
-                height={50}
                 options={{
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
@@ -163,7 +160,6 @@ export default (props: {
                 options={{
                     scales: { y: { title: { display: true, text: "Throttle %" } } },
                 }}
-                height={40}
                 ref={(chart) => pushRef("throttle", chart)}
             />
             <TelemetryPresetChart
@@ -171,7 +167,6 @@ export default (props: {
                 options={{
                     scales: { y: { title: { display: true, text: "Brake %" } } },
                 }}
-                height={40}
                 ref={(chart) => pushRef("brake", chart)}
             />
         </section>

@@ -8,7 +8,7 @@ import {
     type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
     type SessionLapsData,
 } from "@/client/generated"
-import { useDeferredValue, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"
 import { useLapSelection } from "./LapsTableSection/hooks/useLapSelection"
@@ -18,7 +18,7 @@ import { ApiClient } from "@/client"
 import { useSession } from "../../../../hooks/useSession"
 import { ChartLoading } from "./ChartLoading"
 import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
-import { useSelectionGroups, type TGroup } from "./LapsTableSection/hooks/useSelectionGroups"
+import { useSelectionGroups } from "./LapsTableSection/hooks/useSelectionGroups"
 import { SelectionCard } from "./LapsTableSection/components/SelectionCard"
 import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import { getQueries } from "./helpers"

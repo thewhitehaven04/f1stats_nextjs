@@ -104,7 +104,7 @@ export const SpeedtracePresetChart = (
     const mergedProps = merge(baseChartProps, props)
 
     return (
-        <div className="relative">
+        <div className="relative h-[600px]">
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
             {!hasData && (
                 <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">
