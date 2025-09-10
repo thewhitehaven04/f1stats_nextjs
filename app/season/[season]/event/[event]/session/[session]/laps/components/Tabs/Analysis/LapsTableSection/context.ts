@@ -8,7 +8,7 @@ export const LapSelectionContext = createContext<{
         state: boolean
         group?: string
     }) => void
-    isLapSelected: (driver: string, lap: number, group?: string) => boolean 
+    isLapSelected: (driver: string, lap: number) => boolean 
     tab: "telemetry" | "averageTelemetry"
 }>({
     activeGroup: undefined,

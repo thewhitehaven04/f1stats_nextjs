@@ -39,7 +39,6 @@ export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
     const { event, season: year, session } = useSession()
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
     const queries = getQueries(selection, groups)
-    console.log(queries)
 
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
@@ -126,10 +125,11 @@ export const AnalysisTab = ({ laps }: { laps: SessionLapsData }) => {
         () => ({
             activeGroup: activeGroup?.name ?? undefined,
             updateLapSelection: updateSelection,
-            isLapSelected: (driver: string, lap: number, group?: string) =>
-                group
+            isLapSelected: (driver: string, lap: number) =>
+                activeGroup
                     ? !!selection.find(
-                          (s) => s.driver === driver && s.lap === lap && s.group === group,
+                          (s) =>
+                              s.driver === driver && s.lap === lap && s.group === activeGroup.name,
                       )
                     : !!selection.find((s) => s.driver === driver && s.lap === lap),
             tab,

@@ -42,7 +42,7 @@ const LapCheckbox = ({
 }: { cell: CellContext<ILapData, unknown>; driverName: string }) => {
     const lap = cell.row.index + 1
     const { updateLapSelection, activeGroup, isLapSelected, tab } = useContext(LapSelectionContext)
-    const isSelected = isLapSelected(driverName, lap, activeGroup ?? "")
+    const isSelected = isLapSelected(driverName, lap)
     return (
         <Checkbox
             name={driverName}
