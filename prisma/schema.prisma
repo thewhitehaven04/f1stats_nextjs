@@ -220,3 +220,8 @@ model telemetry_measurements {
 
   @@id([lap_id, laptime_at])
 }
+
+model subscriptions {
+  id           BigInt @id @default(autoincrement())
+  subscription Json
+}
