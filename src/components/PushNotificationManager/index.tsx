@@ -1,6 +1,8 @@
+'use client'
 import {useEffect, useState} from "react";
 import {LucideTriangleAlert, LucideBell, LucideBellOff} from "lucide-react";
 import {subscribeUser, unsubscribeUser} from "../../../app/swActions";
+import {Button} from "../ui/button";
 
 const urlBase64ToUint8Array = (base64String: string) => {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -55,22 +57,13 @@ export function PushNotificationManager() {
         await unsubscribeUser()
     }
 
-    // async function sendTestNotification() {
-    //     if (subscription) {
-    //         await sendNotification(message)
-    //         setMessage('')
-    //     }
-    // }
-
-    if (!isSupported) {
-        return <p>Push notifications are not supported in this browser.</p>
-    }
-
     return (
-        isSupported ? (
-            subscription ? <LucideBell onClick={subscribeToPush}/> : <LucideBellOff onClick={unsubscribeFromPush}/>
-        ) : (
-            <LucideTriangleAlert/>
-        )
+        <Button variant='ghost' onClick={subscription ? subscribeToPush : unsubscribeFromPush}>
+            {isSupported ? (
+                subscription ? <LucideBell/> : <LucideBellOff/>
+            ) : (
+                <LucideTriangleAlert/>
+            )}
+        </Button>
     )
 }

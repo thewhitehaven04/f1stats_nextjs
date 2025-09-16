@@ -1,8 +1,10 @@
+'use server'
 import {setVapidDetails, sendNotification, PushSubscription} from "web-push";
 import db from "@/client/db";
 
 setVapidDetails(
-    '', process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.NEXT_PUBLIC_VERCEL_ENV ? `https://${process.env.NEXT_PUBLIC_URL}` : 'https://localhost:3000/',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
     process.env.VAPID_PRIVATE_KEY!
 )
 
