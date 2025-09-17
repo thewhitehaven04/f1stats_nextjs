@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "./components/Header/Breadcrumbs"
 import Link from "next/link"
+import { OfflineHeader } from "./OfflineHeader"
 
 export const Header = ({ rightSlot }: { rightSlot?: React.ReactNode }) => (
     <div className="sticky backdrop-blur-sm z-40 top-0">
@@ -8,6 +9,7 @@ export const Header = ({ rightSlot }: { rightSlot?: React.ReactNode }) => (
                 <div className="text-xl font-semibold opacity-80">
                     <Link href="/">F1Stats</Link>
                 </div>
+                <OfflineHeader />
                 <Breadcrumbs />
             </div>
             <div className="flex flex-row md:justify-end gap-2 w-full">{rightSlot}</div>

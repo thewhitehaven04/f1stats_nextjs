@@ -1,4 +1,5 @@
 "use client"
+import { LucideWifiOff } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export const OfflineHeader = () => {
@@ -18,10 +19,9 @@ export const OfflineHeader = () => {
         }
     }, [])
 
-    console.log('is shown: ', isShown)
-
     return isShown ? (
-        <div className="flex flex-row gap-4 items-center justify-center py-2 bg-red-400">
+        <div className="flex flex-row gap-4 items-center justify-center py-2 opacity-100 z-50">
+            <LucideWifiOff />
             You're in offline mode
         </div>
     ) : null
