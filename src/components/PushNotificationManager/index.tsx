@@ -1,7 +1,7 @@
 'use client'
 import {useEffect, useState} from "react";
 import {LucideTriangleAlert, LucideBell, LucideBellOff} from "lucide-react";
-import {subscribeUser, unsubscribeUser} from "../../../app/swActions";
+import {send, subscribeUser, unsubscribeUser} from "../../../app/swActions";
 import {Button} from "../ui/button";
 
 const urlBase64ToUint8Array = (base64String: string) => {
@@ -25,6 +25,7 @@ export function PushNotificationManager() {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             setIsSupported(true)
             registerServiceWorker()
+            console.log('Service worker has been registered')
         }
     }, [])
 
@@ -38,17 +39,16 @@ export function PushNotificationManager() {
     }
 
     async function subscribeToPush() {
-        navigator.serviceWorker.ready.then(async (registration) => {
-            const sub = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(
-                    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-                ),
-            })
-            setSubscription(sub)
-            const serializedSub = JSON.parse(JSON.stringify(sub))
-            await subscribeUser(serializedSub)
+        const sw = await navigator.serviceWorker.ready
+        const sub = await sw.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(
+                process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+            ),
         })
+        console.log('PM subscribed', JSON.parse(JSON.stringify(sub)))
+        setSubscription(sub)
+        await subscribeUser(JSON.parse(JSON.stringify(sub)))
     }
 
     async function unsubscribeFromPush() {
@@ -57,13 +57,23 @@ export function PushNotificationManager() {
         await unsubscribeUser()
     }
 
+    const sendTestMessage = async () => {
+        await send({
+            title: 'Test',
+            message: 'Test message',
+        })
+    }
+
     return (
-        <Button variant='ghost' onClick={subscription ? subscribeToPush : unsubscribeFromPush}>
-            {isSupported ? (
-                subscription ? <LucideBell/> : <LucideBellOff/>
-            ) : (
-                <LucideTriangleAlert/>
-            )}
-        </Button>
+        <>
+            <Button onClick={!subscription ? subscribeToPush : unsubscribeFromPush}>
+                {isSupported ? (
+                    subscription ? 'Unsubscribe' : 'Subscribe'
+                ) : (
+                    <LucideTriangleAlert/>
+                )}
+            </Button>
+            <Button variant={'ghost'} onClick={sendTestMessage}>Test</Button>
+        </>
     )
 }

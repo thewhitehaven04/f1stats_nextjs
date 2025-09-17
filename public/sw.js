@@ -3,9 +3,9 @@ self.addEventListener('push', function (event) {
         const data = event.data.json()
         event.waitUntil(self.registration.showNotification(data.title, {
             body: data.body,
-            icon: data.icon || '/icon.png',
-            badge: '/badge.png',
+            icon: data.icon || '/notification.png',
             vibrate: [100, 50, 100],
+
             data: {
                 dateOfArrival: Date.now(),
                 primaryKey: '2',
@@ -14,8 +14,16 @@ self.addEventListener('push', function (event) {
     }
 })
 
+self.addEventListener('install', () => {
+    console.log('SW installed')
+})
+
 self.addEventListener('notificationclick', function (event) {
     console.log('Notification click received.')
     event.notification.close()
-    event.waitUntil(clients.openWindow('<https://your-website.com>'))
+    event.waitUntil(
+        self.clients.openWindow(
+            process.env.NEXT_PUBLIC_VERCEL_ENV ? `https://${process.env.NEXT_PUBLIC_URL}` : 'https://localhost:3000/'
+        )
+    )
 })
