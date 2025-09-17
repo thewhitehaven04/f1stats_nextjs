@@ -1472,17 +1472,76 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serwist/sw@npm:^9.2.1":
+"@serwist/build@npm:9.2.1, @serwist/build@npm:^9.2.1":
   version: 9.2.1
-  resolution: "@serwist/sw@npm:9.2.1"
+  resolution: "@serwist/build@npm:9.2.1"
   dependencies:
+    common-tags: "npm:1.8.2"
+    glob: "npm:10.4.5"
+    pretty-bytes: "npm:6.1.1"
+    source-map: "npm:0.8.0-beta.0"
+    zod: "npm:4.1.5"
+  peerDependencies:
+    typescript: ">=5.0.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/b442c29b6c096825ed443c80617f8f37ce2334369e3d5adf821931db564c62b0afdfd98bc2050503b11887a05259a7f48b17e3ed2a17e8c9c858fd8a76012f1c
+  languageName: node
+  linkType: hard
+
+"@serwist/next@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "@serwist/next@npm:9.2.1"
+  dependencies:
+    "@serwist/build": "npm:9.2.1"
+    "@serwist/webpack-plugin": "npm:9.2.1"
+    "@serwist/window": "npm:9.2.1"
+    chalk: "npm:5.6.0"
+    glob: "npm:10.4.5"
+    serwist: "npm:9.2.1"
+    zod: "npm:4.1.5"
+  peerDependencies:
+    next: ">=14.0.0"
+    typescript: ">=5.0.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1bf53dfd49c3bbc06e6383c7741871c613967024c16671cd8b06910d834d4237020a725bdf140123dbf266fd7bb16e8a0d596eea649d24f6303e888ad4626f50
+  languageName: node
+  linkType: hard
+
+"@serwist/webpack-plugin@npm:9.2.1":
+  version: 9.2.1
+  resolution: "@serwist/webpack-plugin@npm:9.2.1"
+  dependencies:
+    "@serwist/build": "npm:9.2.1"
+    pretty-bytes: "npm:6.1.1"
+    zod: "npm:4.1.5"
+  peerDependencies:
+    typescript: ">=5.0.0"
+    webpack: 4.4.0 || ^5.9.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    webpack:
+      optional: true
+  checksum: 10c0/fedbddf69dcdddd0845d0498fbee425d00c85dbcc0e42c0dc3784220a3051d22cf879583815debc1352b9d9c0feebcefa489da405bdcf81f3b1ee23ba99fffad
+  languageName: node
+  linkType: hard
+
+"@serwist/window@npm:9.2.1":
+  version: 9.2.1
+  resolution: "@serwist/window@npm:9.2.1"
+  dependencies:
+    "@types/trusted-types": "npm:2.0.7"
     serwist: "npm:9.2.1"
   peerDependencies:
     typescript: ">=5.0.0"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/188287a72bed35a15ce4c555cecda30c9773fa0d5bbcc8dce9088990b3848e24f27e4f3580d432c61ce52a0681629cceaf5121c6258e2a6505add55d2c76d1da
+  checksum: 10c0/56e9b103dadafcf5f8e8a3f9409a4e0f31e61be7358aee3724eac6930c456fcbb5d1c069e1dd35c6e71beef54cd4a52740f9fb746197e2740eaf8c13e003fa40
   languageName: node
   linkType: hard
 
@@ -1800,6 +1859,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/trusted-types@npm:2.0.7":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 10c0/4c4855f10de7c6c135e0d32ce462419d8abbbc33713b31d294596c0cc34ae1fa6112a2f9da729c8f7a20707782b0d69da3b1f8df6645b0366d08825ca1522e0c
+  languageName: node
+  linkType: hard
+
 "@types/web-push@npm:^3":
   version: 3.6.4
   resolution: "@types/web-push@npm:3.6.4"
@@ -1981,6 +2047,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:5.6.0":
+  version: 5.6.0
+  resolution: "chalk@npm:5.6.0"
+  checksum: 10c0/f8558fc12fd9805f167611803b325b0098bbccdc9f1d3bafead41c9bac61f263357f3c0df0cbe28bc2fd5fca3edcf618b01d6771a5a776b4c15d061482a72b23
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
@@ -2153,6 +2226,13 @@ __metadata:
   version: 13.0.0
   resolution: "commander@npm:13.0.0"
   checksum: 10c0/8ba1e2b83bfdbcefd967aa505f5f5dc58202aa5f8e10437f61f6980dd8a69f868dba439a261f9fb72fc543c5f6fe58140e37b001a4c70b92ae22527abe94dfe1
+  languageName: node
+  linkType: hard
+
+"common-tags@npm:1.8.2":
+  version: 1.8.2
+  resolution: "common-tags@npm:1.8.2"
+  checksum: 10c0/23efe47ff0a1a7c91489271b3a1e1d2a171c12ec7f9b35b29b2fce51270124aff0ec890087e2bc2182c1cb746e232ab7561aaafe05f1e7452aea733d2bfe3f63
   languageName: node
   linkType: hard
 
@@ -2471,7 +2551,8 @@ __metadata:
     "@radix-ui/react-toggle": "npm:^1.1.9"
     "@radix-ui/react-toggle-group": "npm:^1.1.10"
     "@radix-ui/react-tooltip": "npm:^1.2.4"
-    "@serwist/sw": "npm:^9.2.1"
+    "@serwist/build": "npm:^9.2.1"
+    "@serwist/next": "npm:^9.2.1"
     "@sgratzl/chartjs-chart-boxplot": "npm:^4.4.4"
     "@tailwindcss/postcss": "npm:4.1.4"
     "@tailwindcss/typography": "npm:0.5.15"
@@ -2499,6 +2580,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     react-hook-form: "npm:^7.62.0"
     react-icons: "npm:5.5.0"
+    serwist: "npm:^9.2.1"
     svg-pathdata: "npm:8.0.0"
     tailwind-merge: "npm:^3.2.0"
     tailwindcss: "npm:4.1.4"
@@ -2601,7 +2683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.2.2":
+"glob@npm:10.4.5, glob@npm:^10.2.2":
   version: 10.4.5
   resolution: "glob@npm:10.4.5"
   dependencies:
@@ -2937,6 +3019,13 @@ __metadata:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: 10c0/402fa16a1edd7538de5b5903a90228aa48eb5533986ba7fa26606a49db2572bf414ff73a2c9f5d5fd36b31c46a5d5c7e1527749c07cbcf965ccff5fbdf32c506
+  languageName: node
+  linkType: hard
+
+"lodash.sortby@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "lodash.sortby@npm:4.7.0"
+  checksum: 10c0/fc48fb54ff7669f33bb32997cab9460757ee99fafaf72400b261c3e10fde21538e47d8cfcbe6a25a31bcb5b7b727c27d52626386fc2de24eb059a6d64a89cdf5
   languageName: node
   linkType: hard
 
@@ -3399,6 +3488,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pretty-bytes@npm:6.1.1":
+  version: 6.1.1
+  resolution: "pretty-bytes@npm:6.1.1"
+  checksum: 10c0/c7a660b933355f3b4587ad3f001c266a8dd6afd17db9f89ebc50812354bb142df4b9600396ba5999bdb1f9717300387dc311df91895c5f0f2a1780e22495b5f8
+  languageName: node
+  linkType: hard
+
 "prisma@npm:6.6.0":
   version: 6.6.0
   resolution: "prisma@npm:6.6.0"
@@ -3434,6 +3530,13 @@ __metadata:
     err-code: "npm:^2.0.2"
     retry: "npm:^0.12.0"
   checksum: 10c0/9c7045a1a2928094b5b9b15336dcd2a7b1c052f674550df63cc3f36cd44028e5080448175b6f6ca32b642de81150f5e7b1a98b728f15cb069f2dd60ac2616b96
+  languageName: node
+  linkType: hard
+
+"punycode@npm:^2.1.0":
+  version: 2.3.1
+  resolution: "punycode@npm:2.3.1"
+  checksum: 10c0/14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
   languageName: node
   linkType: hard
 
@@ -3604,7 +3707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serwist@npm:9.2.1":
+"serwist@npm:9.2.1, serwist@npm:^9.2.1":
   version: 9.2.1
   resolution: "serwist@npm:9.2.1"
   dependencies:
@@ -3767,6 +3870,15 @@ __metadata:
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
   checksum: 10c0/7bda1fc4c197e3c6ff17de1b8b2c20e60af81b63a52cb32ec5a5d67a20a7d42651e2cb34ebe93833c5a2a084377e17455854fee3e21e7925c64a51b6a52b0faf
+  languageName: node
+  linkType: hard
+
+"source-map@npm:0.8.0-beta.0":
+  version: 0.8.0-beta.0
+  resolution: "source-map@npm:0.8.0-beta.0"
+  dependencies:
+    whatwg-url: "npm:^7.0.0"
+  checksum: 10c0/fb4d9bde9a9fdb2c29b10e5eae6c71d10e09ef467e1afb75fdec2eb7e11fa5b343a2af553f74f18b695dbc0b81f9da2e9fa3d7a317d5985e9939499ec6087835
   languageName: node
   linkType: hard
 
@@ -3940,6 +4052,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tr46@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "tr46@npm:1.0.1"
+  dependencies:
+    punycode: "npm:^2.1.0"
+  checksum: 10c0/41525c2ccce86e3ef30af6fa5e1464e6d8bb4286a58ea8db09228f598889581ef62347153f6636cd41553dc41685bdfad0a9d032ef58df9fbb0792b3447d0f04
+  languageName: node
+  linkType: hard
+
 "tree-kill@npm:^1.2.2":
   version: 1.2.2
   resolution: "tree-kill@npm:1.2.2"
@@ -4100,6 +4221,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webidl-conversions@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "webidl-conversions@npm:4.0.2"
+  checksum: 10c0/def5c5ac3479286dffcb604547628b2e6b46c5c5b8a8cfaa8c71dc3bafc85859bde5fbe89467ff861f571ab38987cf6ab3d6e7c80b39b999e50e803c12f3164f
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^7.0.0":
+  version: 7.1.0
+  resolution: "whatwg-url@npm:7.1.0"
+  dependencies:
+    lodash.sortby: "npm:^4.7.0"
+    tr46: "npm:^1.0.1"
+    webidl-conversions: "npm:^4.0.2"
+  checksum: 10c0/2785fe4647690e5a0225a79509ba5e21fdf4a71f9de3eabdba1192483fe006fc79961198e0b99f82751557309f17fc5a07d4d83c251aa5b2f85ba71e674cbee9
+  languageName: node
+  linkType: hard
+
 "which@npm:^2.0.1":
   version: 2.0.2
   resolution: "which@npm:2.0.2"
@@ -4198,5 +4337,12 @@ __metadata:
   version: 3.25.56
   resolution: "zod@npm:3.25.56"
   checksum: 10c0/3800f01d4b1df932b91354eb1e648f69cc7e5561549e6d2bf83827d930a5f33bbf92926099445f6fc1ebb64ca9c6513ef9ae5e5409cfef6325f354bcf6fc9a24
+  languageName: node
+  linkType: hard
+
+"zod@npm:4.1.5":
+  version: 4.1.5
+  resolution: "zod@npm:4.1.5"
+  checksum: 10c0/7826fb931bc71d4d0fff2fbb72f1a1cf30a6672cf9dbe6933a216bbb60242ef1c3bdfbcd3c5b27e806235a35efaad7a4a9897ff4d3621452f9ea278bce6fd42a
   languageName: node
   linkType: hard
