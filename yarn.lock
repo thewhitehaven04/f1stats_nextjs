@@ -1472,6 +1472,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@serwist/sw@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "@serwist/sw@npm:9.2.1"
+  dependencies:
+    serwist: "npm:9.2.1"
+  peerDependencies:
+    typescript: ">=5.0.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/188287a72bed35a15ce4c555cecda30c9773fa0d5bbcc8dce9088990b3848e24f27e4f3580d432c61ce52a0681629cceaf5121c6258e2a6505add55d2c76d1da
+  languageName: node
+  linkType: hard
+
 "@sgratzl/boxplots@npm:^2.0.0":
   version: 2.0.0
   resolution: "@sgratzl/boxplots@npm:2.0.0"
@@ -2457,6 +2471,7 @@ __metadata:
     "@radix-ui/react-toggle": "npm:^1.1.9"
     "@radix-ui/react-toggle-group": "npm:^1.1.10"
     "@radix-ui/react-tooltip": "npm:^1.2.4"
+    "@serwist/sw": "npm:^9.2.1"
     "@sgratzl/chartjs-chart-boxplot": "npm:^4.4.4"
     "@tailwindcss/postcss": "npm:4.1.4"
     "@tailwindcss/typography": "npm:0.5.15"
@@ -2681,6 +2696,13 @@ __metadata:
   dependencies:
     safer-buffer: "npm:>= 2.1.2 < 3.0.0"
   checksum: 10c0/98102bc66b33fcf5ac044099d1257ba0b7ad5e3ccd3221f34dd508ab4070edff183276221684e1e0555b145fce0850c9f7d2b60a9fcac50fbb4ea0d6e845a3b1
+  languageName: node
+  linkType: hard
+
+"idb@npm:8.0.3":
+  version: 8.0.3
+  resolution: "idb@npm:8.0.3"
+  checksum: 10c0/421cd9a3281b7564528857031cc33fd9e95753f8191e483054cb25d1ceea7303a0d1462f4f69f5b41606f0f066156999e067478abf2460dfcf9cab80dae2a2b2
   languageName: node
   linkType: hard
 
@@ -3579,6 +3601,20 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/aca305edfbf2383c22571cb7714f48cadc7ac95371b4b52362fb8eeffdfbc0de0669368b82b2b15978f8848f01d7114da65697e56cd8c37b0dab8c58e543f9ea
+  languageName: node
+  linkType: hard
+
+"serwist@npm:9.2.1":
+  version: 9.2.1
+  resolution: "serwist@npm:9.2.1"
+  dependencies:
+    idb: "npm:8.0.3"
+  peerDependencies:
+    typescript: ">=5.0.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/6f9e4470bac97d32f103da84602e536b58769493abe013a4322af49750ce81bd2ce01ad30f77d077bb1139079bf06402c06c02329486476db3dc9f0cfe8f811a
   languageName: node
   linkType: hard
 

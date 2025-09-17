@@ -48,40 +48,33 @@ export function PushNotificationManager() {
         })
         await subscribeUser(JSON.parse(JSON.stringify(sub)))
         setSubscription(sub)
+        send({
+            title: "F1Stats",
+            message: "You've subscribed to push notifications",
+        })
     }
 
     async function unsubscribeFromPush() {
+        send({
+            title: "F1Stats",
+            message: "You've unsubscribed from push notifications",
+        })
         await subscription?.unsubscribe()
         setSubscription(null)
         await unsubscribeUser()
     }
 
-    const sendTestMessage = async () => {
-        await send({
-            title: "Test",
-            message: "Test message",
-        })
-    }
-
     return (
-        <>
-            <Button
-                variant="secondary"
-                onClick={!subscription ? subscribeToPush : unsubscribeFromPush}
-            >
-                {isSupported ? (
-                    subscription ? (
-                        <LucideBell />
-                    ) : (
-                        <LucideBellOff />
-                    )
+        <Button variant="secondary" onClick={!subscription ? subscribeToPush : unsubscribeFromPush}>
+            {isSupported ? (
+                subscription ? (
+                    <LucideBell />
                 ) : (
-                    <LucideTriangleAlert />
-                )}
-            </Button>
-            <Button variant={"ghost"} onClick={sendTestMessage}>
-                Send test message
-            </Button>
-        </>
+                    <LucideBellOff />
+                )
+            ) : (
+                <LucideTriangleAlert />
+            )}
+        </Button>
     )
 }

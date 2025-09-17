@@ -1,4 +1,4 @@
-self.addEventListener('push', function (event) {
+self.addEventListener('push', (event) => {
     if (event.data) {
         const data = event.data.json()
         event.waitUntil(self.registration.showNotification(data.title, {
@@ -14,12 +14,7 @@ self.addEventListener('push', function (event) {
     }
 })
 
-self.addEventListener('install', () => {
-    console.log('SW installed')
-})
-
-self.addEventListener('notificationclick', function (event) {
-    console.log('Notification click received.')
+self.addEventListener('notificationclick', (event) => {
     event.notification.close()
     event.waitUntil(
         self.clients.openWindow(

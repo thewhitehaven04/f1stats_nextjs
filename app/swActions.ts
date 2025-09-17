@@ -49,7 +49,6 @@ export async function send({ title, message }: { title: string; message: string 
             JSON.stringify({
                 title: title,
                 body: message,
-                icon: "/notification.png",
             }),
         )
         return { success: true }
