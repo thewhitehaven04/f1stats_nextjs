@@ -11,8 +11,8 @@ const appFont = Archivo({
 
 const APP_NAME = "F1Stats"
 const APP_DEFAULT_TITLE = "F1Stats"
-const APP_TITLE_TEMPLATE = "%s - PWA App"
-const APP_DESCRIPTION = "F1Stats PWA app"
+const APP_TITLE_TEMPLATE = "%s app"
+const APP_DESCRIPTION = "F1Stats - telemetry and statistics data visualized"
 
 export const metadata: Metadata = {
     applicationName: APP_NAME,

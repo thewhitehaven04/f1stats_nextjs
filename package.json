@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "fastapi-dev": "uv run uvicorn api._index:app --reload",
-        "next-dev": "next dev --turbopack --experimental-https",
+        "next-dev": "next dev --experimental-https",
         "dev": "concurrently \"yarn run next-dev\" \"yarn run fastapi-dev\"",
         "lint": "next lint",
         "fetch-api": "node ./src/client/apiGenerator/saveSpec.mjs",
