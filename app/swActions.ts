@@ -1,11 +1,13 @@
-'use server'
-import {setVapidDetails, sendNotification, PushSubscription} from "web-push";
-import db from "@/client/db";
+"use server"
+import { setVapidDetails, sendNotification, PushSubscription } from "web-push"
+import db from "@/client/db"
 
 setVapidDetails(
-    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' ? `https://${process.env.NEXT_PUBLIC_URL}` : 'https://localhost:3000/',
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+        ? `https://${process.env.NEXT_PUBLIC_URL}`
+        : "https://localhost:3000/",
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
+    process.env.VAPID_PRIVATE_KEY!,
 )
 
 let subscription: PushSubscription | null = null
@@ -15,11 +17,11 @@ export async function subscribeUser(sub: PushSubscription) {
     subscription = sub
     const res = await db.subscriptions.create({
         data: {
-            subscription: JSON.stringify(sub)
-        }
+            subscription: JSON.stringify(sub),
+        },
     })
     subscriptionId = res.id
-    return {success: true}
+    return { success: true }
 }
 
 export async function unsubscribeUser() {
@@ -28,17 +30,17 @@ export async function unsubscribeUser() {
     if (subscriptionId) {
         await db.subscriptions.delete({
             where: {
-                id: subscriptionId
-            }
+                id: subscriptionId,
+            },
         })
-        return {success: true}
+        return { success: true }
     }
-    return {success: false}
+    return { success: false }
 }
 
-export async function send({title, message}: { title: string, message: string }) {
+export async function send({ title, message }: { title: string; message: string }) {
     if (!subscription) {
-        throw new Error('No subscription available')
+        throw new Error("No subscription available")
     }
 
     try {
@@ -47,12 +49,12 @@ export async function send({title, message}: { title: string, message: string })
             JSON.stringify({
                 title: title,
                 body: message,
-                icon: '/notification.png',
+                icon: "/notification.png",
             }),
         )
-        return {success: true}
+        return { success: true }
     } catch (error) {
-        console.error('Error sending push notification:', error)
-        return {success: false, error: 'Failed to send notification'}
+        console.error("Error sending push notification:", error)
+        return { success: false, error: "Failed to send notification" }
     }
 }
