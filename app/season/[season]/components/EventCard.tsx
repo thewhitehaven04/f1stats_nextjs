@@ -2,10 +2,26 @@
 import Link from "next/link"
 import getUnicodeFlagIcon from "country-flag-icons/unicode"
 import { format } from "date-fns/format"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { TMappedSeasonEvent } from "../fetcher/types"
+import type { ComponentProps } from "react"
+
+const OfflineAwareLink = (props: ComponentProps<typeof Link>) => {
+    return (
+        <Link
+            {...props}
+            onNavigate={(evt) => {
+                window.navigator.onLine
+                    ? props.onNavigate
+                        ? props.onNavigate(evt)
+                        : null
+                    : evt.preventDefault()
+            }}
+        />
+    )
+}
 
 export const EventCard = (props: TMappedSeasonEvent) => {
     const { country, dateStart, name, officialName, sessions, format: eventFormat } = props
@@ -28,54 +44,54 @@ export const EventCard = (props: TMappedSeasonEvent) => {
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp1}/results`}
                                     >
                                         {sessions.fp1}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp2}/results`}
                                     >
                                         {sessions.fp2}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp3}/results`}
                                     >
                                         {sessions.fp3}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.quali}/results`}
                                     >
                                         {sessions.quali}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.race}/results`}
                                     >
                                         {sessions.race}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
@@ -85,32 +101,32 @@ export const EventCard = (props: TMappedSeasonEvent) => {
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp1}/results`}
                                     >
                                         {sessions.fp1}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp2}/results`}
                                     >
                                         {sessions.fp2}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp3}/results`}
                                     >
                                         {sessions.fp3}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
@@ -120,56 +136,56 @@ export const EventCard = (props: TMappedSeasonEvent) => {
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp1}/results`}
                                     >
                                         {sessions.fp1}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.sprintQuali}/results`}
                                     >
                                         {sessions.sprintQuali}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.sprint}/results`}
                                     >
                                         {sessions.sprint}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
                         <ul className="flex flex-col">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.quali}/results`}
                                     >
                                         {sessions.quali}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.race}/results`}
                                     >
                                         {sessions.race}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
@@ -179,56 +195,56 @@ export const EventCard = (props: TMappedSeasonEvent) => {
                         <ul className="flex flex-col gap-2">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp1}/results`}
                                     >
                                         {sessions.fp1}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.quali}/results`}
                                     >
                                         {sessions.quali}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
                         <ul className="flex flex-col gap-2">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.sprintQuali}/results`}
                                     >
                                         {sessions.sprintQuali}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.fp2}/results`}
                                     >
                                         {sessions.fp2}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
                         <ul className="flex flex-col gap-2">
                             <li>
                                 <Button type="button" variant="ghost">
-                                    <Link
+                                    <OfflineAwareLink
                                         className="link-hover"
                                         href={`${season}/event/${name}/session/${sessions.race}/results`}
                                     >
                                         {sessions.race}
-                                    </Link>
+                                    </OfflineAwareLink>
                                 </Button>
                             </li>
                         </ul>
