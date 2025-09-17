@@ -12,11 +12,11 @@ Implemented features:
 - Head-to-head laptime comparisons visualized in box, violin and line plots.
 - Colour coded circuit map based on which driver is quicker at a given point of the circuit;
 - Team stats;
+- Offline mode;
+- Notifications (in testing);
 
 ## Planned features:
 - Driver stats;
-- Offline mode;
-- Notifications;
 
 If you have any suggestions, questions or you've found an issue, feel free to open a GitHub issue.
 
