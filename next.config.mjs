@@ -5,6 +5,7 @@ const withSerwist = withSerwistInit({
     // use something else that works, such as "service-worker/index.ts".
     swSrc: "src/sw.ts",
     swDest: "public/sw.js",
+    cacheOnNavigation: true,
 })
 
 const nextConfig = withSerwist(

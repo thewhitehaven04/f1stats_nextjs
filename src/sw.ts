@@ -22,6 +22,21 @@ const serwist = new Serwist({
     runtimeCaching: defaultCache,
 })
 
+const CACHED_URLS = ["/", "/season/2024", "/season/2025"]
+
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+        Promise.all(
+            CACHED_URLS.map((url) =>
+                serwist.handleRequest({
+                    request: new Request(url),
+                    event,
+                }),
+            ),
+        ),
+    )
+})
+
 self.addEventListener("push", (event) => {
     if (event.data) {
         const data = event.data.json()
