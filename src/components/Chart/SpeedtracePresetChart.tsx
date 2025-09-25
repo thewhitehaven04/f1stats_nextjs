@@ -9,7 +9,10 @@ import { ThemedChart } from "@/components/Chart/ThemedChart"
 initGlobalChartConfig()
 
 export const SpeedtracePresetChart = (
-    props: Omit<ComponentProps<typeof Chart>, "type"> & { data: { datasets: TTelemetryDataset } },
+    props: Omit<ComponentProps<typeof Chart>, "type"> & {
+        data: { datasets: TTelemetryDataset }
+        isUpdatingData: boolean
+    },
 ) => {
     const hasData = !!props.data.datasets.length
     const baseChartProps = {
@@ -105,13 +108,12 @@ export const SpeedtracePresetChart = (
 
     return (
         <div className="relative h-[600px]">
-            <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
-            {!hasData && (
-                <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">
-                    <h1 className="text-center text-lg font-bold">No laps selected</h1>
-                </div>
-            )}
-            <ThemedChart {...mergedProps} className={clsx(mergedProps.className, "z-0")} />
+            <ThemedChart
+                {...mergedProps}
+                className={clsx(mergedProps.className, "z-0")}
+                hasData={hasData}
+                noDataMessage="No laps selected"
+            />
         </div>
     )
 }

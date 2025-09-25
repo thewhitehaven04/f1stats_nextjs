@@ -1,13 +1,13 @@
-import clsx from "clsx"
-import type { ChartProps } from "react-chartjs-2"
+import type { Chart, ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-import { ThemedChart } from "@/components/Chart/ThemedChart"
 import type { ComponentProps } from "react"
+import { ThemedChart } from "@/components/Chart/ThemedChart"
 
 export const TimedeltaPresetChart = (
-    props: Omit<ComponentProps<typeof ThemedChart>, "type"> & {
+    props: Omit<ComponentProps<typeof Chart>, "type"> & {
         data: { datasets: TTelemetryDataset }
+        isUpdatingData: boolean
     },
 ) => {
     const hasData = !!props.data.datasets.length
@@ -84,13 +84,11 @@ export const TimedeltaPresetChart = (
 
     return (
         <div className="relative h-[300px]">
-            <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
-            {!hasData && (
-                <div className="absolute z-10 w-full top-[50%] translate-y-[-50%]">
-                    <h1 className="text-center text-lg font-bold">No laps selected</h1>
-                </div>
-            )}
-            <ThemedChart {...merge(baseChartProps, props)} />
+            <ThemedChart
+                {...merge(baseChartProps, props)}
+                hasData={hasData}
+                noDataMessage="No laps selected"
+            />
         </div>
     )
 }

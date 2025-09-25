@@ -1,12 +1,22 @@
 "use client"
-import type { Chart, ChartData, ChartDataset, ChartTypeRegistry } from "chart.js"
-import { useCallback, useMemo, useRef, type RefObject } from "react"
-import type { DriverTelemetryPlotData, PlotColor } from "@/client/generated"
+import type { Chart, ChartDataset, ChartTypeRegistry } from "chart.js"
+import { useCallback, useMemo, useRef } from "react"
+import {
+    getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
+    getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
+    type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
+    type SessionQuery,
+} from "@/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { Button } from "@/components/ui/button"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { ApiClient } from "@/client"
+import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
+import type { TSession } from "../../../../../hooks/useSession"
+import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 
 export type TTelemetryDataset = ChartDataset<
     "scatter",
@@ -17,29 +27,71 @@ export type TTelemetryDataset = ChartDataset<
 >[]
 
 export default function TelemetryChartSection(props: {
-    data: DriverTelemetryPlotData[] | null
-    colorMap: Record<string, PlotColor>
+    queries: SessionQuery[]
+    session: TSession
+    event: string
+    season: string
 }) {
-    const { data: telemetryMeasurements, colorMap } = props
-    const distanceLabels = telemetryMeasurements
-        ?.flatMap((lap) => lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)))
-        .sort((a, b) => a - b)
+    const { season, event, session, queries } = props
+    const timeoutRef = useRef<NodeJS.Timeout>(null)
+
+    const { data, isFetching } = useQuery({
+        queryKey: ["telemetry", season, event, session, queries],
+        queryFn: async () =>
+            new Promise<GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse>(
+                (resolve) => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+                    timeoutRef.current = setTimeout(() => {
+                        resolve(
+                            getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
+                                client: ApiClient,
+                                body: { queries },
+                                path: {
+                                    event,
+                                    session,
+                                    year: season,
+                                },
+                                throwOnError: true,
+                            }).then((res) => res.data),
+                        )
+                    }, 700)
+                },
+            ),
+        enabled: () => !!queries.length,
+    })
+    const telemetries = data?.telemetries
+    const colorMap = Object.fromEntries(
+        Object.keys(data?.color_map || {}).map((key) => [
+            key,
+            data?.color_map[key].style === "alternative"
+                ? getAlternativeColor(data?.color_map[key].color)
+                : data?.color_map[key].color || "#FFF",
+        ]),
+    )
+
+    const distanceLabels =
+        telemetries
+            ?.flatMap((lap) =>
+                lap.lap.telemetry.map((measurement) => Math.trunc(measurement.distance)),
+            )
+            .sort((a, b) => a - b) ?? []
 
     const presets = useMemo(
         () =>
-            telemetryMeasurements?.map((driverMeasurements) => ({
-                borderColor: getColorFromColorMap(colorMap, driverMeasurements.driver),
+            telemetries?.map((driverMeasurements) => ({
+                borderColor: getColorFromColorMap(data?.color_map || {}, driverMeasurements.driver),
                 borderDash:
-                    colorMap[driverMeasurements.driver].style === "alternative"
+                    data?.color_map[driverMeasurements.driver].style === "alternative"
                         ? [6, 1.5]
                         : undefined,
             })) || [],
-        [telemetryMeasurements, colorMap],
+        [data, telemetries],
     )
 
     const speedDatasets: TTelemetryDataset = useMemo(
         () =>
-            telemetryMeasurements?.map((lap, index) => ({
+            telemetries?.map((lap, index) => ({
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -47,12 +99,12 @@ export default function TelemetryChartSection(props: {
                 })),
                 ...presets[index],
             })) || [],
-        [telemetryMeasurements, presets],
+        [telemetries, presets],
     )
 
     const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
-            telemetryMeasurements?.map((lap, index) => ({
+            telemetries?.map((lap, index) => ({
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -60,12 +112,12 @@ export default function TelemetryChartSection(props: {
                 })),
                 ...presets[index],
             })) || [],
-        [telemetryMeasurements, presets],
+        [telemetries, presets],
     )
 
     const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
-            telemetryMeasurements?.map((lap, index) => ({
+            telemetries?.map((lap, index) => ({
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -73,12 +125,12 @@ export default function TelemetryChartSection(props: {
                 })),
                 ...presets[index],
             })) || [],
-        [telemetryMeasurements, presets],
+        [telemetries, presets],
     )
 
     const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
-            telemetryMeasurements?.map((lap, index) => ({
+            telemetries?.map((lap, index) => ({
                 label: lap.driver,
                 data: lap.lap.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -86,12 +138,12 @@ export default function TelemetryChartSection(props: {
                 })),
                 ...presets[index],
             })) || [],
-        [telemetryMeasurements, presets],
+        [telemetries, presets],
     )
 
     const timeDeltaDatasets: TTelemetryDataset = useMemo(
         () =>
-            telemetryMeasurements
+            telemetries
                 ?.map((comp, index) => ({
                     label: `${comp.driver} vs ${comp.delta?.reference}`,
                     data:
@@ -102,8 +154,18 @@ export default function TelemetryChartSection(props: {
                     ...presets[index],
                 }))
                 .filter((tMeasurements) => tMeasurements.data.length > 0) || [],
-        [telemetryMeasurements, presets],
+        [telemetries, presets],
     )
+
+    const { data: geometry } = useSuspenseQuery({
+        queryKey: [season, event],
+        queryFn: () =>
+            getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet({
+                path: { year: season, event },
+                client: ApiClient,
+                throwOnError: true,
+            }).then((res) => res.data),
+    })
 
     const chartRefs = useRef<
         Record<string, Chart<keyof ChartTypeRegistry, unknown, unknown> | null>
@@ -130,9 +192,13 @@ export default function TelemetryChartSection(props: {
         },
         [],
     )
-
     return (
         <section className="flex flex-col gap-2">
+            <DeltaCircuitMap
+                geometry={geometry}
+                driverDeltas={data?.delta || []}
+                colorMap={colorMap}
+            />
             <div className="flex flex-row justify-end">
                 <Button
                     type="button"
@@ -154,11 +220,13 @@ export default function TelemetryChartSection(props: {
                 }}
                 height={150}
                 ref={(chart) => pushRef("speedtrace", chart)}
+                isUpdatingData={isFetching}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels, datasets: timeDeltaDatasets }}
                 height={60}
                 ref={(chart) => pushRef("timedelta", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{
@@ -177,6 +245,7 @@ export default function TelemetryChartSection(props: {
                 }}
                 height={50}
                 ref={(chart) => pushRef("rpm", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: throttleDatasets }}
@@ -194,6 +263,7 @@ export default function TelemetryChartSection(props: {
                 }}
                 height={30}
                 ref={(chart) => pushRef("throttle", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels, datasets: brakeDatasets }}
@@ -211,6 +281,7 @@ export default function TelemetryChartSection(props: {
                 }}
                 height={30}
                 ref={(chart) => pushRef("brake", chart)}
+                isUpdatingData={isFetching}
             />
         </section>
     )

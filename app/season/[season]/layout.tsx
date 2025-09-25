@@ -5,7 +5,6 @@ import { fetchEventsWithSessions, type TSeasonEvent } from "./fetcher/fetcher"
 import { Footer } from "./Footer"
 import { Header } from "./Header"
 import { PushNotificationManager } from "@/components/PushNotificationManager"
-import { OfflineHeader } from "./OfflineHeader"
 
 export default async function Layout({
     children,
@@ -14,11 +13,6 @@ export default async function Layout({
     const events = await fetchEventsWithSessions((await params).season)
     return (
         <>
-            {typeof window !== "undefined" ? (
-                window.navigator.onLine ? null : (
-                    <OfflineHeader />
-                )
-            ) : null}
             <Header
                 rightSlot={
                     <>

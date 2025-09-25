@@ -2,31 +2,93 @@ import type { Chart, ChartTypeRegistry } from "chart.js"
 import { useCallback, useMemo, useRef } from "react"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import type { AverageTelemetryPlotData } from "@/client/generated"
+import {
+    getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
+    getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
+    type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
+    type SessionQuery,
+} from "@/client/generated"
 import type { TTelemetryDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { Button } from "@/components/ui/button"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { ApiClient } from "@/client"
+import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
+import { DeltaCircuitMap } from '@/components/CircuitSection/CircuitMap'
+import type { TSession } from '../../../../../hooks/useSession'
 
 export default (props: {
-    data: AverageTelemetryPlotData[] | null
-    colorMap: Record<string, string>
+    queries: SessionQuery[]
+    session: TSession 
+    event: string
+    season: string
 }) => {
-    const { data: averageTelemetry, colorMap } = props
+    const { season, event, session, queries } = props
+    const timeoutRef = useRef<NodeJS.Timeout>(null)
+    const { data, isFetching } = useQuery({
+        queryKey: ["averageTelemetry", season, event, session, queries],
+        queryFn: async () =>
+            new Promise<GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse>(
+                (resolve) => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
+                    timeoutRef.current = setTimeout(() => {
+                        resolve(
+                            getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
+                                {
+                                    client: ApiClient,
+                                    body: { queries },
+                                    path: {
+                                        event,
+                                        session,
+                                        year: season,
+                                    },
+                                    throwOnError: true,
+                                },
+                            ).then((res) => res.data),
+                        )
+                    }, 700)
+                },
+            ),
+        enabled: () => !!queries.length,
+    })
+
+    const { data: geometry } = useSuspenseQuery({
+        queryKey: [season, event],
+        queryFn: () =>
+            getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet({
+                path: { year: season, event },
+                client: ApiClient,
+                throwOnError: true,
+            }).then((res) => res.data),
+    })
+
+    const colorMap = Object.fromEntries(
+        Object.keys(data?.color_map || {}).map((key) => [
+            key,
+            data?.color_map[key].style === "alternative"
+                ? getAlternativeColor(data?.color_map[key].color)
+                : data?.color_map[key].color || "#FFF",
+        ]),
+    )
+
+    const telemetries = data?.telemetries
+
     const distanceLabels =
-        averageTelemetry?.length &&
-        averageTelemetry[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
+        telemetries?.length &&
+        telemetries[0].telemetry.map((measurement) => Math.trunc(measurement.distance))
 
     const presets = useMemo(
         () =>
-            averageTelemetry?.map((driverMeasurements) => ({
+            telemetries?.map((driverMeasurements) => ({
                 borderColor: colorMap[driverMeasurements.group.name],
             })) || [],
-        [averageTelemetry, colorMap],
+        [telemetries, colorMap],
     )
 
     const speedDatasets: TTelemetryDataset = useMemo(
         () =>
-            averageTelemetry?.map((stint, index) => ({
+            telemetries?.map((stint, index) => ({
                 label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -34,12 +96,12 @@ export default (props: {
                 })),
                 ...presets[index],
             })) || [],
-        [averageTelemetry, presets],
+        [telemetries, presets],
     )
 
     const timeDeltaDatasets: TTelemetryDataset = useMemo(
         () =>
-            averageTelemetry
+            telemetries
                 ?.map((tel, index) => ({
                     label: `${tel.driver} gap to ${tel.delta?.reference}`,
                     data:
@@ -50,12 +112,12 @@ export default (props: {
                     ...presets[index],
                 }))
                 .filter((dataset) => dataset.data.length > 0) || [],
-        [averageTelemetry, presets],
+        [telemetries, presets],
     )
 
     const rpmDatasets: TTelemetryDataset = useMemo(
         () =>
-            averageTelemetry?.map((stint, index) => ({
+            telemetries?.map((stint, index) => ({
                 label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -63,12 +125,12 @@ export default (props: {
                 })),
                 ...presets[index],
             })) || [],
-        [averageTelemetry, presets],
+        [telemetries, presets],
     )
 
     const throttleDatasets: TTelemetryDataset = useMemo(
         () =>
-            averageTelemetry?.map((stint, index) => ({
+            telemetries?.map((stint, index) => ({
                 label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -76,12 +138,12 @@ export default (props: {
                 })),
                 ...presets[index],
             })) || [],
-        [averageTelemetry, presets],
+        [telemetries, presets],
     )
 
     const brakeDatasets: TTelemetryDataset = useMemo(
         () =>
-            averageTelemetry?.map((stint, index) => ({
+            telemetries?.map((stint, index) => ({
                 label: stint.group.name,
                 data: stint.telemetry.map((measurement) => ({
                     x: measurement.distance,
@@ -89,7 +151,7 @@ export default (props: {
                 })),
                 ...presets[index],
             })) || [],
-        [averageTelemetry, presets],
+        [telemetries, presets],
     )
 
     const chartRefs = useRef<
@@ -120,6 +182,11 @@ export default (props: {
 
     return (
         <section className="flex flex-col gap-4">
+            <DeltaCircuitMap
+                geometry={geometry}
+                driverDeltas={data?.delta || []}
+                colorMap={colorMap}
+            />
             <div className="flex flex-row justify-end">
                 <Button
                     type="button"
@@ -140,10 +207,12 @@ export default (props: {
                     datasets: speedDatasets,
                 }}
                 ref={(chart) => pushRef("speedtrace", chart)}
+                isUpdatingData={isFetching}
             />
             <TimedeltaPresetChart
                 data={{ labels: distanceLabels || [], datasets: timeDeltaDatasets }}
                 ref={(chart) => pushRef("timedelta", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{
@@ -154,6 +223,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "RPM" } } },
                 }}
                 ref={(chart) => pushRef("rpm", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: throttleDatasets }}
@@ -161,6 +231,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Throttle %" } } },
                 }}
                 ref={(chart) => pushRef("throttle", chart)}
+                isUpdatingData={isFetching}
             />
             <TelemetryPresetChart
                 data={{ labels: distanceLabels || [], datasets: brakeDatasets }}
@@ -168,6 +239,7 @@ export default (props: {
                     scales: { y: { title: { display: true, text: "Brake %" } } },
                 }}
                 ref={(chart) => pushRef("brake", chart)}
+                isUpdatingData={isFetching}
             />
         </section>
     )

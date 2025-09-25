@@ -1,5 +1,5 @@
 "use server"
-import { setVapidDetails, sendNotification, PushSubscription } from "web-push"
+import { setVapidDetails, sendNotification, type PushSubscription } from "web-push"
 import db from "@/client/db"
 
 setVapidDetails(
