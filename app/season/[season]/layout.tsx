@@ -1,10 +1,10 @@
 import { ThemeSelector } from '@/shared/components/header/components/ThemeSelector'
-import { fetchEventsWithSessions } from "./fetcher/fetcher"
 import { PushNotificationManager } from "@/shared/components/header/components/PushNotificationManager"
 import { Footer } from '@/shared/components/footer'
 import { Header } from '@/shared/components/header'
 import { SeasonSelector } from '@/shared/components/header/components/SeasonSelector'
 import { SessionSearch } from '@/shared/components/header/components/SessionSearch'
+import { fetchEventsWithSessions } from '@/modules/SeasonCalendar/fetcher/fetcher'
 
 export default async function Layout({
     children,

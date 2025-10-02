@@ -1,8 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { fetchSessionResults } from '@/modules/session-results/fetcher'
 import type { ISessionPathnameParams } from "../types"
-import { ResultsSection } from "./components/ResultsSection"
-import { fetchSessionResults } from "./fetcher"
 import type { Metadata } from "next"
+import { SessionResultsScreen } from '@/modules/session-results/SessionResultsScreen'
 
 export async function generateMetadata({
     params,
@@ -21,5 +20,5 @@ export default async function Page({ params }: { params: Promise<ISessionPathnam
         decodeURIComponent(session),
     )
 
-    return <ResultsSection sessionType={type} sessionResults={data} />
+    return <SessionResultsScreen sessionType={type} sessionResults={data} />
 }

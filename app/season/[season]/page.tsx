@@ -1,7 +1,7 @@
 import dbClient from "../../../shared/client/db"
 import { SeasonCalendarScreen } from "../../../modules/SeasonCalendar/SeasonCalendarScreen"
 import type { Metadata } from "next"
-import { fetchSeasonEvents } from "./fetcher"
+import { fetchSeasonEvents } from '@/modules/SeasonCalendar/fetcher'
 
 // revalidate calendar data every 30 minutes
 export const revalidate = 1800

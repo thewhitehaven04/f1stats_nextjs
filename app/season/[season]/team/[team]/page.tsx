@@ -1,5 +1,6 @@
 import dbClient from "@/shared/client/db"
-import { TeamSeasonResultsScreen } from "@/modules/TeamSeasonResults/TeamSeasonResultsScreen"
+import { fetchTeamSeasonForm } from "@/modules/team-season-results/fetcher"
+import { TeamSeasonResultsScreen } from "@/modules/team-season-results/TeamSeasonResultsScreen"
 
 export async function generateMetadata({
     params,
@@ -17,5 +18,6 @@ export default async function TeamSeasonFormPage(props: {
     params: Promise<{ season: string; team: string }>
 }) {
     const { season, team } = await props.params
-    return <TeamSeasonResultsScreen season={season} team={team} />
+    const data = fetchTeamSeasonForm(season, team)
+    return <TeamSeasonResultsScreen {...data} />
 }

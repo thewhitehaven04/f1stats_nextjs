@@ -2,15 +2,15 @@ import { Gap } from "@/components/Gap"
 import { Laptime } from "@/components/Laptime"
 import { SectorTime } from "@/components/SectorTime"
 import { NaLabel, ValueOrNa } from "@/components/ValueOrNa"
-import { createColumnHelper } from "@tanstack/react-table"
 import {
-    ESessionType,
     type IBaseResultsData,
     type IPracticeData,
     type IQualifyingData,
     type IRaceData,
-} from "./types"
-import { Checkbox } from "@/components/ui/checkbox"
+    ESessionType,
+} from "@/modules/session-results/features/results-table/types"
+import { Checkbox } from "@radix-ui/react-checkbox"
+import { createColumnHelper } from "@tanstack/react-table"
 import Link from "next/link"
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()

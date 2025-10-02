@@ -1,4 +1,4 @@
-import type { TSeasonEvent } from "./fetcher"
+import type { TSeasonEvent } from '@/modules/SeasonCalendar/fetcher/fetcher'
 import type { TMappedSeasonEvent } from "./types"
 
 export const mapSeasonEvents = (event: TSeasonEvent): TMappedSeasonEvent => {

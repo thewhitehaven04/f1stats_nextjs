@@ -1,27 +1,12 @@
 "use client"
-import Link from "next/link"
 import getUnicodeFlagIcon from "country-flag-icons/unicode"
 import { format } from "date-fns/format"
 import { useParams } from "next/navigation"
-import type { TMappedSeasonEvent } from "../../../app/season/[season]/fetcher/types"
-import type { ComponentProps } from "react"
 import { Button } from '@/uiComponents/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/uiComponents/card'
+import type { TMappedSeasonEvent } from '@/modules/SeasonCalendar/fetcher/types'
+import { OfflineAwareLink } from '@/shared/components/OfflineAwareLink'
 
-const OfflineAwareLink = (props: ComponentProps<typeof Link>) => {
-    return (
-        <Link
-            {...props}
-            onNavigate={(evt) => {
-                window.navigator.onLine
-                    ? props.onNavigate
-                        ? props.onNavigate(evt)
-                        : null
-                    : evt.preventDefault()
-            }}
-        />
-    )
-}
 
 export const EventCard = (props: TMappedSeasonEvent) => {
     const { country, dateStart, name, officialName, sessions, format: eventFormat } = props

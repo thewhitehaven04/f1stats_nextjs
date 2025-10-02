@@ -1,15 +1,11 @@
 import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
-import { TeamSeasonFormChart } from "@/modules/TeamSeasonResults/features/form-chart/TeamSeasonFormChart"
-import { TeamSeasonFormSection } from "@/modules/TeamSeasonResults/features/form-table/TeamSeasonFormTable"
-import { fetchTeamSeasonForm } from "@/modules/TeamSeasonResults/fetcher"
+import { TeamSeasonFormChart } from '@/modules/team-season-results/features/form-chart/TeamSeasonFormChart'
+import { TeamSeasonFormSection } from '@/modules/team-season-results/features/form-table/TeamSeasonFormTable'
+import type { fetchTeamSeasonForm } from '@/modules/team-season-results/fetcher'
 import { Suspense } from "react"
 
-export async function TeamSeasonResultsScreen(props: { season: string; team: string }) {
-    const { season, team } = props
-    const { teamName, eventPoints, seasonEvents, driverCount } = await fetchTeamSeasonForm(
-        season,
-        team,
-    )
+export async function TeamSeasonResultsScreen(props: ReturnType<typeof fetchTeamSeasonForm>) {
+    const { eventPoints, seasonEvents, driverCount, teamName } = await props
 
     return (
         <div className="flex flex-col gap-4">
@@ -18,7 +14,7 @@ export async function TeamSeasonResultsScreen(props: { season: string; team: str
                 events={seasonEvents}
                 driverCount={driverCount}
             >
-                {teamName} {season} form
+                {teamName} form
             </TeamSeasonFormSection>
             <Suspense fallback={<LoadingSpinner />}>
                 <TeamSeasonFormChart

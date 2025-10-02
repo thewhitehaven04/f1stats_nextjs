@@ -1,5 +1,9 @@
 "use client"
 
+import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from '@/modules/session-results/features/results-table/columns'
+import type { ESessionType, IBaseResultsData } from '@/modules/session-results/features/results-table/types'
+import { TooltipButton } from '@/shared/components/TooltipButton'
+import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/uiComponents/table'
 import {
     flexRender,
     getCoreRowModel,
@@ -7,17 +11,7 @@ import {
     type ColumnDef,
     type RowData,
 } from "@tanstack/react-table"
-import type { ESessionType, IBaseResultsData } from "./types"
-import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from "./constants"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { TooltipButton } from "../../laps/components/Tabs/Analysis/LapsTableSection/components/TooltipButton"
+import { Table } from 'lucide-react'
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
 }

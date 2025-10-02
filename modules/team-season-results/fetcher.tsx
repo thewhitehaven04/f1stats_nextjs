@@ -1,5 +1,5 @@
 import dbClient from '@/shared/client/db'
-import type { TSessionResultResponse } from './types'
+import type { TDriverRow, TSessionResultResponse } from './types'
 // TODO: replace it with a proper model
 export const fetchTeamSeasonForm = async (season: string, team: string) => {
     const parsedTeam = Number.parseInt(team)

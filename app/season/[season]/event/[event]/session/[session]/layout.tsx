@@ -1,5 +1,5 @@
 import { format } from "date-fns/format"
-import dbClient from "../../../../../../../shared/client/db"
+import dbClient from "@/shared/client/db"
 import type { ISessionPathnameParams } from "./types"
 import { SummaryItem } from "./SummaryItem"
 import { Suspense } from "react"
