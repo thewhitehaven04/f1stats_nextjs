@@ -6,14 +6,14 @@ import {
     getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
     type SessionQuery,
-} from "@/client/generated"
+} from "../../../../../../../../../../../../shared/client/generated"
 import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { Button } from "@/components/ui/button"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { ApiClient } from "@/client"
+import { ApiClient } from "../../../../../../../../../../../../shared/client"
 import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
 import type { TSession } from "../../../../../hooks/useSession"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"

@@ -7,7 +7,7 @@
         "next-dev": "next dev",
         "dev": "concurrently \"yarn run next-dev\" \"yarn run fastapi-dev\"",
         "lint": "next lint",
-        "fetch-api": "node ./src/client/apiGenerator/saveSpec.mjs",
+        "fetch-api": "node ./shared/client/apiGenerator/saveSpec.mjs",
         "update-api": "openapi-ts",
         "build": "yarn prisma db pull --schema ./prisma/schema.prisma && yarn prisma generate --schema ./prisma/schema.prisma && next build"
     },

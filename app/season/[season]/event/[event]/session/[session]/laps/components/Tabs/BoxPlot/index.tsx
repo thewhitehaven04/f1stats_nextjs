@@ -4,7 +4,7 @@ import { StintSelector } from "../../StintSelector"
 import { LapsBoxChart } from "./Chart"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"
-import type { SessionLapsData } from '@/client/generated'
+import type { SessionLapsData } from '../../../../../../../../../../../shared/client/generated'
 
 initGlobalChartConfig()
 

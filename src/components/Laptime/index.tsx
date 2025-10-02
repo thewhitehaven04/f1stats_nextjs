@@ -1,5 +1,5 @@
 import { NaLabel } from '@/components/ValueOrNa'
-import { formatTime } from '@/core/helpers/formatTime'
+import { formatTime } from '../../../shared/helpers/formatTime'
 import clsx from "clsx"
 import type { HTMLAttributes } from "react"
 export interface ILaptimeProps extends HTMLAttributes<HTMLDivElement> {

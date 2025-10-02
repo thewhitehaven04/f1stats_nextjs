@@ -4,7 +4,7 @@ import type { ComponentProps } from "react"
 import type { ChartProps, Chart } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
-import { ThemedChart } from "@/components/Chart/ThemedChart"
+import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 
 initGlobalChartConfig()
 

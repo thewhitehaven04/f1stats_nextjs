@@ -1,4 +1,4 @@
-import type { Compound } from "@/client/generated"
+import type { Compound } from "../../../../../../../../../../shared/client/generated"
 
 export const TYRE_COLOR_MAP: Record<Compound, string> = {
     SOFT: "#e32526",

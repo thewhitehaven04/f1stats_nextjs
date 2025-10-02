@@ -1,10 +1,10 @@
-import { SeasonSelector } from "../../components/SeasonSelector"
-import { SessionSearch } from "../../components/SessionSearch"
-import { ThemeSelector } from "../../components/ThemeSelector"
-import { fetchEventsWithSessions, type TSeasonEvent } from "./fetcher/fetcher"
-import { Footer } from "./Footer"
-import { Header } from "./Header"
-import { PushNotificationManager } from "@/components/PushNotificationManager"
+import { ThemeSelector } from '@/shared/components/header/components/ThemeSelector'
+import { fetchEventsWithSessions } from "./fetcher/fetcher"
+import { PushNotificationManager } from "@/shared/components/header/components/PushNotificationManager"
+import { Footer } from '@/shared/components/footer'
+import { Header } from '@/shared/components/header'
+import { SeasonSelector } from '@/shared/components/header/components/SeasonSelector'
+import { SessionSearch } from '@/shared/components/header/components/SessionSearch'
 
 export default async function Layout({
     children,

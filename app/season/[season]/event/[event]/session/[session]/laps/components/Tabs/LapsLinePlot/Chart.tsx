@@ -2,13 +2,13 @@
 import type { TooltipItem } from "chart.js"
 import type { ComponentProps } from "react"
 import type { ChartProps } from "react-chartjs-2"
-import { formatTime } from "@/core/helpers/formatTime"
+import { formatTime } from "../../../../../../../../../../../shared/helpers/formatTime"
 import { merge } from "ts-deepmerge"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { TYRE_COLOR_MAP } from "../../helpers/colorMap"
 import { getAlternativeColor } from "../../helpers/getAlternativeColor"
 import type { TLapsLinePlotDataset, TLinePlotTabBoxChartDataset } from "./LinePlotTab"
-import { ThemedChart } from "@/components/Chart/ThemedChart"
+import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 
 initGlobalChartConfig()
 

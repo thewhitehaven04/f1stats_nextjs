@@ -1,4 +1,4 @@
-import type { SessionLapsData } from "@/client/generated"
+import type { SessionLapsData } from "../../../../../../../../../../../shared/client/generated"
 import { useMemo, useState } from "react"
 import { LapsTableSection } from "./LapsTableSection"
 import dynamic from "next/dynamic"

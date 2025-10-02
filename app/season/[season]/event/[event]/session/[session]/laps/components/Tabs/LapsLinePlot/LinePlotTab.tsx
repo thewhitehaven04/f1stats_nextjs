@@ -1,7 +1,7 @@
 "use client"
 import { useMemo, useState } from "react"
 import { LineLapsChart } from "./Chart"
-import type { Compound, PlotColor, SessionLapsData } from "@/client/generated"
+import type { Compound, PlotColor, SessionLapsData } from "../../../../../../../../../../../shared/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
 import { StintSelector } from "../../StintSelector"

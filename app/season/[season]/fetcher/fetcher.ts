@@ -1,4 +1,4 @@
-import dbClient from "@/client/db"
+import dbClient from "../../../../shared/client/db"
 import { cache } from "react"
 export const fetchEventsWithSessions = cache(async (season: string) => {
     return (

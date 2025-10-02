@@ -1,11 +1,11 @@
 "use client"
-import { formatTime } from "@/core/helpers/formatTime"
+import { formatTime } from "../../../../../../../../../../../shared/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
 import { Chart } from "react-chartjs-2"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { getColorFromColorMap } from "@/components/Chart/helpers"
-import type { SessionLapsData } from "@/client/generated"
+import type { SessionLapsData } from "../../../../../../../../../../../shared/client/generated"
 initGlobalChartConfig()
 
 export function LapsBoxChart({

@@ -1,6 +1,6 @@
 import { useParams } from "next/navigation"
 import { z } from "zod"
-import type { GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData } from "@/client/generated"
+import type { GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData } from "../../../../../../../../shared/client/generated"
 
 export type TSession =
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData["path"]["session"]

@@ -1,5 +1,5 @@
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
-import type { CircuitGeometryDto, FastestDelta } from "@/client/generated"
+import type { CircuitGeometryDto, FastestDelta } from "../../../shared/client/generated"
 
 const padding = 16
 const MAX_DIMENSION = Math.min(480, document.body.getBoundingClientRect().width - padding)

@@ -7,12 +7,12 @@ import {
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
     type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
     type SessionQuery,
-} from "@/client/generated"
+} from "../../../../../../../../../../../../shared/client/generated"
 import type { TTelemetryDataset } from "../ChartSection"
 import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { Button } from "@/components/ui/button"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { ApiClient } from "@/client"
+import { ApiClient } from "../../../../../../../../../../../../shared/client"
 import { getAlternativeColor } from "../../../helpers/getAlternativeColor"
 import { DeltaCircuitMap } from '@/components/CircuitSection/CircuitMap'
 import type { TSession } from '../../../../../hooks/useSession'

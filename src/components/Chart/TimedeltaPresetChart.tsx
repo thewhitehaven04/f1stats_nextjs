@@ -2,7 +2,7 @@ import type { Chart, ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartSection"
 import type { ComponentProps } from "react"
-import { ThemedChart } from "@/components/Chart/ThemedChart"
+import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 
 export const TimedeltaPresetChart = (
     props: Omit<ComponentProps<typeof Chart>, "type"> & {

@@ -1,7 +1,7 @@
 "use client"
 import { createColumnHelper, type CellContext } from "@tanstack/react-table"
 import { memo, useContext, useMemo } from "react"
-import type { LapTimingData, SessionLapsData } from "@/client/generated"
+import type { LapTimingData, SessionLapsData } from "../../../../../../../../../../../../shared/client/generated"
 import { Speedtrap } from "@/components/Speedtrap"
 import { SectorTime } from "@/components/SectorTime"
 import { NaLabel } from "@/components/ValueOrNa"

@@ -19,6 +19,9 @@
             }
         ],
         "paths": {
+            "@/uiComponents/*": ["./shared/components/ui/*"],
+            "@/shared/*": ["./shared/*"],
+            "@/modules/*": ["./modules/*"],
             "@/*": ["./src/*"],
         },
         "target": "ES2017"

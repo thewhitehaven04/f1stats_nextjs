@@ -6,12 +6,12 @@ import { AnalysisTab } from "./Analysis"
 import {
     getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
     type SessionQuery,
-} from "@/client/generated"
+} from "../../../../../../../../../../shared/client/generated"
 import dynamic from "next/dynamic"
 import { ChartLoading } from "./Analysis/ChartLoading"
 import { useSession } from "../../../hooks/useSession"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { ApiClient } from "@/client"
+import { ApiClient } from "../../../../../../../../../../shared/client"
 
 const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string) => {
     const search = new URLSearchParams(readOnlySearch)
