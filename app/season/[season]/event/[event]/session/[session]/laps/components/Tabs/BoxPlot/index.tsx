@@ -1,6 +1,6 @@
 "use client"
 import { useMemo, useState } from "react"
-import { StintSelector } from "../../StintSelector"
+import { StintSelector } from "../../../../../../../../../../../shared/components/stint-selector/StintSelector"
 import { LapsBoxChart } from "./Chart"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { Button } from "@/components/ui/button"

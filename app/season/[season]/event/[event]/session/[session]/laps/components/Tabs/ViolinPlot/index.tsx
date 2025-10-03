@@ -10,11 +10,7 @@ import {
 import { useMemo, useState } from "react"
 import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
 import { initGlobalChartConfig } from "@/components/Chart/config"
-import { Button } from "@/components/ui/button"
-import { getColorFromColorMap } from "@/components/Chart/helpers"
-import { formatTime } from "../../../../../../../../../../../shared/helpers/formatTime"
 import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
-import type { SessionLapsData } from "../../../../../../../../../../../shared/client/generated"
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()

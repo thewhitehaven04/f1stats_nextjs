@@ -4,8 +4,8 @@ import { format } from "date-fns/format"
 import { useParams } from "next/navigation"
 import { Button } from '@/uiComponents/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/uiComponents/card'
-import type { TMappedSeasonEvent } from '@/modules/SeasonCalendar/fetcher/types'
 import { OfflineAwareLink } from '@/shared/components/OfflineAwareLink'
+import type { TMappedSeasonEvent } from '../models/types'
 
 
 export const EventCard = (props: TMappedSeasonEvent) => {

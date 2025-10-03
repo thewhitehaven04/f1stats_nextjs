@@ -4,7 +4,7 @@ import { LineLapsChart } from "./Chart"
 import type { Compound, PlotColor, SessionLapsData } from "../../../../../../../../../../../shared/client/generated"
 import type { ChartData } from "chart.js"
 import { Button } from "@/components/ui/button"
-import { StintSelector } from "../../StintSelector"
+import { StintSelector } from "../../../../../../../../../../../shared/components/stint-selector/StintSelector"
 
 export type TLapsLinePlotDataset = {
     x: number

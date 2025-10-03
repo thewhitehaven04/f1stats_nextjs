@@ -6,7 +6,7 @@ import { formatTime } from "../../../../../../../../../../../shared/helpers/form
 import { merge } from "ts-deepmerge"
 import { initGlobalChartConfig } from "@/components/Chart/config"
 import { TYRE_COLOR_MAP } from "../../helpers/colorMap"
-import { getAlternativeColor } from "../../helpers/getAlternativeColor"
+import { getAlternativeColor } from "../../../../../../../../../../../shared/components/themed-chart/getAlternativeColor"
 import type { TLapsLinePlotDataset, TLinePlotTabBoxChartDataset } from "./LinePlotTab"
 import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 

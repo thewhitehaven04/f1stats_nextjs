@@ -1,4 +1,4 @@
-import type { SessionQuery } from "../../../../../../../../../../../shared/client/generated"
+import type { SessionQuery } from '@/shared/client/generated'
 import type { TLapSelectionInstance } from "./LapsTableSection/hooks/useLapSelection"
 import type { TGroup } from "./LapsTableSection/hooks/useSelectionGroups"
 

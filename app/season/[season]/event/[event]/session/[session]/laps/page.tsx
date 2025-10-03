@@ -1,4 +1,4 @@
-import { LapsTabs } from "./components/Tabs/tabs"
+import { LapsScreen } from '@/modules/session-laps/LapsScreen'
 import type { ISessionPathnameParams } from "../types"
 import type { Metadata } from "next"
 
@@ -13,5 +13,5 @@ export async function generateMetadata({
 }
 
 export default async function LapsPage() {
-    return <LapsTabs />
+    return <LapsScreen />
 }

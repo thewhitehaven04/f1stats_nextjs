@@ -1,5 +1,5 @@
-import type { TMappedSeasonEvent } from '@/modules/SeasonCalendar/fetcher/types'
 import { EventCard } from './features/EventCard'
+import type { TMappedSeasonEvent } from './models/types'
 
 export const SeasonCalendarScreen = ({ events }: { events: TMappedSeasonEvent[] }) => {
     const testingEvents = events.filter((event) => event.format === "testing")

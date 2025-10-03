@@ -1,7 +1,7 @@
-import { fetchSessionResults } from '@/modules/session-results/fetcher'
+import { SessionResultsScreen } from '@/modules/session-results/SessionResultsScreen'
 import type { ISessionPathnameParams } from "../types"
 import type { Metadata } from "next"
-import { SessionResultsScreen } from '@/modules/session-results/SessionResultsScreen'
+import { fetchSessionResults } from '@/modules/session-results/models/session-results'
 
 export async function generateMetadata({
     params,

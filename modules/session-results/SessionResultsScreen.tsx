@@ -2,7 +2,7 @@ import Form from "next/form"
 import { ResultsTable } from "./features/results-table/ResultsTable"
 import type { ComponentProps } from "react"
 import { ESessionType, type IPracticeData, type IQualifyingData, type IRaceData } from "./features/results-table/types"
-import type { TFetchSessionResults } from "./fetcher"
+import type { TFetchSessionResults } from "./models/session-results"
 
 export const SessionResultsScreen = (props: {
     sessionResults: TFetchSessionResults

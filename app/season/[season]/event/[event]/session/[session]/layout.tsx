@@ -1,88 +1,16 @@
-import { format } from "date-fns/format"
-import dbClient from "@/shared/client/db"
+import { fetchSessionInformation } from "@/modules/session-information/models/session-information"
 import type { ISessionPathnameParams } from "./types"
-import { SummaryItem } from "./SummaryItem"
-import { Suspense } from "react"
-import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
-import { LucideDroplets, LucideThermometer, LucideThermometerSun, LucideTimer } from "lucide-react"
+import { SessionInformation } from "@/modules/session-information/features/session-information/SessionInformation"
 
-const fetchSessionDataWithWeather = async (session: string, season: number, event: string) => {
-    const eventSession = await dbClient.event_sessions.findFirstOrThrow({
-        where: {
-            session_type_id: session,
-            season_year: season,
-            event_name: event,
-        },
-        include: {
-            session_weather_measurements: true,
-            events: true,
-        },
-    })
-    const sessionData = {
-        sessionType: eventSession.session_type_id,
-        startTime: eventSession.start_time,
-        endTime: eventSession.end_time,
-        eventName: eventSession.events.event_name,
-        eventOfficialName: eventSession.events.event_official_name,
-    }
-
-    const endIndex = eventSession.session_weather_measurements.length - 1
-    const weather = {
-        airTempStart: eventSession.session_weather_measurements[0].air_temp,
-        airTempEnd: eventSession.session_weather_measurements[endIndex].air_temp,
-        trackTempStart: eventSession.session_weather_measurements[0].track_temp,
-        trackTempEnd: eventSession.session_weather_measurements[endIndex].track_temp,
-        humidityStart: eventSession.session_weather_measurements[0].humidity,
-        humidityEnd: eventSession.session_weather_measurements[endIndex].humidity,
-        airPressureStart: eventSession.session_weather_measurements[0].air_pressure,
-        airPressureEnd: eventSession.session_weather_measurements[endIndex].air_pressure,
-    }
-    return { sessionData, weather }
-}
-
-export default async function SummaryLayout({
+export default async function SessionLayout({
     params,
     children,
 }: { params: Promise<ISessionPathnameParams>; children: React.ReactNode }) {
     const { season, session, event } = await params
-    const { sessionData, weather } = await fetchSessionDataWithWeather(
+    const sessionInformation = await fetchSessionInformation(
         decodeURIComponent(session),
         Number.parseInt(season),
         decodeURIComponent(event),
     )
-    return (
-        <>
-            <section className="flex flex-col gap-2 w-full overflow-x-visible">
-                <h1 className="text-xl font-medium">
-                    {sessionData.eventName} - {sessionData.sessionType}
-                </h1>
-                <div className="grid grid-cols-2 gap-4">
-                    <SummaryItem
-                        icon={<LucideTimer size={32} />}
-                        label="Session time"
-                        value={`${format(sessionData.startTime, "MMM dd, yyyy HH:MM")} — ${format(sessionData.endTime, "HH:MM")}`}
-                    />
-
-                    <SummaryItem
-                        icon={<LucideThermometerSun size={32} />}
-                        label="Air temp"
-                        value={`${weather.airTempStart} — ${weather.airTempEnd}°C`}
-                    />
-
-                    <SummaryItem
-                        icon={<LucideThermometer size={32} />}
-                        label="Tarmac temp"
-                        value={`${weather.trackTempStart} — ${weather.trackTempEnd}°C`}
-                    />
-
-                    <SummaryItem
-                        icon={<LucideDroplets size={32} />}
-                        label="Humidity"
-                        value={`${weather.humidityStart} — ${weather.humidityEnd}%`}
-                    />
-                </div>
-            </section>
-            <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
-        </>
-    )
+    return <SessionInformation {...sessionInformation}>{children}</SessionInformation>
 }

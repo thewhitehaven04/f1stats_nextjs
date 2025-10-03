@@ -1,11 +1,11 @@
 "use client"
 import { PopupCard } from "@/components/PopupCard"
+import type { TSeasonEvent } from '@/modules/season-calendar/models/types'
+import { useDebouncedState } from '@/shared/hooks/useDebouncedState'
+import { Input } from '@/uiComponents/input'
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useMemo, useState } from "react"
-import { Input } from "@/components/ui/input"
-import { useDebouncedState } from "../../../shared/hooks/useDebouncedState"
-import type { TSeasonEvent } from "../../../app/season/[season]/fetcher/fetcher"
 
 export const SessionSearch = ({ events }: { events: TSeasonEvent[] }) => {
     const { season } = useParams<{ season: string }>()
