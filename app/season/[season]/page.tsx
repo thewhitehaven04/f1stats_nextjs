@@ -1,7 +1,7 @@
-import dbClient from "../../../shared/client/db"
-import { SeasonCalendarScreen } from "../../../modules/SeasonCalendar/SeasonCalendarScreen"
 import type { Metadata } from "next"
-import { fetchSeasonEvents } from '@/modules/SeasonCalendar/fetcher'
+import dbClient from "@/shared/client/db"
+import { SeasonCalendarScreen } from "@/modules/season-calendar/SeasonCalendarScreen"
+import { getSeasonEvents } from "@/modules/season-calendar/models/season-events"
 
 // revalidate calendar data every 30 minutes
 export const revalidate = 1800
@@ -28,6 +28,6 @@ export async function generateStaticParams() {
 }
 
 export default async function SeasonPage({ params }: { params: Promise<{ season: string }> }) {
-    const events = await fetchSeasonEvents({ season: (await params).season })
+    const events = await getSeasonEvents({ season: (await params).season })
     return <SeasonCalendarScreen events={events} />
 }

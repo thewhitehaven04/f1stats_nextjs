@@ -2,17 +2,17 @@ import { useTheme } from "next-themes"
 import { useEffect, useRef, type ComponentProps } from "react"
 import { Chart } from "react-chartjs-2"
 import type { Chart as ChartJS, ChartTypeRegistry } from "chart.js"
-import { getCssVar } from "@/components/Chart/config"
 import { merge } from "ts-deepmerge"
 import clsx from "clsx"
-import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
+import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
+import { getCssVar } from './config'
 
 export const ThemedChart = (
     props: ComponentProps<typeof Chart> & {
         hasData: boolean
-        noDataMessage: string
-        isUpdatingData: boolean
-    },
+        noDataMessage?: string
+        isUpdatingData?: boolean
+    }
 ) => {
     const { theme } = useTheme()
 

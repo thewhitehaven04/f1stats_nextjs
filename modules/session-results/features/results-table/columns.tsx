@@ -1,7 +1,7 @@
-import { Gap } from "@/components/Gap"
-import { Laptime } from "@/components/Laptime"
-import { SectorTime } from "@/components/SectorTime"
-import { NaLabel, ValueOrNa } from "@/components/ValueOrNa"
+import { Gap } from "@/modules/session-results/features/results-table/components/Gap"
+import { Laptime } from "@/shared/components/laptime/Laptime"
+import { SectorTime } from "@/shared/components/sector-time/SectorTime"
+import { NaLabel, ValueOrNa } from "@/shared/components/ValueOrNa"
 import {
     type IBaseResultsData,
     type IPracticeData,
@@ -9,9 +9,9 @@ import {
     type IRaceData,
     ESessionType,
 } from "@/modules/session-results/features/results-table/types"
-import { Checkbox } from "@radix-ui/react-checkbox"
 import { createColumnHelper } from "@tanstack/react-table"
 import Link from "next/link"
+import { Checkbox } from '@/uiComponents/checkbox'
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()
 const practiceHelper = createColumnHelper<IPracticeData>()

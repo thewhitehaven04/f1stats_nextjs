@@ -1,12 +1,12 @@
 "use client"
-import { Separator } from "@radix-ui/react-select"
 import { Plus } from "lucide-react"
-import type { TGroup } from "../hooks/useSelectionGroups"
 import Color from "color"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { Button } from '@/uiComponents/button'
 import { Input } from '@/uiComponents/input'
 import { Badge } from '@/uiComponents/badge'
+import type { TGroup } from '@/modules/lap-telemetry/models/types'
+import { Separator } from '@radix-ui/react-select'
 
 export const SelectionCard = ({
     groups,

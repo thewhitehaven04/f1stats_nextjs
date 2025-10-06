@@ -1,10 +1,9 @@
-import { initGlobalChartConfig } from "@/components/Chart/config"
-import clsx from "clsx"
 import type { Chart, ChartProps } from "react-chartjs-2"
 import { merge } from "ts-deepmerge"
 import type { TTelemetryDataset } from "../features/per-lap-telemetry/PerLapTelemetryComparisonView"
 import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 import type { ComponentProps } from "react"
+import { initGlobalChartConfig } from '@/shared/components/themed-chart/config'
 initGlobalChartConfig()
 
 export const TelemetryPresetChart = (

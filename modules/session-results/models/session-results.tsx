@@ -1,4 +1,4 @@
-import dbClient from "../../../shared/client/db"
+import dbClient from "@/shared/client/db"
 
 export const fetchSessionResults = async (season: string, event: string, session: string) => {
     const { start_time: sessionStartTime } = await dbClient.event_sessions.findFirstOrThrow({

@@ -1,22 +1,21 @@
 "use client"
 import type { Chart, ChartDataset, ChartTypeRegistry } from "chart.js"
 import { useCallback, useMemo, useRef } from "react"
-import {
-    getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
-    getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
-    type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
-    type SessionQuery,
-} from "../../../../shared/client/generated"
-import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
-import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
-import { getColorFromColorMap } from "@/components/Chart/helpers"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { ApiClient } from "../../../../shared/client"
-import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
-import type { TSession } from "../../../../app/season/[season]/event/[event]/session/[session]/hooks/useSession"
-import { getAlternativeColor } from "../../../../shared/components/themed-chart/getAlternativeColor"
-import { Button } from '@/uiComponents/button'
+import { DeltaCircuitMap } from "@/modules/lap-telemetry/components/DeltaCircuitMap"
+import { Button } from "@/uiComponents/button"
+import { getAlternativeColor, getColorFromColorMap } from "@/shared/components/themed-chart/helpers"
+import { TimedeltaPresetChart } from "../../components/TimedeltaPresetChart"
+import { SpeedtracePresetChart } from "../../components/SpeedtracePresetChart"
+import { TelemetryPresetChart } from "../../components/TelemetryPresetChart"
+import {
+    type SessionQuery,
+    type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
+    getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
+    getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
+} from "@/shared/client/generated"
+import { ApiClient } from "@/shared/client"
+import type { TSession } from '@/shared/hooks/useSession'
 
 export type TTelemetryDataset = ChartDataset<
     "scatter",

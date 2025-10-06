@@ -1,6 +1,6 @@
 import { Button } from '@/uiComponents/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip"
 import type { ComponentProps } from "react"
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 export const TooltipButton = (props: ComponentProps<typeof Button> & { tooltipText: string }) => {
     const { tooltipText, disabled, ...buttonProps } = props

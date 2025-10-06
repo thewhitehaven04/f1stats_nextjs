@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnVisibilityButton } from "@/components/Table/Toolbars/ColumnVisibilityButton"
+import { ColumnVisibilityButton } from "@/shared/components/table/toolbars/ColumnVisibilityButton"
 import {
     flexRender,
     type TableOptions,
@@ -8,17 +8,17 @@ import {
     getCoreRowModel,
 } from "@tanstack/react-table"
 import { memo, useEffect, useRef, useState, type ReactNode } from "react"
-import type { ILapData } from "../../../../../../../../../../../../../modules/lap-telemetry/features/lap-selector-table/LapSelectorTable"
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { TableContext } from "@/components/Table/context"
+import { TableContext } from "@/shared/components/table/context"
 import clsx from "clsx"
-import { Button } from "@/components/ui/button"
+import type { ITableLapData } from "../models/types"
+import type { Button } from "@/uiComponents/button"
+import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/uiComponents/table"
 
 function lapsTable(
-    props: Omit<TableOptions<ILapData>, "getCoreRowModel"> & { children?: ReactNode },
+    props: Omit<TableOptions<ITableLapData>, "getCoreRowModel"> & { children?: ReactNode },
 ) {
     const { children, ...options } = props
-    const table = useReactTable<ILapData>({
+    const table = useReactTable<ITableLapData>({
         ...options,
         initialState: {
             ...options.initialState,

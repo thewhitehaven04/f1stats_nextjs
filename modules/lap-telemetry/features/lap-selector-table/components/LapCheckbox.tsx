@@ -1,10 +1,13 @@
-import type { CellContext } from '@tanstack/react-table'
-import type { ILapData } from '../../../../../../../../../../../../../modules/lap-telemetry/features/lap-selector-table/LapSelectorTable'
+import { LapSelectionContext } from "@/modules/lap-telemetry/context/lap-selection-context"
+import { Checkbox } from "@/uiComponents/checkbox"
+import type { CellContext } from "@tanstack/react-table"
+import { useContext } from "react"
+import type { ITableLapData } from "../models/types"
 
 export const LapCheckbox = ({
     cell,
     driverName,
-}: { cell: CellContext<ILapData, unknown>; driverName: string }) => {
+}: { cell: CellContext<ITableLapData, unknown>; driverName: string }) => {
     const lap = cell.row.index + 1
     const { updateLapSelection, activeGroup, isLapSelected, tab } = useContext(LapSelectionContext)
     const isSelected = isLapSelected(driverName, lap)

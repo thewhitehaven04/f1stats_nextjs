@@ -3,7 +3,7 @@
 import { SESSION_TYPE_TO_RESULT_COLUMN_MAP } from '@/modules/session-results/features/results-table/columns'
 import type { ESessionType, IBaseResultsData } from '@/modules/session-results/features/results-table/types'
 import { TooltipButton } from '@/shared/components/TooltipButton'
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/uiComponents/table'
+import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from '@/uiComponents/table'
 import {
     flexRender,
     getCoreRowModel,
@@ -11,7 +11,6 @@ import {
     type ColumnDef,
     type RowData,
 } from "@tanstack/react-table"
-import { Table } from 'lucide-react'
 export interface IResultsTableProps<T extends RowData> {
     rows: T[]
 }

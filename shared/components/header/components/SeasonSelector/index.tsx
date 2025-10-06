@@ -1,12 +1,7 @@
 "use client"
+import { Select, SelectContent, SelectItem, SelectValue } from "@/uiComponents/select"
+import { SelectTrigger } from "@radix-ui/react-select"
 import { useParams, useRouter } from "next/navigation"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 const SUPPORTED_SEASONS = ["2024", "2025"]
 
 export const SeasonSelector = () => {

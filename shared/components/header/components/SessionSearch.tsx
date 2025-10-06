@@ -1,5 +1,5 @@
 "use client"
-import { PopupCard } from "@/components/PopupCard"
+import { PopupCard } from "@/shared/components/PopupCard"
 import type { TSeasonEvent } from '@/modules/season-calendar/models/types'
 import { useDebouncedState } from '@/shared/hooks/useDebouncedState'
 import { Input } from '@/uiComponents/input'

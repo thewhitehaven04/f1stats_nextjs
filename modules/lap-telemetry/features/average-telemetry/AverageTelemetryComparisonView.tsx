@@ -1,10 +1,7 @@
 import type { Chart, ChartTypeRegistry } from "chart.js"
 import { useCallback, useMemo, useRef } from "react"
-import { TelemetryPresetChart } from "@/components/Chart/TelemetryPresetChart"
-import { SpeedtracePresetChart } from "@/components/Chart/SpeedtracePresetChart"
-import { TimedeltaPresetChart } from "@/components/Chart/TimedeltaPresetChart"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { DeltaCircuitMap } from "@/components/CircuitSection/CircuitMap"
+import { DeltaCircuitMap } from "@/modules/lap-telemetry/components/DeltaCircuitMap"
 import { ApiClient } from "@/shared/client"
 import {
     type SessionQuery,
@@ -12,10 +9,13 @@ import {
     getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
 } from "@/shared/client/generated"
-import type { TSession } from "../../../../app/season/[season]/event/[event]/session/[session]/hooks/useSession"
-import { getAlternativeColor } from "../../../../shared/components/themed-chart/getAlternativeColor"
+import type { TSession } from "../../../../shared/hooks/useSession"
 import type { TTelemetryDataset } from "../per-lap-telemetry/PerLapTelemetryComparisonView"
 import { Button } from "@/uiComponents/button"
+import { getAlternativeColor } from '@/shared/components/themed-chart/helpers'
+import { SpeedtracePresetChart } from '../../components/SpeedtracePresetChart'
+import type { TelemetryPresetChart } from '../../components/TelemetryPresetChart'
+import { TimedeltaPresetChart } from '../../components/TimedeltaPresetChart'
 
 function AverageTelemetryComparisonView(props: {
     queries: SessionQuery[]

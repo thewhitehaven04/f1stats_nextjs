@@ -1,18 +1,42 @@
 "use client"
 import { createColumnHelper } from "@tanstack/react-table"
 import { memo, useMemo } from "react"
-import { Speedtrap } from "@/components/Speedtrap"
-import { SectorTime } from "@/components/SectorTime"
-import { NaLabel } from "@/components/ValueOrNa"
-import { Laptime } from "@/components/Laptime"
+import { Speedtrap } from "@/shared/components/speedtrap/Speedtrap"
+import { SectorTime } from "@/shared/components/sector-time/SectorTime"
+import { NaLabel } from "@/shared/components/ValueOrNa"
+import { Laptime } from "@/shared/components/laptime/Laptime"
 import type { SessionLapsData } from "@/shared/client/generated"
-import type { ITableLapData } from './models/types'
-import { mapLapsToTableLapData } from './models/table-lap-data'
-import { LapsTable } from './components/LapsTable'
-import { getTyreComponentByCompound } from '../../../../app/season/[season]/event/[event]/session/[session]/laps/components/helpers/getTyreIconByCompound'
-import { LapCheckbox } from './components/LapCheckbox'
+import type { ITableLapData } from "./models/types"
+import { mapLapsToTableLapData } from "./models/table-lap-data"
+import { LapsTable } from "./components/LapsTable"
+import { LapCheckbox } from "./components/LapCheckbox"
+import { LapsTableTelemetryTutorial } from "./components/TelemetryTutorial"
+import type { ITyreIconProps } from "@/shared/components/icons/tyres/types"
+import { SoftTyreIcon } from "@/shared/components/icons/tyres/Soft"
+import { MediumTyreIcon } from "@/shared/components/icons/tyres/Medium"
+import { HardTyreIcon } from "@/shared/components/icons/tyres/Hard"
+import { IntermediateTyreIcon } from "@/shared/components/icons/tyres/Intermediate"
+import { WetTyreIcon } from "@/shared/components/icons/tyres/Wet"
 export const columnHelper = createColumnHelper<ITableLapData>()
 
+export function getTyreComponentByCompound(
+    compound: string | null,
+): React.FunctionComponent<ITyreIconProps> | null {
+    switch (compound) {
+        case "SOFT":
+            return SoftTyreIcon
+        case "MEDIUM":
+            return MediumTyreIcon
+        case "HARD":
+            return HardTyreIcon
+        case "INTERMEDIATE":
+            return IntermediateTyreIcon
+        case "WET":
+            return WetTyreIcon
+        default:
+            return null
+    }
+}
 
 function LapSelectorTable(props: { laps: SessionLapsData }) {
     const { laps } = props

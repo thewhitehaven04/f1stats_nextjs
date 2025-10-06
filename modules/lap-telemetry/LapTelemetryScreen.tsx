@@ -1,25 +1,31 @@
-import type { SessionLapsData } from "../../shared/client/generated"
 import { useMemo, useState } from "react"
 import { LapsTableSection } from "./features/lap-selector-table/LapSelectorTable"
 import dynamic from "next/dynamic"
-import { useLapSelection } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/LapsTableSection/hooks/useLapSelection"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useSession } from "../../app/season/[season]/event/[event]/session/[session]/hooks/useSession"
-import { ChartLoading } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/ChartLoading"
-import { useSelectionGroups } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/LapsTableSection/hooks/useSelectionGroups"
-import { SelectionCard } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/LapsTableSection/components/SelectionCard"
-import { getQueries } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/helpers"
-import { LapSelectionContext } from "../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/LapsTableSection/context"
+import { useLapSelection } from "./hooks/useLapSelection"
+import { useSelectionGroups } from "./hooks/useSelectionGroups"
+import { getQueries } from "./helpers"
+import { LapSelectionContext } from "./context/lap-selection-context"
+import { SelectionCard } from "./features/lap-selector-table/components/SelectionCard"
+import { ChartLoadingIndicator } from "./components/ChartLoadingIndicator"
+import { useSession } from "@/shared/hooks/useSession"
+import type { SessionLapsData } from "@/shared/client/generated"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/uiComponents/tabs'
 
-const AverageTelemetrySection = dynamic(() => import("../../app/season/[season]/event/[event]/session/[session]/laps/components/Tabs/Analysis/AverageTelemetrySection/index"), {
-    ssr: false,
-    loading: () => <ChartLoading />,
-})
+const AverageTelemetrySection = dynamic(
+    () => import("./features/average-telemetry/AverageTelemetryComparisonView"),
+    {
+        ssr: false,
+        loading: () => <ChartLoadingIndicator />,
+    },
+)
 
-const TelemetryChartSection = dynamic(() => import("./features/per-lap-telemetry/PerLapTelemetryComparisonView"), {
-    ssr: false,
-    loading: () => <ChartLoading />,
-})
+const TelemetryChartSection = dynamic(
+    () => import("./features/per-lap-telemetry/PerLapTelemetryComparisonView"),
+    {
+        ssr: false,
+        loading: () => <ChartLoadingIndicator />,
+    },
+)
 
 export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
     const { selection, updateSelection, resetSelection } = useLapSelection()

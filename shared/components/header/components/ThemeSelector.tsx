@@ -1,6 +1,6 @@
 "use client"
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from '@/uiComponents/toggle-group'
 import { LucideMoon, LucideSettings, LucideSun } from "lucide-react"
 import { useTheme } from "next-themes"
 

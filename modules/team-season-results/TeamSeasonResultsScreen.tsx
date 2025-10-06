@@ -1,4 +1,4 @@
-import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
+import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
 import { TeamSeasonFormChart } from '@/modules/team-season-results/features/form-chart/TeamSeasonFormChart'
 import { TeamSeasonFormSection } from '@/modules/team-season-results/features/form-table/TeamSeasonFormTable'
 import type { fetchTeamSeasonForm } from '@/modules/team-season-results/fetcher'

@@ -1,6 +1,6 @@
 import type { TDriverRow } from "../../types"
-import { Position } from "@/components/Position"
-import { NaLabel } from "@/components/ValueOrNa"
+import { TeamFormTablePositionCell } from "@/modules/team-season-results/features/form-table/components/TeamFormTablePositionCell"
+import { NaLabel } from "@/shared/components/ValueOrNa"
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/uiComponents/table'
 import { Table } from 'lucide-react'
 
@@ -47,7 +47,7 @@ export const TeamSeasonFormSection = (props: {
                                         className="align-middle p-0 text-accent-foreground dark:text-accent w-8"
                                     >
                                         {seasonForm[roundNumber][index] ? (
-                                            <Position
+                                            <TeamFormTablePositionCell
                                                 position={
                                                     seasonForm[roundNumber][index].position || ""
                                                 }

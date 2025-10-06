@@ -1,7 +1,7 @@
 import { LucideDroplets, LucideThermometer, LucideThermometerSun, LucideTimer } from "lucide-react"
 import { SummaryItem } from "./components/SummaryItem"
 import { Suspense, type PropsWithChildren } from "react"
-import { LoadingSpinner } from "@/components/SectionLoadingSpinner"
+import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
 import { format } from "date-fns/format"
 import type { ISessionInformation } from '../../models/types'
 

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from '@/uiComponents/button'
 import "./globals.css"
 import Link from "next/link"
 

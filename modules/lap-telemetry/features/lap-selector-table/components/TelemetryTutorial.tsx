@@ -1,5 +1,5 @@
 "use client"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/uiComponents/card"
 import { useEffect, useRef, useState } from "react"
 
 const HAS_COMPLETED_TUTORIAL_KEY = "hasCompletedTelemetryTutorial"

@@ -1,4 +1,4 @@
-import { LapsScreen } from '@/modules/session-laps/LapsScreen'
+import { LapsScreen } from "@/modules/session-laps/SessionLapsScreen"
 import type { ISessionPathnameParams } from "../types"
 import type { Metadata } from "next"
 

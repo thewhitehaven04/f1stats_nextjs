@@ -1,11 +1,11 @@
 "use client"
 
-import type { TDriverRow } from "../../../../../../modules/TeamSeasonResults/types"
 import type { ChartData } from "chart.js"
 import { useMemo } from "react"
-import { initGlobalChartConfig } from "@/components/Chart/config"
-import { rollingSum } from "../../../../../../shared/helpers/rollingSum"
 import dynamic from "next/dynamic"
+import { initGlobalChartConfig } from '@/shared/components/themed-chart/config'
+import { rollingSum } from '@/shared/helpers/rollingSum'
+import type { TDriverRow } from '../../types'
 
 initGlobalChartConfig()
 
@@ -55,6 +55,7 @@ export const TeamSeasonFormChart = ({
                 interaction: { mode: "index", intersect: false },
                 scales: { y: { beginAtZero: true } },
             }}
+            hasData
         />
     )
 }
