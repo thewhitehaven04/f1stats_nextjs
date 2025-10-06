@@ -8,7 +8,7 @@ const withSerwist = withSerwistInit({
     cacheOnNavigation: true,
 })
 
-const nextConfig = {
+const nextConfig = withSerwist({
     rewrites: async () => {
         return [
             {
@@ -60,6 +60,6 @@ const nextConfig = {
             },
         ]
     },
-}
+})
 
 export default nextConfig
