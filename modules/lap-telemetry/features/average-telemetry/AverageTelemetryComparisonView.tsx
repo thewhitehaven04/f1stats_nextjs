@@ -14,7 +14,7 @@ import type { TTelemetryDataset } from "../per-lap-telemetry/PerLapTelemetryComp
 import { Button } from "@/uiComponents/button"
 import { getAlternativeColor } from '@/shared/components/themed-chart/helpers'
 import { SpeedtracePresetChart } from '../../components/SpeedtracePresetChart'
-import type { TelemetryPresetChart } from '../../components/TelemetryPresetChart'
+import { TelemetryPresetChart } from '../../components/TelemetryPresetChart'
 import { TimedeltaPresetChart } from '../../components/TimedeltaPresetChart'
 
 function AverageTelemetryComparisonView(props: {
