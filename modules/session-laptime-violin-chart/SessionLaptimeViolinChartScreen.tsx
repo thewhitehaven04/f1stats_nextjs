@@ -12,6 +12,9 @@ import { Violin, ViolinController } from "@sgratzl/chartjs-chart-boxplot"
 import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
 import type { SessionLapsData } from "@/shared/client/generated"
 import { initGlobalChartConfig } from "@/shared/components/themed-chart/config"
+import { getColorFromColorMap } from "@/shared/components/themed-chart/helpers"
+import { formatTime } from "@/shared/helpers/formatTime"
+import { Button } from "@/uiComponents/button"
 
 ChartJS.register(Violin, ViolinController, LinearScale, CategoryScale, Legend, Tooltip)
 initGlobalChartConfig()
@@ -97,6 +100,7 @@ export default function ViolinPlotTab({ laps }: { laps: SessionLapsData }) {
                         },
                     }}
                     height={160}
+                    hasData={true}
                 />
             </div>
         </div>

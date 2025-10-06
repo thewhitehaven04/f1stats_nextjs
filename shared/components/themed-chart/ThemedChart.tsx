@@ -5,14 +5,14 @@ import type { Chart as ChartJS, ChartTypeRegistry } from "chart.js"
 import { merge } from "ts-deepmerge"
 import clsx from "clsx"
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
-import { getCssVar } from './config'
+import { getCssVar } from "./config"
 
 export const ThemedChart = (
     props: ComponentProps<typeof Chart> & {
         hasData: boolean
         noDataMessage?: string
         isUpdatingData?: boolean
-    }
+    },
 ) => {
     const { theme } = useTheme()
 
@@ -67,7 +67,6 @@ export const ThemedChart = (
         },
     } as Partial<ComponentProps<typeof Chart>>)
 
-    // @ts-ignore ref weirdness /
     return (
         <>
             <div className={clsx(!hasData && "absolute backdrop-blur-xs z-10 w-full h-full")} />
@@ -80,6 +79,7 @@ export const ThemedChart = (
                     <h1 className="text-center text-lg font-bold">{noDataMessage}</h1>
                 </div>
             ) : null}
+            {/** @ts-ignore */}
             <Chart {...merged} />
         </>
     )

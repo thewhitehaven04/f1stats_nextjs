@@ -11,7 +11,7 @@ import { memo, useEffect, useRef, useState, type ReactNode } from "react"
 import { TableContext } from "@/shared/components/table/context"
 import clsx from "clsx"
 import type { ITableLapData } from "../models/types"
-import type { Button } from "@/uiComponents/button"
+import { Button } from "@/uiComponents/button"
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/uiComponents/table"
 
 function lapsTable(
