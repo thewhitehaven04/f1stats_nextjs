@@ -71,6 +71,17 @@ class TelemetryResolver:
     def _interpolate_telemetry(
         self, telemetry: DataFrame, lattice: ndarray, ref_laptime: float | None = None
     ):
+        """
+        Interpolates telemetry data to a common lattice (relative distance).
+
+        Args:
+            telemetry (DataFrame): The raw telemetry data for a lap.
+            lattice (ndarray): The common lattice (relative distance array) to interpolate to.
+            ref_laptime (float | None): Reference lap time for distance adjustment.
+
+        Returns:
+            DataFrame: Interpolated telemetry data.
+        """
         df = DataFrame(columns=self._TELEMETRY_DF_COLUMNS, index=lattice)
 
         if ref_laptime:
@@ -115,6 +126,16 @@ class TelemetryResolver:
         return df
 
     def average_telemetry_for_driver(self, telemetry: DataFrame, lat: ndarray):
+        """
+        Calculates the average telemetry for a driver across multiple laps.
+
+        Args:
+            telemetry (DataFrame): Telemetry data for a driver, potentially spanning multiple laps.
+            lat (ndarray): The common lattice (relative distance array) to interpolate to.
+
+        Returns:
+            DataFrame: Averaged telemetry data for the driver.
+        """
         unique_lap_ids = telemetry["lap_id"].unique()
         resampled_telemetries: list[DataFrame] = []
 
