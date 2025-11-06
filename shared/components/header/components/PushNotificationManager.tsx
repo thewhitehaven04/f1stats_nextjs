@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useState } from "react"
 import { LucideTriangleAlert, LucideBell, LucideBellOff } from "lucide-react"
-import { send, subscribeUser, unsubscribeUser } from '@/shared/workers/swActions'
-import { Button } from '@/uiComponents/button'
+import { send, subscribeUser, unsubscribeUser } from "@/shared/workers/swActions"
+import { Button } from "@/uiComponents/button"
 
 const urlBase64ToUint8Array = (base64String: string) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4)

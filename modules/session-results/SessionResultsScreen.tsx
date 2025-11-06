@@ -1,105 +1,62 @@
+"use client"
 import Form from "next/form"
 import { ResultsTable } from "./features/results-table/ResultsTable"
-import type { ComponentProps } from "react"
-import {
-    ESessionType,
-    type IPracticeData,
-    type IQualifyingData,
-    type IRaceData,
-} from "./features/results-table/types"
+import { useMemo } from "react"
+import { ESessionType } from "./features/results-table/types"
 import type { TFetchSessionResults } from "./models/types"
+import { TooltipButton } from "@/shared/components/TooltipButton"
+import { useHasDriverSelection } from "./features/atoms/driverSelection"
+import {
+    getRowDataFromPractice,
+    getRowDataFromQualifying,
+    getRowDataFromRace,
+} from "./models/row-data"
 
 export const SessionResultsScreen = (props: {
     sessionResults: TFetchSessionResults
     sessionType: string
 }) => {
     const { sessionResults, sessionType } = props
-    let tableData: ComponentProps<typeof ResultsTable>
-    if (sessionType.toLowerCase().includes("practice")) {
-        tableData = {
-            rows: sessionResults.map((result) => {
-                return {
-                    driver: {
-                        country: result.drivers?.country_alpha3 || "",
-                        name: `${result.drivers?.first_name} ${result.drivers?.last_name}` || "",
-                        id: result.drivers?.id || "",
-                    },
-                    teamName: result.drivers?.driver_team_changes[0].teams
-                        ? {
-                              name:
-                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
-                                  "",
-                              id: result.drivers?.driver_team_changes[0].teams.id,
-                          }
-                        : null,
-                    time: result.practice_session_results
-                        ? result.practice_session_results.laptime
-                        : 0,
-                    gap: result.practice_session_results ? result.practice_session_results.gap : 0,
-                } satisfies IPracticeData
-            }),
-            sessionType: ESessionType.PRACTICE,
+
+    const tableData = useMemo(() => {
+        if (sessionType.toLowerCase().includes("practice")) {
+            return {
+                rows: sessionResults.map((result) => getRowDataFromPractice(result)),
+                sessionType: ESessionType.PRACTICE as const,
+            }
         }
-    } else if (
-        sessionType === "Qualifying" ||
-        sessionType === "Sprint Qualifying" ||
-        sessionType === "Sprint Shootout"
-    ) {
-        tableData = {
-            rows: sessionResults.map((result) => {
-                return {
-                    driver: {
-                        country: result.drivers?.country_alpha3 || "",
-                        name: `${result.drivers?.first_name} ${result.drivers?.last_name}` || "",
-                        id: result.drivers?.id || "",
-                    },
-                    teamName: result.drivers?.driver_team_changes[0].teams
-                        ? {
-                              name:
-                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
-                                  "",
-                              id: result.drivers?.driver_team_changes[0].teams.id,
-                          }
-                        : null,
-                    q1Time: result.qualifying_session_results?.q1_laptime ?? null,
-                    q2Time: result.qualifying_session_results?.q2_laptime ?? null,
-                    q3Time: result.qualifying_session_results?.q3_laptime ?? null,
-                } satisfies IQualifyingData
-            }),
-            sessionType: ESessionType.QUALIFYING,
+        if (
+            sessionType === "Qualifying" ||
+            sessionType === "Sprint Qualifying" ||
+            sessionType === "Sprint Shootout"
+        ) {
+            return {
+                rows: sessionResults.map((result) => getRowDataFromQualifying(result)),
+                sessionType: ESessionType.QUALIFYING as const,
+            }
         }
-    } else {
-        tableData = {
-            rows: sessionResults.map((result) => {
-                return {
-                    driver: {
-                        country: result.drivers?.country_alpha3 || "",
-                        name: `${result.drivers?.first_name} ${result.drivers?.last_name}` || "",
-                        id: result.drivers?.id || "",
-                    },
-                    gap: result.race_session_results ? result.race_session_results.gap : null,
-                    teamName: result.drivers?.driver_team_changes[0].teams
-                        ? {
-                              name:
-                                  result.drivers?.driver_team_changes[0].teams.team_display_name ||
-                                  "",
-                              id: result.drivers?.driver_team_changes[0].teams.id,
-                          }
-                        : null,
-                    time: result.race_session_results
-                        ? result.race_session_results.total_time
-                        : null,
-                    status: result.race_session_results?.result_status ?? null,
-                    points: result.race_session_results?.points ?? null,
-                    gridPosition: result.race_session_results?.grid_position ?? null,
-                } satisfies IRaceData
-            }),
-            sessionType: ESessionType.RACE,
+        return {
+            rows: sessionResults.map((result) => getRowDataFromRace(result)),
+            sessionType: ESessionType.RACE as const,
         }
-    }
+    }, [sessionType, sessionResults])
+
+    const hasSelection = useHasDriverSelection()
+
     return (
         <section className="flex flex-col gap-2 w-full overflow-x-visible">
             <Form action="laps" className="w-full flex flex-col items-end gap-2">
+                <div className="flex flex-row justify-end">
+                    <TooltipButton
+                        variant="secondary"
+                        type="submit"
+                        disabled={hasSelection}
+                        tooltipText="You need to select at least one result"
+                        size="md"
+                    >
+                        Lap-by-lap details
+                    </TooltipButton>
+                </div>
                 <ResultsTable {...tableData} />
             </Form>
         </section>

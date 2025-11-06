@@ -8,7 +8,7 @@ const withSerwist = withSerwistInit({
     cacheOnNavigation: true,
 })
 
-const nextConfig = withSerwist({
+export const nextConfig = withSerwist({
     rewrites: async () => {
         return [
             {

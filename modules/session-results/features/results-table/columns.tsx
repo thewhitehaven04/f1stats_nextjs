@@ -11,7 +11,8 @@ import {
 } from "@/modules/session-results/features/results-table/types"
 import { createColumnHelper } from "@tanstack/react-table"
 import Link from "next/link"
-import { Checkbox } from '@/uiComponents/checkbox'
+import { Checkbox } from "@/uiComponents/checkbox"
+import { useSetDriverSelection } from "../atoms/driverSelection"
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()
 const practiceHelper = createColumnHelper<IPracticeData>()
@@ -22,13 +23,20 @@ const BASE_COLUMNS = [
     baseColumnHelper.display({
         id: "selector",
         cell: ({ row }) => {
+            const { appendDriver, removeDriver } = useSetDriverSelection()
+
             const driver = row.getValue("driver") as IBaseResultsData["driver"]
             return (
                 <Checkbox
                     name="driver"
                     value={driver.id}
-                    onCheckedChange={row.getToggleSelectedHandler()}
-                    checked={row.getIsSelected()}
+                    onCheckedChange={(checked) => {
+                        if (checked === true) {
+                            appendDriver(driver.id)
+                        } else if (!checked) {
+                            removeDriver(driver.id)
+                        }
+                    }}
                 />
             )
         },

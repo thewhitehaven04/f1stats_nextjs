@@ -1,7 +1,8 @@
-import { SessionResultsScreen } from '@/modules/session-results/SessionResultsScreen'
+import { SessionResultsScreen } from "@/modules/session-results/SessionResultsScreen"
 import type { ISessionPathnameParams } from "../types"
 import type { Metadata } from "next"
-import { fetchSessionResults } from '@/modules/session-results/models/session-results'
+import { fetchSessionResults } from "@/modules/session-results/models/session-results"
+import { Provider } from "jotai"
 
 export async function generateMetadata({
     params,
@@ -20,5 +21,9 @@ export default async function Page({ params }: { params: Promise<ISessionPathnam
         decodeURIComponent(session),
     )
 
-    return <SessionResultsScreen sessionType={type} sessionResults={data} />
+    return (
+        <Provider>
+            <SessionResultsScreen sessionType={type} sessionResults={data} />
+        </Provider>
+    )
 }

@@ -2,6 +2,7 @@
 
 import type * as React from "react"
 import { cn } from '../../helpers/utils'
+import { memo } from 'react'
 
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
@@ -68,7 +69,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+const TableCell = memo(function TableCellInner({ className, ...props }: React.ComponentProps<"td">) {
     return (
         <td
             data-slot="table-cell"
@@ -79,7 +80,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
             {...props}
         />
     )
-}
+})
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
     return (

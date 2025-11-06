@@ -1,10 +1,12 @@
 import sys
-from typing import Sequence
+from typing import Sequence, TypedDict
 from numpy import arange, array, interp, linspace, ndarray, nonzero, trunc
 from pandas import DataFrame, read_sql, to_numeric
 from sqlalchemy import Connection, and_, or_, select
+from sqlalchemy.orm import Session
+from api._repository.engine import postgres
 
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import GroupDto, SessionIdentifier, SessionQueryFilter
 from api._repository.repository import (
     Laps,
     SessionResults,
@@ -55,6 +57,7 @@ class TelemetryResolver:
     ):
         self.db_connection = db_connection
         self.season = season
+        self.orm_session = Session(postgres)
         self.event = event
         self.session_identifier = session_identifier
         self.plot_style_resolver = TeamPlotStyleResolver(
@@ -68,6 +71,17 @@ class TelemetryResolver:
     def _interpolate_telemetry(
         self, telemetry: DataFrame, lattice: ndarray, ref_laptime: float | None = None
     ):
+        """
+        Interpolates telemetry data to a common lattice (relative distance).
+
+        Args:
+            telemetry (DataFrame): The raw telemetry data for a lap.
+            lattice (ndarray): The common lattice (relative distance array) to interpolate to.
+            ref_laptime (float | None): Reference lap time for distance adjustment.
+
+        Returns:
+            DataFrame: Interpolated telemetry data.
+        """
         df = DataFrame(columns=self._TELEMETRY_DF_COLUMNS, index=lattice)
 
         if ref_laptime:
@@ -112,6 +126,16 @@ class TelemetryResolver:
         return df
 
     def average_telemetry_for_driver(self, telemetry: DataFrame, lat: ndarray):
+        """
+        Calculates the average telemetry for a driver across multiple laps.
+
+        Args:
+            telemetry (DataFrame): Telemetry data for a driver, potentially spanning multiple laps.
+            lat (ndarray): The common lattice (relative distance array) to interpolate to.
+
+        Returns:
+            DataFrame: Averaged telemetry data for the driver.
+        """
         unique_lap_ids = telemetry["lap_id"].unique()
         resampled_telemetries: list[DataFrame] = []
 
@@ -143,27 +167,6 @@ class TelemetryResolver:
     ) -> AverageTelemetriesResponseDto:
         deltas: Sequence[FastestDelta] = []
         color_map = ColorMapBuilder()
-        driver_lap_id_entries = [
-            [
-                query.driver,
-                query.group,
-                [
-                    lap_tuple[0]
-                    for lap_tuple in self.db_connection.execute(
-                        select(Laps.id).where(
-                            and_(
-                                Laps.season_year == self.season,
-                                Laps.session_type_id == self.session_identifier,
-                                Laps.event_name == self.event,
-                                Laps.driver_id == query.driver,
-                                Laps.lap_number.in_(query.lap_filter or []),
-                            ),
-                        )
-                    ).fetchall()
-                ],
-            ]
-            for query in filter_.queries
-        ]
 
         avg_telemetries = []
 
