@@ -1,10 +1,12 @@
 import sys
-from typing import Sequence
+from typing import Sequence, TypedDict
 from numpy import arange, array, interp, linspace, ndarray, nonzero, trunc
 from pandas import DataFrame, read_sql, to_numeric
 from sqlalchemy import Connection, and_, or_, select
+from sqlalchemy.orm import Session
+from api._repository.engine import postgres
 
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import GroupDto, SessionIdentifier, SessionQueryFilter
 from api._repository.repository import (
     Laps,
     SessionResults,
@@ -55,6 +57,7 @@ class TelemetryResolver:
     ):
         self.db_connection = db_connection
         self.season = season
+        self.orm_session = Session(postgres)
         self.event = event
         self.session_identifier = session_identifier
         self.plot_style_resolver = TeamPlotStyleResolver(
@@ -138,32 +141,19 @@ class TelemetryResolver:
 
         return avg_dataframe
 
+    def _get_lap_ids(self, filter_: SessionQueryFilter):
+        lap_ids: list[int] = []
+        for query in filter_.queries:
+            if isinstance(query.lap_filter, list):
+                for lap in query.lap_filter:
+                    lap_ids.append(lap)
+        return lap_ids
+
     def get_average_telemetry(
         self, filter_: SessionQueryFilter
     ) -> AverageTelemetriesResponseDto:
         deltas: Sequence[FastestDelta] = []
         color_map = ColorMapBuilder()
-        driver_lap_id_entries = [
-            [
-                query.driver,
-                query.group,
-                [
-                    lap_tuple[0]
-                    for lap_tuple in self.db_connection.execute(
-                        select(Laps.id).where(
-                            and_(
-                                Laps.season_year == self.season,
-                                Laps.session_type_id == self.session_identifier,
-                                Laps.event_name == self.event,
-                                Laps.driver_id == query.driver,
-                                Laps.lap_number.in_(query.lap_filter or []),
-                            ),
-                        )
-                    ).fetchall()
-                ],
-            ]
-            for query in filter_.queries
-        ]
 
         avg_telemetries = []
 
@@ -176,33 +166,47 @@ class TelemetryResolver:
         )
         np_lat = array(lat)
 
-        for driver_id, group, lap_ids in driver_lap_id_entries:
-            telemetry_data = read_sql(
-                con=self.db_connection,
-                sql=select(TelemetryMeasurements).where(
-                    and_(TelemetryMeasurements.lap_id.in_(lap_ids))
-                ),
-            )
-            telemetry_data.laptime_at = to_numeric(telemetry_data.laptime_at)
-            color_map.set(group.name, PlotColor(color=group.color, style="default"))
-            avg_telemetry_data = self.average_telemetry_for_driver(
-                telemetry_data, np_lat
-            )
+        lap_ids = self._get_lap_ids(filter_)
 
-            laptime = avg_telemetry_data["laptime_at"].tail(1).iloc[0]
-            if laptime < min_laptime:
-                min_laptime = laptime
-                reference_telemetry = avg_telemetry_data
-                reference_driver = driver_id
+        all_telemetry_data = read_sql(
+            con=self.db_connection,
+            sql=select(TelemetryMeasurements).where(
+                and_(TelemetryMeasurements.lap_id.in_(lap_ids))
+            ),
+        )
 
-            avg_telemetries.append(
-                {
-                    "raw_telemetry": avg_telemetry_data,
-                    "driver": driver_id,
-                    "group": group,
-                    "stint_length": len(lap_ids),
-                }
-            )
+        for query in filter_.queries:
+            if query.lap_filter and query.group:
+                driver_telemetry_data = all_telemetry_data[
+                    all_telemetry_data["lap_id"].isin(query.lap_filter)
+                ]
+                driver_telemetry_data.laptime_at = to_numeric(
+                    driver_telemetry_data.laptime_at
+                )
+                color_map.set(
+                    query.group.name,
+                    PlotColor(color=query.group.color, style="default"),
+                )
+                avg_telemetry_data = self.average_telemetry_for_driver(
+                    all_telemetry_data, np_lat
+                )
+
+                laptime = avg_telemetry_data["laptime_at"].iat[-1]
+                if laptime < min_laptime:
+                    min_laptime = laptime
+                    reference_telemetry = avg_telemetry_data
+                    reference_driver = query.driver
+
+                avg_telemetries.append(
+                    {
+                        "raw_telemetry": avg_telemetry_data,
+                        "driver": query.driver,
+                        "group": query.group,
+                        "stint_length": len(lap_ids),
+                    }
+                )
+            else:
+                continue
 
         prepared_telemetries: Sequence[AverageTelemetryPlotData] = []
         if reference_driver and reference_telemetry is not None:
