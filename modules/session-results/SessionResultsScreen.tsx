@@ -50,7 +50,7 @@ export const SessionResultsScreen = (props: {
                     <TooltipButton
                         variant="secondary"
                         type="submit"
-                        disabled={hasSelection}
+                        disabled={!hasSelection}
                         tooltipText="You need to select at least one result"
                         size="md"
                     >
