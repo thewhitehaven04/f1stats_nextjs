@@ -1,7 +1,7 @@
 "use client"
 import type { Chart, ChartDataset, ChartTypeRegistry } from "chart.js"
 import { useCallback, useMemo, useRef } from "react"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { DeltaCircuitMap } from "@/modules/lap-telemetry/components/DeltaCircuitMap"
 import { Button } from "@/uiComponents/button"
 import { getAlternativeColor, getColorFromColorMap } from "@/shared/components/themed-chart/helpers"
@@ -9,13 +9,11 @@ import { TimedeltaPresetChart } from "../../components/TimedeltaPresetChart"
 import { SpeedtracePresetChart } from "../../components/SpeedtracePresetChart"
 import { TelemetryPresetChart } from "../../components/TelemetryPresetChart"
 import {
-    type SessionQuery,
-    type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
-    getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost,
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
 } from "@/shared/client/generated"
 import { ApiClient } from "@/shared/client"
-import type { TSession } from '@/shared/hooks/useSession'
+import type { TSession } from "@/shared/hooks/useSession"
+import { usePerLapTelemetry } from "../../hooks/queries/usePerLapTelemetry"
 
 export type TTelemetryDataset = ChartDataset<
     "scatter",
@@ -26,39 +24,12 @@ export type TTelemetryDataset = ChartDataset<
 >[]
 
 export default function PerLapTelemetryComparisonView(props: {
-    queries: SessionQuery[]
     session: TSession
     event: string
     season: string
 }) {
-    const { season, event, session, queries } = props
-    const timeoutRef = useRef<NodeJS.Timeout>(null)
-
-    const { data, isFetching } = useQuery({
-        queryKey: ["telemetry", season, event, session, queries],
-        queryFn: async () =>
-            new Promise<GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse>(
-                (resolve) => {
-                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-                    timeoutRef.current = setTimeout(() => {
-                        resolve(
-                            getLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPost({
-                                client: ApiClient,
-                                body: { queries },
-                                path: {
-                                    event,
-                                    session,
-                                    year: season,
-                                },
-                                throwOnError: true,
-                            }).then((res) => res.data),
-                        )
-                    }, 700)
-                },
-            ),
-        enabled: () => !!queries.length,
-    })
+    const { season, event, session } = props
+    const { data, isFetching } = usePerLapTelemetry({ season, event, session })
     const telemetries = data?.telemetries
     const colorMap = Object.fromEntries(
         Object.keys(data?.color_map || {}).map((key) => [

@@ -10,8 +10,9 @@ import {
     getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
     type SessionQuery,
 } from "@/shared/client/generated"
-import { ApiClient } from '@/shared/client'
-import { useSession } from '@/shared/hooks/useSession'
+import { ApiClient } from "@/shared/client"
+import { useSession } from "@/shared/hooks/useSession"
+import { Provider } from "jotai"
 
 const getTabQueryString = (readOnlySearch: ReadonlyURLSearchParams, tab: string) => {
     const search = new URLSearchParams(readOnlySearch)
@@ -48,8 +49,7 @@ export const LapsScreen = () => {
 
     const queries = search.getAll("driver").map((driver) => ({
         driver,
-        lap_filter: null,
-        group: null,
+        lap_number_filter: [],
     })) satisfies SessionQuery[]
 
     const { data } = useSuspenseQuery({
@@ -111,7 +111,9 @@ export const LapsScreen = () => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="analysis">
-                    <LapTelemetryScreen laps={data} />
+                    <Provider>
+                        <LapTelemetryScreen laps={data} />
+                    </Provider>
                 </TabsContent>
                 <TabsContent value="lineplot">
                     <SessionLaptimeLineChartScreen laps={data} />

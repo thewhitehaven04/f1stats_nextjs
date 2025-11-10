@@ -43,11 +43,26 @@ class GroupDto(BaseModel):
     name: str
     color: str
 
+
+class AverageTelemetryQuery(BaseModel):
+    lap_id_filter: list[int]
+    group: GroupDto
+
+
+class GetAverageTelemetryQueriesRequestDto(BaseModel):
+    queries: list[AverageTelemetryQuery]
+
+
+class LapTelemetryQuery(BaseModel):
+    driver: str
+    lap_id_filter: list[int]
+
+class GetTelemetryQueriesRequestDto(BaseModel):
+    queries: list[LapTelemetryQuery]
+
 class SessionQuery(BaseModel):
     driver: str
-    lap_filter: list[int] | None
-    group: GroupDto | None 
-
+    lap_number_filter: list[int]
 
 class SessionQueryFilter(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)

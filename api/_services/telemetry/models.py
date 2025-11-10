@@ -1,5 +1,6 @@
-from typing import Sequence
+from typing import Sequence, TypedDict
 from pydantic import BaseModel, ConfigDict
+from pandas import DataFrame
 
 from api._core.models.queries import GroupDto
 from api._services.color_resolver.models import ColorMap
@@ -23,6 +24,12 @@ class LapTelemetryDto(BaseModel):
     lap_distance: int
 
 
+class RawAverageTelemetryData(TypedDict):
+    raw_telemetry: DataFrame
+    group: GroupDto
+    stint_length: int
+
+
 class DeltaInstance(BaseModel):
     relative_distance: float
     distance: float
@@ -31,7 +38,7 @@ class DeltaInstance(BaseModel):
 
 
 class FastestDelta(BaseModel):
-    driver: str
+    driver: str | None 
     group: GroupDto | None
     relative_distance: float
     point: tuple[float, float]
@@ -47,7 +54,6 @@ class DriverTelemetryDelta(BaseModel):
 class AverageTelemetryPlotData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    driver: str
     group: GroupDto 
     stint_length: int
     telemetry: Sequence[TelemetryMeasurementDto]

@@ -10,11 +10,15 @@ export type AverageTelemetriesResponseDto = {
 }
 
 export type AverageTelemetryPlotData = {
-    driver: string
     group: GroupDto
     stint_length: number
     telemetry: Array<TelemetryMeasurementDto>
     delta: DriverTelemetryDelta | null
+}
+
+export type AverageTelemetryQuery = {
+    lap_id_filter: Array<number>
+    group: GroupDto
 }
 
 export type CircuitFeatureProperties = {
@@ -67,7 +71,7 @@ export type DriverTelemetryPlotData = {
 }
 
 export type FastestDelta = {
-    driver: string
+    driver: string | null
     group: GroupDto | null
     relative_distance: number
     point: [number, number]
@@ -82,6 +86,14 @@ export type FeatureLineStringCircuitFeatureProperties = {
     geometry: LineString | null
     properties: CircuitFeatureProperties | null
     id?: number | string | null
+}
+
+export type GetAverageTelemetryQueriesRequestDto = {
+    queries: Array<AverageTelemetryQuery>
+}
+
+export type GetTelemetryQueriesRequestDto = {
+    queries: Array<LapTelemetryQuery>
 }
 
 export type GroupDto = {
@@ -107,6 +119,11 @@ export type LapTelemetryDto = {
     lap_number: number
     telemetry: Array<TelemetryMeasurementDto>
     lap_distance: number
+}
+
+export type LapTelemetryQuery = {
+    driver: string
+    lap_id_filter: Array<number>
 }
 
 export type LapTimingData = {
@@ -168,8 +185,7 @@ export type SessionLapsData = {
 
 export type SessionQuery = {
     driver: string
-    lap_filter: Array<number> | null
-    group: GroupDto | null
+    lap_number_filter: Array<number>
 }
 
 export type SessionQueryFilter = {
@@ -244,7 +260,7 @@ export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsP
     GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponses[keyof GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponses]
 
 export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData = {
-    body: SessionQueryFilter
+    body: GetTelemetryQueriesRequestDto
     path: {
         year: string
         event: string
@@ -284,7 +300,7 @@ export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPos
 
 export type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostData =
     {
-        body: SessionQueryFilter
+        body: GetAverageTelemetryQueriesRequestDto
         path: {
             year: string
             event: string
@@ -355,5 +371,5 @@ export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse =
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses[keyof GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses]
 
 export type ClientOptions = {
-    baseUrl: `${string}://src` | (string & {})
+    baseUrl: `${string}://shared` | (string & {})
 }

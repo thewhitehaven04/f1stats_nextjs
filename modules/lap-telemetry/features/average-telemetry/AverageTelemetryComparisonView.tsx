@@ -1,57 +1,29 @@
 import type { Chart, ChartTypeRegistry } from "chart.js"
 import { useCallback, useMemo, useRef } from "react"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { DeltaCircuitMap } from "@/modules/lap-telemetry/components/DeltaCircuitMap"
 import { ApiClient } from "@/shared/client"
 import {
-    type SessionQuery,
-    type GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse,
-    getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost,
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
 } from "@/shared/client/generated"
 import type { TSession } from "../../../../shared/hooks/useSession"
 import type { TTelemetryDataset } from "../per-lap-telemetry/PerLapTelemetryComparisonView"
 import { Button } from "@/uiComponents/button"
-import { getAlternativeColor } from '@/shared/components/themed-chart/helpers'
-import { SpeedtracePresetChart } from '../../components/SpeedtracePresetChart'
-import { TelemetryPresetChart } from '../../components/TelemetryPresetChart'
-import { TimedeltaPresetChart } from '../../components/TimedeltaPresetChart'
+import { getAlternativeColor } from "@/shared/components/themed-chart/helpers"
+import { SpeedtracePresetChart } from "../../components/SpeedtracePresetChart"
+import { TelemetryPresetChart } from "../../components/TelemetryPresetChart"
+import { TimedeltaPresetChart } from "../../components/TimedeltaPresetChart"
+import { useAverageTelemetry } from "../../hooks/queries/useAverageTelemetry"
+import type { TGroup } from '../../models/types'
 
 function AverageTelemetryComparisonView(props: {
-    queries: SessionQuery[]
     session: TSession
     event: string
     season: string
+    groups: TGroup[]
 }) {
-    const { season, event, session, queries } = props
-    const timeoutRef = useRef<NodeJS.Timeout>(null)
-    const { data, isFetching } = useQuery({
-        queryKey: ["averageTelemetry", season, event, session, queries],
-        queryFn: async () =>
-            new Promise<GetAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePostResponse>(
-                (resolve) => {
-                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-                    timeoutRef.current = setTimeout(() => {
-                        resolve(
-                            getAverageLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetryAveragePost(
-                                {
-                                    client: ApiClient,
-                                    body: { queries },
-                                    path: {
-                                        event,
-                                        session,
-                                        year: season,
-                                    },
-                                    throwOnError: true,
-                                },
-                            ).then((res) => res.data),
-                        )
-                    }, 700)
-                },
-            ),
-        enabled: () => !!queries.length,
-    })
+    const { season, event } = props
+    const { data, isFetching } = useAverageTelemetry(props)
 
     const { data: geometry } = useSuspenseQuery({
         queryKey: [season, event],
@@ -103,7 +75,7 @@ function AverageTelemetryComparisonView(props: {
         () =>
             telemetries
                 ?.map((tel, index) => ({
-                    label: `${tel.driver} gap to ${tel.delta?.reference}`,
+                    label: `${tel.group.name} gap to ${tel.delta?.reference}`,
                     data:
                         tel.delta?.delta.map((dMeasurement) => ({
                             x: dMeasurement.distance,

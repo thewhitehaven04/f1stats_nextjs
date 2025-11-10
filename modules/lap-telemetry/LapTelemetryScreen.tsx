@@ -1,15 +1,13 @@
 import { useMemo, useState } from "react"
 import { LapsTableSection } from "./features/lap-selector-table/LapSelectorTable"
 import dynamic from "next/dynamic"
-import { useLapSelection } from "./hooks/useLapSelection"
 import { useSelectionGroups } from "./hooks/useSelectionGroups"
-import { getQueries } from "./helpers"
-import { LapSelectionContext } from "./context/lap-selection-context"
+import { GroupSelectionContext } from "./context/lap-selection-context"
 import { SelectionCard } from "./features/lap-selector-table/components/SelectionCard"
 import { ChartLoadingIndicator } from "./components/ChartLoadingIndicator"
 import { useSession } from "@/shared/hooks/useSession"
 import type { SessionLapsData } from "@/shared/client/generated"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/uiComponents/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/uiComponents/tabs"
 
 const AverageTelemetrySection = dynamic(
     () => import("./features/average-telemetry/AverageTelemetryComparisonView"),
@@ -28,15 +26,12 @@ const TelemetryChartSection = dynamic(
 )
 
 export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
-    const { selection, updateSelection, resetSelection } = useLapSelection()
     const { event, season: year, session } = useSession()
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
-    const queries = getQueries(selection, groups)
 
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")
 
     const handleTabChange = (newTab: typeof tab) => {
-        resetSelection()
         resetGroups()
         setTab(newTab)
     }
@@ -44,21 +39,13 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
     const ctxValue = useMemo(
         () => ({
             activeGroup: activeGroup?.name ?? undefined,
-            updateLapSelection: updateSelection,
-            isLapSelected: (driver: string, lap: number) =>
-                activeGroup
-                    ? !!selection.find(
-                          (s) =>
-                              s.driver === driver && s.lap === lap && s.group === activeGroup.name,
-                      )
-                    : !!selection.find((s) => s.driver === driver && s.lap === lap),
             tab,
         }),
-        [activeGroup, updateSelection, selection, tab],
+        [activeGroup, tab],
     )
 
     return (
-        <LapSelectionContext.Provider value={ctxValue}>
+        <GroupSelectionContext.Provider value={ctxValue}>
             <LapsTableSection key={tab} laps={laps} />
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
@@ -73,12 +60,7 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="telemetry">
-                    <TelemetryChartSection
-                        queries={queries}
-                        season={year}
-                        session={session}
-                        event={event}
-                    />
+                    <TelemetryChartSection season={year} session={session} event={event} />
                 </TabsContent>
                 <TabsContent value="averageTelemetry">
                     <SelectionCard
@@ -88,13 +70,13 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
                         setActiveGroup={setActiveGroup}
                     />
                     <AverageTelemetrySection
-                        queries={queries}
                         season={year}
                         session={session}
                         event={event}
+                        groups={groups}
                     />
                 </TabsContent>
             </Tabs>
-        </LapSelectionContext.Provider>
+        </GroupSelectionContext.Provider>
     )
 }

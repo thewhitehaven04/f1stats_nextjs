@@ -5,7 +5,13 @@ from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import (
+    AverageTelemetryQuery,
+    GetAverageTelemetryQueriesRequestDto,
+    GetTelemetryQueriesRequestDto,
+    SessionIdentifier,
+    SessionQueryFilter,
+)
 from api._repository.engine import get_connection
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
@@ -67,7 +73,7 @@ async def get_lap_telemetries(
     year: str,
     event: str,
     session: SessionIdentifier,
-    body: SessionQueryFilter,
+    body: GetTelemetryQueriesRequestDto,
     connection: Annotated[Connection, Depends(get_connection)],
 ) -> LapTelemetriesResponseDto:
     """Retrieve telemetry data for a specific Formula 1 session.
@@ -87,7 +93,7 @@ async def get_lap_telemetries(
         season=year,
         event=unquote(event),
         session_identifier=unquote(session),
-    ).get_telemetry(query_filter=body)
+    ).get_telemetry(query_filter=body.queries)
 
 
 @app.post(
@@ -98,7 +104,7 @@ async def get_average_lap_telemetries(
     year: str,
     event: str,
     session: SessionIdentifier,
-    body: SessionQueryFilter,
+    body: GetAverageTelemetryQueriesRequestDto,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve averaged telemetry data for a specific Formula 1 session.
@@ -119,7 +125,7 @@ async def get_average_lap_telemetries(
         event=unquote(event),
         session_identifier=unquote(session),
     ).get_average_telemetry(
-        filter_=body,
+        queries=body.queries,
     )
 
 

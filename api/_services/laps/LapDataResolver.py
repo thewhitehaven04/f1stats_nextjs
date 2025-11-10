@@ -123,9 +123,9 @@ class LapDataResolver:
                             (
                                 and_(
                                     Laps.driver_id == fil.driver,
-                                    Laps.lap_number.in_(fil.lap_filter),
+                                    Laps.lap_number.in_(fil.lap_number_filter),
                                 )
-                                if fil.lap_filter
+                                if fil.lap_number_filter
                                 else and_(
                                     Laps.driver_id == fil.driver,
                                 )

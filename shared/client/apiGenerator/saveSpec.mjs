@@ -1,6 +1,6 @@
 import * as fs from "node:fs"
 
-const SAVE_PATH = "/src/client/apiGenerator/generated"
+const SAVE_PATH = "/shared/client/apiGenerator/generated"
 const OPENAPI_URL = "http://localhost:3000/openapi.json"
 
 export const saveOpenApiSpec = async () => {

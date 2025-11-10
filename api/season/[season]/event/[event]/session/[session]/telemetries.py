@@ -2,7 +2,7 @@ from typing import Annotated
 from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
-from api._core.models.queries import SessionQueryFilter
+from api._core.models.queries import GetTelemetryQueriesRequestDto, SessionQueryFilter
 from api._repository.engine import (
     get_connection,
 )
@@ -30,7 +30,7 @@ async def get_lap_telemetries(
     year: str,
     event: str,
     session: str,
-    body: SessionQueryFilter,
+    body: GetTelemetryQueriesRequestDto,
     connection: Annotated[Connection, Depends(get_connection)],
 ):
     """Retrieve telemetry data for a specific Formula 1 session.
@@ -50,4 +50,4 @@ async def get_lap_telemetries(
         season=year,
         event=unquote(event),
         session_identifier=unquote(session),
-    ).get_telemetry(query_filter=body)
+    ).get_telemetry(query_filter=body.queries)
