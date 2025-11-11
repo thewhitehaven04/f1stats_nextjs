@@ -8,8 +8,9 @@ import { ChartLoadingIndicator } from "./components/ChartLoadingIndicator"
 import { useSession } from "@/shared/hooks/useSession"
 import type { SessionLapsData } from "@/shared/client/generated"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/uiComponents/tabs"
+import { AggregateAveragesCardRow } from "./features/aggregate-averages/AggregateAveragesCard"
 
-const AverageTelemetrySection = dynamic(
+const AverageTelemetryComparisonView = dynamic(
     () => import("./features/average-telemetry/AverageTelemetryComparisonView"),
     {
         ssr: false,
@@ -17,7 +18,7 @@ const AverageTelemetrySection = dynamic(
     },
 )
 
-const TelemetryChartSection = dynamic(
+const PerLapTelemetryComparisonView = dynamic(
     () => import("./features/per-lap-telemetry/PerLapTelemetryComparisonView"),
     {
         ssr: false,
@@ -60,21 +61,17 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="telemetry">
-                    <TelemetryChartSection season={year} session={session} event={event} />
+                    <PerLapTelemetryComparisonView />
                 </TabsContent>
-                <TabsContent value="averageTelemetry">
+                <TabsContent value="averageTelemetry" className="flex flex-col gap-8">
                     <SelectionCard
                         groups={groups}
                         addGroup={addGroup}
                         activeGroup={activeGroup ? activeGroup.name : undefined}
                         setActiveGroup={setActiveGroup}
                     />
-                    <AverageTelemetrySection
-                        season={year}
-                        session={session}
-                        event={event}
-                        groups={groups}
-                    />
+                    <AggregateAveragesCardRow />
+                    <AverageTelemetryComparisonView groups={groups} />
                 </TabsContent>
             </Tabs>
         </GroupSelectionContext.Provider>

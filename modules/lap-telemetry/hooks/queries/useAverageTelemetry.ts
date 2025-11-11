@@ -67,7 +67,7 @@ export function useAverageTelemetry({ season, event, session, groups }: UseAvera
                         } catch (error) {
                             reject(error)
                         } finally {
-                            timeoutRef.current = null // Clear the ref after execution
+                            timeoutRef.current = null
                         }
                     }, 700)
                 },

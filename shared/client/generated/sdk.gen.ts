@@ -14,6 +14,9 @@ import type {
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
+    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
+    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
+    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
@@ -156,5 +159,30 @@ export const getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet = <
     >({
         url: "/api/season/{year}/event/{event}/circuit/geojson",
         ...options,
+    })
+}
+
+/**
+ * Get Session Laptimes Filtered
+ */
+export const getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPost = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? _heyApiClient).post<
+        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
+        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
+        ThrowOnError
+    >({
+        url: "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options?.headers,
+        },
     })
 }

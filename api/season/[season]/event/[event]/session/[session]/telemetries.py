@@ -2,7 +2,7 @@ from typing import Annotated
 from urllib.parse import unquote
 from fastapi import Depends, FastAPI
 from sqlalchemy import Connection
-from api._core.models.queries import GetTelemetryQueriesRequestDto, SessionQueryFilter
+from api._core.models.queries import GetTelemetryQueriesRequestDto
 from api._repository.engine import (
     get_connection,
 )

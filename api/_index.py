@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import (
-    AverageTelemetryQuery,
+    GetAggregatesRequestDto,
     GetAverageTelemetryQueriesRequestDto,
     GetTelemetryQueriesRequestDto,
     SessionIdentifier,
@@ -16,7 +16,7 @@ from api._repository.engine import get_connection
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
 from api._services.laps.LapDataResolver import LapDataResolver
-from api._services.laps.models.laps import SessionLapsData
+from api._services.laps.models.laps import LaptimeGroupAggregateData, SessionLapsData
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import (
     AverageTelemetriesResponseDto,
@@ -135,3 +135,23 @@ async def get_average_lap_telemetries(
 )
 async def get_circuit_geojson(year: str, event: str):
     return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()
+
+@app.post(
+    "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
+    response_model=list[LaptimeGroupAggregateData],
+)
+async def get_session_laptimes_filtered(
+    year: str,
+    event: str,
+    session: str,
+    body: GetAggregatesRequestDto,
+    connection: Annotated[Connection, Depends(get_connection)],
+):
+    return LapDataResolver(
+        db_connection=connection,
+        season=year,
+        event=unquote(event),
+        session_identifier=unquote(session),
+    ).get_aggregate_data(
+        query=body.queries,
+    )

@@ -12,10 +12,10 @@ export const useLapSelection = () => {
     const [lapSelection, setLapSelection] = useAtom(lapSelectionAtom)
 
     const updateSelection = useCallback(
-        (instance: { driver: string; lapId: number; state: boolean }) => {
-            const { lapId, driver, state } = instance
+        (instance: { driver: string; lapId: number; isSelected: boolean }) => {
+            const { lapId, driver, isSelected } = instance
 
-            if (state) {
+            if (isSelected) {
                 setLapSelection((prev: TLapSelectionInstance[]) => [
                     ...prev,
                     {

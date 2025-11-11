@@ -26,14 +26,14 @@ export const LapCheckbox = ({
                 if (tab === "telemetry") {
                     updateLapSelection({
                         lapId,
+                        isSelected: !isSelected,
                         driver: driverName,
-                        state: !isSelected,
                     })
                 }
                 if (activeGroup) {
                     updateGroupSelection({
                         lapId,
-                        state: !isSelected,
+                        isSelected: !isSelected,
                         group: activeGroup,
                     })
                 }

@@ -12,10 +12,10 @@ export const useLapGroupSelection = () => {
     const [lapSelection, setLapSelection] = useAtom(lapGroupSelectionAtom)
 
     const updateSelection = useCallback(
-        (instance: { lapId: number; state: boolean; group: string }) => {
-            const { lapId, group, state } = instance
+        (instance: { lapId: number; isSelected: boolean; group: string }) => {
+            const { lapId, group, isSelected } = instance
 
-            if (state) {
+            if (isSelected) {
                 setLapSelection((prev: TGroupLapSelectionInstance[]) => [
                     ...prev,
                     {

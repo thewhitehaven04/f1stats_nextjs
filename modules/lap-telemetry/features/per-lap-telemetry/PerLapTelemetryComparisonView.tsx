@@ -12,7 +12,7 @@ import {
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
 } from "@/shared/client/generated"
 import { ApiClient } from "@/shared/client"
-import type { TSession } from "@/shared/hooks/useSession"
+import { useSession, type TSession } from "@/shared/hooks/useSession"
 import { usePerLapTelemetry } from "../../hooks/queries/usePerLapTelemetry"
 
 export type TTelemetryDataset = ChartDataset<
@@ -23,12 +23,8 @@ export type TTelemetryDataset = ChartDataset<
     }[]
 >[]
 
-export default function PerLapTelemetryComparisonView(props: {
-    session: TSession
-    event: string
-    season: string
-}) {
-    const { season, event, session } = props
+export default function PerLapTelemetryComparisonView() {
+    const { season, event, session } = useSession()
     const { data, isFetching } = usePerLapTelemetry({ season, event, session })
     const telemetries = data?.telemetries
     const colorMap = Object.fromEntries(

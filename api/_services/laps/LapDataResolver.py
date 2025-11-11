@@ -1,3 +1,4 @@
+from fastapi import logger
 from pandas import DataFrame, NamedAgg, read_sql
 from sqlalchemy import Connection, and_, null, or_, select
 from numpy.polynomial import Polynomial
@@ -8,13 +9,21 @@ from api._repository.repository import (
     EventSessions,
     Laps,
 )
-from api._core.models.queries import SessionIdentifier, SessionQueryFilter
+from api._core.models.queries import (
+    AggregateLapDataQuery,
+    AverageTelemetryQuery,
+    GetAggregatesRequestDto,
+    GetAverageTelemetryQueriesRequestDto,
+    SessionIdentifier,
+    SessionQueryFilter,
+)
 
 from api._services.color_resolver.ColorMap import ColorMapBuilder
 from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
 from api._services.color_resolver.models import PlotColor
 from api._services.laps.models.laps import (
     DriverLapData,
+    LaptimeGroupAggregateData,
     SessionLapsData,
     StintData,
 )
@@ -109,7 +118,7 @@ class LapDataResolver:
 
         return laps
 
-    def _get_laps_dataframe(self, filter_: SessionQueryFilter):
+    def _get_laps_dataframe_by_filter(self, filter_: SessionQueryFilter):
         return read_sql(
             con=self.db_connection,
             sql=select(Laps)
@@ -160,11 +169,63 @@ class LapDataResolver:
             ),
         )
 
+    def _get_laps_dataframe_by_query(self, query: list[AggregateLapDataQuery]):
+        return read_sql(
+            con=self.db_connection,
+            sql=select(
+                Laps.id,
+                Laps.laptime,
+                Laps.sector_1_time,
+                Laps.sector_2_time,
+                Laps.sector_3_time,
+            )
+            .where(
+                and_(
+                    Laps.season_year == self.season,
+                    Laps.session_type_id == self.session_identifier,
+                    Laps.event_name == self.event,
+                    or_(
+                        *[
+                            (
+                                and_(
+                                    Laps.id.in_(q.lap_id_filter),
+                                )
+                            )
+                            for q in query
+                        ]
+                    ),
+                )
+            )
+            .join(
+                Drivers,
+                Laps.driver_id == Drivers.id,
+            )
+            .join(
+                EventSessions,
+                and_(
+                    EventSessions.event_name == Laps.event_name,
+                    EventSessions.season_year == Laps.season_year,
+                    EventSessions.session_type_id == Laps.session_type_id,
+                ),
+            )
+            .join(
+                DriverTeamChanges,
+                and_(
+                    DriverTeamChanges.driver_id == Drivers.id,
+                    DriverTeamChanges.timestamp_start <= EventSessions.start_time,
+                    or_(
+                        DriverTeamChanges.timestamp_end >= EventSessions.start_time,
+                        DriverTeamChanges.timestamp_end.is_(null()),
+                    ),
+                ),
+            ),
+        )
+
     def get_laptime_comparison(
         self,
         filter_: SessionQueryFilter,
     ):
-        laps = self._get_laps_dataframe(filter_)
+        laps = self._get_laps_dataframe_by_filter(filter_)
 
         color_map = ColorMapBuilder()
 
@@ -257,3 +318,36 @@ class LapDataResolver:
             min_time=formatted_laps["laptime"].min(),
             max_time=formatted_laps["laptime"].max(),
         )
+
+    def get_aggregate_data(
+        self, query: list[AggregateLapDataQuery]
+    ) -> list[LaptimeGroupAggregateData]:
+        df = self._get_laps_dataframe_by_query(query)
+        aggs: list[LaptimeGroupAggregateData] = []
+
+        for item in query:
+            if item.lap_id_filter:
+                current = df[df["id"].isin(item.lap_id_filter)]
+                logger.logger.warning(current.to_records())
+                current = current.agg(
+                    avg_time=NamedAgg(column="laptime", aggfunc="mean"),
+                    min_time=NamedAgg(column="laptime", aggfunc="min"),
+                    max_time=NamedAgg(column="laptime", aggfunc="max"),
+                    slope=NamedAgg(
+                        column="laptime",
+                        aggfunc=lambda x: Polynomial.fit(
+                            list(range(len(x))), x.values, 1
+                        ).coef[1],
+                    ),
+                ).to_records()
+                aggs.append(
+                    LaptimeGroupAggregateData(
+                        group=item.group_name,
+                        avg_time=current[0][1],
+                        min_time=current[1][1],
+                        max_time=current[2][1],
+                        slope=current[3][1],
+                    )
+                )
+
+        return aggs

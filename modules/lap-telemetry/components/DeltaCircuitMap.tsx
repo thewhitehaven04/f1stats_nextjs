@@ -111,7 +111,7 @@ export function DeltaCircuitMap(props: {
             midY,
             rotation: geometry.rotation,
         }),
-        key: d.group?.name ?? d.driver,
+        key: d.driver ?? d.group?.name
     }))
 
     const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
@@ -190,7 +190,7 @@ export function DeltaCircuitMap(props: {
                                 isXSmall: isXSmallDimension,
                             })}
                             fill="white"
-                            stroke={colorMap[pos.key]}
+                            stroke={pos.key ? colorMap[pos.key] : 'var(--foreground)'}
                             strokeWidth="4.5"
                         />
                     )

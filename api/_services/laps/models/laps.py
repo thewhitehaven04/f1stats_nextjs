@@ -87,6 +87,14 @@ class DriverLapData(BaseModel):
     stints: Sequence[StintData]
     laps: Sequence[LapTimingData]
 
+class LaptimeGroupAggregateData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    group: str
+    min_time: float
+    max_time: float
+    avg_time: float
+    slope: float
 
 class SessionLapsData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
