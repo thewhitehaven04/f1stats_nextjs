@@ -20,7 +20,6 @@ export async function generateStaticParams() {
         orderBy: {
             season_year: "desc",
         },
-        skip: 1,
     })
     return seasons.map((season) => ({
         season: season.season_year.toString(),

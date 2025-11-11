@@ -1,8 +1,8 @@
 import type { TDriverRow } from "../../types"
 import { TeamFormTablePositionCell } from "@/modules/team-season-results/features/form-table/components/TeamFormTablePositionCell"
 import { NaLabel } from "@/shared/components/ValueOrNa"
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/uiComponents/table'
-import { Table } from 'lucide-react'
+import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/uiComponents/table"
+import { Table } from "lucide-react"
 
 export const TeamSeasonFormSection = (props: {
     driverCount: number
@@ -39,26 +39,22 @@ export const TeamSeasonFormSection = (props: {
                             <TableCell className="sticky left-0 bg-primary-foreground z-50 outline-[1px] outline-accent pl-2 pr-4 max-w-max">
                                 {seasonForm[0][index].driverId}
                             </TableCell>
-                            {seasonForm.map((_, roundNumber) => {
-                                return (
-                                    <TableCell
-                                        // biome-ignore lint/suspicious/noArrayIndexKey: SAME
-                                        key={roundNumber}
-                                        className="align-middle p-0 text-accent-foreground dark:text-accent w-8"
-                                    >
-                                        {seasonForm[roundNumber][index] ? (
-                                            <TeamFormTablePositionCell
-                                                position={
-                                                    seasonForm[roundNumber][index].position || ""
-                                                }
-                                                points={seasonForm[roundNumber][index].points}
-                                            />
-                                        ) : (
-                                            <NaLabel />
-                                        )}
-                                    </TableCell>
-                                )
-                            })}
+                            {seasonForm.map((_, roundNumber) => (
+                                <TableCell
+                                    // biome-ignore lint/suspicious/noArrayIndexKey: SAME
+                                    key={roundNumber}
+                                    className="align-middle p-0 text-accent-foreground dark:text-accent w-8"
+                                >
+                                    {seasonForm[roundNumber][index] ? (
+                                        <TeamFormTablePositionCell
+                                            position={seasonForm[roundNumber][index].position || ""}
+                                            points={seasonForm[roundNumber][index].points}
+                                        />
+                                    ) : (
+                                        <NaLabel />
+                                    )}
+                                </TableCell>
+                            ))}
                         </TableRow>
                     ))}
                 </TableBody>

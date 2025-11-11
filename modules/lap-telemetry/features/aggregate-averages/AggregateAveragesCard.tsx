@@ -8,6 +8,7 @@ import { useMemo } from "react"
 import { Laptime } from "@/shared/components/laptime/Laptime"
 import { useSession } from "@/shared/hooks/useSession"
 import { AggregateAverageDisplayCard } from "./components/AggregateAverageDisplayCard"
+import { SectorTime } from "@/shared/components/sector-time/SectorTime"
 
 export const AggregateAveragesCardRow = () => {
     const { event, session, season } = useSession()
@@ -42,19 +43,33 @@ export const AggregateAveragesCardRow = () => {
                 },
                 throwOnError: true,
             }).then((res) => res.data),
+        placeholderData: queries.map((q) => ({
+            group: q.group_name,
+            avg_time: null,
+            slope: null,
+            max_time: null,
+            min_time: null,
+            avg_s1_time: null,
+            avg_s2_time: null,
+            avg_s3_time: null,
+        })),
     })
+    console.log(data)
 
     return (
-        <section className="w-full grid grid-cols-[repeat(auto-fill,_minmax(330px,_1fr))] gap-4">
+        <section className="w-full grid grid-cols-[repeat(auto-fill,_minmax(275px,_1fr))] gap-4">
             {data
                 ? data.map((d) => (
                       <AggregateAverageDisplayCard
                           key={d.group}
                           groupName={d.group}
                           averageTime={<Laptime value={d.avg_time} />}
-                          slope={<Laptime value={d.slope} />}
+                          slope={<div className='px-1'>{d.slope?.toFixed(3)}</div>}
                           slowestLap={<Laptime isSessionBest={false} value={d.max_time} />}
                           bestLap={<Laptime isPersonalBest value={d.min_time} />}
+                          averageS1={<SectorTime value={d.avg_s1_time} />}
+                          averageS2={<SectorTime value={d.avg_s2_time} />}
+                          averageS3={<SectorTime value={d.avg_s3_time} />}
                       />
                   ))
                 : null}

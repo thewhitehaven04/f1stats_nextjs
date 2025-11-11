@@ -91,10 +91,13 @@ class LaptimeGroupAggregateData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     group: str
-    min_time: float
-    max_time: float
-    avg_time: float
-    slope: float
+    min_time: float | None
+    max_time: float | None
+    avg_time: float | None
+    slope: float | None
+    avg_s1_time: float | None
+    avg_s2_time: float | None
+    avg_s3_time: float | None
 
 class SessionLapsData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)

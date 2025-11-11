@@ -1,6 +1,6 @@
 import type React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/uiComponents/card"
-import { ChartColumnDecreasing, ChartLine, TrendingDown, TrendingUp } from "lucide-react"
+import { ChartColumnDecreasing, ChartLine, ChartSpline, TrendingDown, TrendingUp } from "lucide-react"
 
 interface IAggregateAverageDisplayCardProps {
     groupName: string
@@ -8,6 +8,9 @@ interface IAggregateAverageDisplayCardProps {
     slope: React.ReactNode
     slowestLap: React.ReactNode
     bestLap: React.ReactNode
+    averageS1: React.ReactNode
+    averageS2: React.ReactNode
+    averageS3: React.ReactNode
 }
 
 export const AggregateAverageDisplayCard = ({
@@ -16,6 +19,9 @@ export const AggregateAverageDisplayCard = ({
     slope,
     slowestLap,
     bestLap,
+    averageS1,
+    averageS2,
+    averageS3,
 }: IAggregateAverageDisplayCardProps) => {
     return (
         <Card>
@@ -50,6 +56,27 @@ export const AggregateAverageDisplayCard = ({
                         Best lap:
                     </span>
                     {bestLap}
+                </div>
+                <div className="flex flex-row w-full justify-between">
+                    <span className="font-medium flex flex-row gap-2">
+                        <ChartSpline  />
+                        Average S1:
+                    </span>
+                    {averageS1}
+                </div>
+                <div className="flex flex-row w-full justify-between">
+                    <span className="font-medium flex flex-row gap-2">
+                        <ChartSpline  />
+                        Average S2:
+                    </span>
+                    {averageS2}
+                </div>
+                <div className="flex flex-row w-full justify-between">
+                    <span className="font-medium flex flex-row gap-2">
+                        <ChartSpline  />
+                        Average S3:
+                    </span>
+                    {averageS3}
                 </div>
             </CardContent>
         </Card>

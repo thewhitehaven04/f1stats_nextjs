@@ -162,10 +162,13 @@ export type LapTimingData = {
 
 export type LaptimeGroupAggregateData = {
     group: string
-    min_time: number
-    max_time: number
-    avg_time: number
-    slope: number
+    min_time: number | null
+    max_time: number | null
+    avg_time: number | null
+    slope: number | null
+    avg_s1_time: number | null
+    avg_s2_time: number | null
+    avg_s3_time: number | null
 }
 
 /**

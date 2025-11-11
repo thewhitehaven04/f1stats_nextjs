@@ -27,7 +27,6 @@ const PerLapTelemetryComparisonView = dynamic(
 )
 
 export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
-    const { event, season: year, session } = useSession()
     const { groups, activeGroup, setActiveGroup, addGroup, resetGroups } = useSelectionGroups()
 
     const [tab, setTab] = useState<"telemetry" | "averageTelemetry">("telemetry")

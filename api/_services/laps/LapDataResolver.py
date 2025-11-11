@@ -339,14 +339,20 @@ class LapDataResolver:
                             list(range(len(x))), x.values, 1
                         ).coef[1],
                     ),
-                ).to_records()
+                    average_s1=NamedAgg(column="sector_1_time", aggfunc='mean'),
+                    average_s2=NamedAgg(column="sector_2_time", aggfunc='mean'),
+                    average_s3=NamedAgg(column="sector_3_time", aggfunc='mean'),
+                ).to_dict()
                 aggs.append(
                     LaptimeGroupAggregateData(
                         group=item.group_name,
-                        avg_time=current[0][1],
-                        min_time=current[1][1],
-                        max_time=current[2][1],
-                        slope=current[3][1],
+                        avg_time=current['laptime']['avg_time'],
+                        min_time=current['laptime']['min_time'],
+                        max_time=current['laptime']['max_time'],
+                        slope=current['laptime']['slope'],
+                        avg_s1_time=current['sector_1_time']['average_s1'],
+                        avg_s2_time=current['sector_2_time']['average_s2'],
+                        avg_s3_time=current['sector_3_time']['average_s3'],
                     )
                 )
 
