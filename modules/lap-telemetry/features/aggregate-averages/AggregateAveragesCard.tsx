@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useLapGroupSelection } from "../../hooks/useLapGroupSelectionAtom"
 import {
-    getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost,
+    getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPost,
     type AggregateLapDataQuery,
 } from "@/shared/client/generated"
 import { useMemo } from "react"
@@ -32,7 +32,7 @@ export const AggregateAveragesCardRow = () => {
     const { data } = useQuery({
         queryKey: ["aggregateAverages", selection],
         queryFn: async () =>
-            getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost({
+            getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPost({
                 body: {
                     queries,
                 },

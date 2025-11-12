@@ -14,9 +14,9 @@ import type {
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
-    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData,
-    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse,
-    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
@@ -162,20 +162,20 @@ export const getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet = <
 /**
  * Get Aggregate Laptime Data
  */
-export const getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost = <
+export const getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? _heyApiClient).post<
-        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse,
-        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
         ThrowOnError
     >({
-        url: "/api/season/{year}/event/{event}/session/{session}/aggregates",
+        url: "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
         ...options,
         headers: {
             "Content-Type": "application/json",

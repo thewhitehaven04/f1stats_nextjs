@@ -22,7 +22,7 @@ app.add_middleware(
 
 
 @app.post(
-    "/api/season/{year}/event/{event}/session/{session}/aggregates",
+    "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
     response_model=list[LaptimeGroupAggregateData],
 )
 async def get_aggregate_laptime_data(

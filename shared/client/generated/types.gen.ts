@@ -390,7 +390,7 @@ export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses =
 export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse =
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses[keyof GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses]
 
-export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData = {
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostData = {
     body: GetAggregatesRequestDto
     path: {
         year: string
@@ -398,28 +398,29 @@ export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregat
         session: string
     }
     query?: never
-    url: "/api/season/{year}/event/{event}/session/{session}/aggregates"
+    url: "/api/season/{year}/event/{event}/session/{session}/laps/aggregates"
 }
 
-export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors = {
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError
 }
 
-export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError =
-    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors]
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostError =
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors]
 
-export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: Array<LaptimeGroupAggregateData>
-}
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses =
+    {
+        /**
+         * Successful Response
+         */
+        200: Array<LaptimeGroupAggregateData>
+    }
 
-export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse =
-    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses]
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse =
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses]
 
 export type ClientOptions = {
     baseUrl: `${string}://shared` | (string & {})
