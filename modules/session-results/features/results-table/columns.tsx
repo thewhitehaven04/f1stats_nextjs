@@ -66,7 +66,11 @@ const PRACTICE_COLUMNS_DEF = [
         cell: (info) => {
             const value = info.getValue()
             return value ? (
-                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                <Link
+                    className="hover:underline"
+                    prefetch={false}
+                    href={`/season/${2024}/team/${value.id}`}
+                >
                     {value.name}
                 </Link>
             ) : (
@@ -104,7 +108,11 @@ const QUALI_COLUMNS_DEF = [
         cell: (info) => {
             const value = info.getValue()
             return value ? (
-                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                <Link
+                    className="hover:underline"
+                    prefetch={false}
+                    href={`/season/${2024}/team/${value.id}`}
+                >
                     {value.name}
                 </Link>
             ) : (
@@ -147,7 +155,11 @@ export const RACE_COLUMNS_DEF = [
         cell: (info) => {
             const value = info.getValue()
             return value ? (
-                <Link className="hover:underline" href={`/season/${2024}/team/${value.id}`}>
+                <Link
+                    className="hover:underline"
+                    prefetch={false}
+                    href={`/season/${2024}/team/${value.id}`}
+                >
                     {value.name}
                 </Link>
             ) : (

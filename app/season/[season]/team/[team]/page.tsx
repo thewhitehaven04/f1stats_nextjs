@@ -18,6 +18,6 @@ export default async function TeamSeasonFormPage(props: {
     params: Promise<{ season: string; team: string }>
 }) {
     const { season, team } = await props.params
-    const data = fetchTeamSeasonForm(season, team)
+    const data = await fetchTeamSeasonForm(season, team)
     return <TeamSeasonResultsScreen {...data} />
 }

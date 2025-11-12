@@ -1,11 +1,13 @@
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
-import { TeamSeasonFormChart } from '@/modules/team-season-results/features/form-chart/TeamSeasonFormChart'
-import { TeamSeasonFormSection } from '@/modules/team-season-results/features/form-table/TeamSeasonFormTable'
-import type { fetchTeamSeasonForm } from '@/modules/team-season-results/fetcher'
+import { TeamSeasonFormChart } from "@/modules/team-season-results/features/form-chart/TeamSeasonFormChart"
+import { TeamSeasonFormSection } from "@/modules/team-season-results/features/form-table/TeamSeasonFormTable"
+import type { fetchTeamSeasonForm } from "@/modules/team-season-results/fetcher"
 import { Suspense } from "react"
 
-export async function TeamSeasonResultsScreen(props: ReturnType<typeof fetchTeamSeasonForm>) {
-    const { eventPoints, seasonEvents, driverCount, teamName } = await props
+export async function TeamSeasonResultsScreen(
+    props: Awaited<ReturnType<typeof fetchTeamSeasonForm>>,
+) {
+    const { eventPoints, seasonEvents, driverCount, teamName } = props
 
     return (
         <div className="flex flex-col gap-4">

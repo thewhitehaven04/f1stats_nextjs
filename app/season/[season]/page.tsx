@@ -3,8 +3,7 @@ import dbClient from "@/shared/client/db"
 import { SeasonCalendarScreen } from "@/modules/season-calendar/SeasonCalendarScreen"
 import { getSeasonEvents } from "@/modules/season-calendar/models/season-events"
 
-// revalidate calendar data every 30 minutes
-export const revalidate = 1800
+export const revalidate = 3600 
 
 export async function generateMetadata({
     params,
