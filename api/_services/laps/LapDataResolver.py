@@ -11,9 +11,6 @@ from api._repository.repository import (
 )
 from api._core.models.queries import (
     AggregateLapDataQuery,
-    AverageTelemetryQuery,
-    GetAggregatesRequestDto,
-    GetAverageTelemetryQueriesRequestDto,
     SessionIdentifier,
     SessionQueryFilter,
 )

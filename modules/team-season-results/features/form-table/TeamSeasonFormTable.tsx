@@ -1,8 +1,7 @@
 import type { TDriverRow } from "../../types"
 import { TeamFormTablePositionCell } from "@/modules/team-season-results/features/form-table/components/TeamFormTablePositionCell"
 import { NaLabel } from "@/shared/components/ValueOrNa"
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/uiComponents/table"
-import { Table } from "lucide-react"
+import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/uiComponents/table"
 
 export const TeamSeasonFormSection = (props: {
     driverCount: number

@@ -54,7 +54,6 @@ export const AggregateAveragesCardRow = () => {
             avg_s3_time: null,
         })),
     })
-    console.log(data)
 
     return (
         <section className="w-full grid grid-cols-[repeat(auto-fill,_minmax(275px,_1fr))] gap-4">

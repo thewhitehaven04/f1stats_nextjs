@@ -5,7 +5,7 @@ import type { Chart as ChartJS, ChartTypeRegistry } from "chart.js"
 import { merge } from "ts-deepmerge"
 import clsx from "clsx"
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
-import { getCssVar } from "./config"
+import { getThemeVar } from "./config"
 
 export const ThemedChart = (
     props: ComponentProps<typeof Chart> & {
@@ -14,7 +14,7 @@ export const ThemedChart = (
         isUpdatingData?: boolean
     },
 ) => {
-    const { theme } = useTheme()
+    const { resolvedTheme } = useTheme()
 
     const chartRef = useRef<ChartJS<keyof ChartTypeRegistry, unknown, unknown>>(null)
 
@@ -23,44 +23,44 @@ export const ThemedChart = (
         if (chartRef.current) {
             chartRef.current.update("none")
         }
-    }, [theme])
+    }, [resolvedTheme])
 
     const { noDataMessage, hasData, isUpdatingData, ...rest } = props
 
     const merged = merge(rest, {
         ref: props.ref || chartRef,
         options: {
-            backgroundColor: getCssVar("--background"),
-            borderColor: getCssVar("--border"),
-            color: getCssVar("--foreground"),
+            backgroundColor: getThemeVar(resolvedTheme, "background"),
+            borderColor: getThemeVar(resolvedTheme, "border"),
+            color: getThemeVar(resolvedTheme, "foreground"),
             plugins: {
                 legend: {
                     labels: {
-                        color: getCssVar("--foreground"),
+                        color: getThemeVar(resolvedTheme, "foreground"),
                     },
                 },
             },
             scales: {
                 x: {
                     border: {
-                        color: getCssVar("--muted-foreground"),
+                        color: getThemeVar(resolvedTheme, "muted-foreground"),
                     },
                     ticks: {
-                        color: getCssVar("--foreground"),
+                        color: getThemeVar(resolvedTheme, "foreground"),
                     },
                     grid: {
-                        color: getCssVar("--muted-foreground"),
+                        color: getThemeVar(resolvedTheme, "muted-foreground"),
                     },
                 },
                 y: {
                     border: {
-                        color: getCssVar("--muted-foreground"),
+                        color: getThemeVar(resolvedTheme, "muted-foreground"),
                     },
                     ticks: {
-                        color: getCssVar("--foreground"),
+                        color: getThemeVar(resolvedTheme, "foreground"),
                     },
                     grid: {
-                        color: getCssVar("--muted-foreground"),
+                        color: getThemeVar(resolvedTheme, "muted-foreground"),
                     },
                 },
             },

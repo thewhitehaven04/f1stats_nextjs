@@ -1,11 +1,11 @@
 "use client"
 import type { SessionLapsData } from "@/shared/client/generated"
 import { initGlobalChartConfig } from "@/shared/components/themed-chart/config"
-import { getColorFromColorMap } from '@/shared/components/themed-chart/helpers'
-import { formatTime } from '@/shared/helpers/formatTime'
+import { getColorFromColorMap } from "@/shared/components/themed-chart/helpers"
+import { ThemedChart } from "@/shared/components/themed-chart/ThemedChart"
+import { formatTime } from "@/shared/helpers/formatTime"
 import type { ChartConfiguration } from "chart.js"
 import { useMemo } from "react"
-import { Chart } from "react-chartjs-2"
 initGlobalChartConfig()
 
 export function LapsBoxChart({
@@ -69,7 +69,8 @@ export function LapsBoxChart({
 
     return (
         <div className="relative w-full flex flex-col">
-            <Chart
+            <ThemedChart
+                hasData={!!sessionData}
                 type="boxplot"
                 data={sessionData}
                 height={laps.driver_lap_data.length * 25}
