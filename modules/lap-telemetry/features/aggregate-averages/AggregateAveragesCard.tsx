@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useLapGroupSelection } from "../../hooks/useLapGroupSelectionAtom"
 import {
-    getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPost,
+    getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost,
     type AggregateLapDataQuery,
 } from "@/shared/client/generated"
 import { useMemo } from "react"
@@ -32,7 +32,7 @@ export const AggregateAveragesCardRow = () => {
     const { data } = useQuery({
         queryKey: ["aggregateAverages", selection],
         queryFn: async () =>
-            getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPost({
+            getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost({
                 body: {
                     queries,
                 },
@@ -64,7 +64,7 @@ export const AggregateAveragesCardRow = () => {
                           key={d.group}
                           groupName={d.group}
                           averageTime={<Laptime value={d.avg_time} />}
-                          slope={<div className='px-1'>{d.slope?.toFixed(3)}</div>}
+                          slope={<div className="px-1">{d.slope?.toFixed(3)}</div>}
                           slowestLap={<Laptime isSessionBest={false} value={d.max_time} />}
                           bestLap={<Laptime isPersonalBest value={d.min_time} />}
                           averageS1={<SectorTime value={d.avg_s1_time} />}

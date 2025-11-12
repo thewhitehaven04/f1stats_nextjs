@@ -37,7 +37,7 @@ app.add_middleware(
     "/api/season/{year}/event/{event}/session/{session}/laps",
     response_model=SessionLapsData,
 )
-async def get_session_laptimes_filtered(
+async def get_session_laps(
     year: str,
     event: str,
     session: SessionIdentifier,
@@ -137,10 +137,10 @@ async def get_circuit_geojson(year: str, event: str):
     return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()
 
 @app.post(
-    "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
+    "/api/season/{year}/event/{event}/session/{session}/aggregates",
     response_model=list[LaptimeGroupAggregateData],
 )
-async def get_session_laptimes_filtered(
+async def get_aggregate_laptime_data(
     year: str,
     event: str,
     session: str,

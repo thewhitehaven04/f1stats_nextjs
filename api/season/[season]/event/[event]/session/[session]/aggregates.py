@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 
-from api._core.models.queries import GetAggregatesRequestDto, SessionQueryFilter
+from api._core.models.queries import GetAggregatesRequestDto
 from api._repository.engine import get_connection
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LaptimeGroupAggregateData
@@ -22,10 +22,10 @@ app.add_middleware(
 
 
 @app.post(
-    "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
+    "/api/season/{year}/event/{event}/session/{session}/aggregates",
     response_model=list[LaptimeGroupAggregateData],
 )
-async def get_session_laptimes_filtered(
+async def get_aggregate_laptime_data(
     year: str,
     event: str,
     session: str,

@@ -7,7 +7,7 @@ import { ChartLoadingIndicator } from "../lap-telemetry/components/ChartLoadingI
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/uiComponents/tabs"
 import {
-    getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost,
+    getSessionLapsApiSeasonYearEventEventSessionSessionLapsPost,
     type SessionQuery,
 } from "@/shared/client/generated"
 import { ApiClient } from "@/shared/client"
@@ -56,7 +56,7 @@ export const LapsScreen = () => {
         queryKey: ["laps", year, event, session, queries],
         queryFn: async () =>
             (
-                await getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost({
+                await getSessionLapsApiSeasonYearEventEventSessionSessionLapsPost({
                     client: ApiClient,
                     path: {
                         event,

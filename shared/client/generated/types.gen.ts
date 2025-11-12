@@ -240,7 +240,7 @@ export type ValidationError = {
     type: string
 }
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostData = {
+export type GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostData = {
     body: SessionQueryFilter
     path: {
         year: string
@@ -259,25 +259,25 @@ export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsP
     url: "/api/season/{year}/event/{event}/session/{session}/laps"
 }
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostErrors = {
+export type GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError
 }
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostError =
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostErrors[keyof GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostErrors]
+export type GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostError =
+    GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostErrors[keyof GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostErrors]
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponses = {
+export type GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponses = {
     /**
      * Successful Response
      */
     200: SessionLapsData
 }
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponse =
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponses[keyof GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponses]
+export type GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponse =
+    GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponses[keyof GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponses]
 
 export type GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData = {
     body: GetTelemetryQueriesRequestDto
@@ -390,39 +390,36 @@ export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses =
 export type GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse =
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses[keyof GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponses]
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostData =
-    {
-        body: GetAggregatesRequestDto
-        path: {
-            year: string
-            event: string
-            session: string
-        }
-        query?: never
-        url: "/api/season/{year}/event/{event}/session/{session}/laps/aggregates"
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData = {
+    body: GetAggregatesRequestDto
+    path: {
+        year: string
+        event: string
+        session: string
     }
+    query?: never
+    url: "/api/season/{year}/event/{event}/session/{session}/aggregates"
+}
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors =
-    {
-        /**
-         * Validation Error
-         */
-        422: HttpValidationError
-    }
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError
+}
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostError =
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors[keyof GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostErrors]
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError =
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostErrors]
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses =
-    {
-        /**
-         * Successful Response
-         */
-        200: Array<LaptimeGroupAggregateData>
-    }
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<LaptimeGroupAggregateData>
+}
 
-export type GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse =
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses[keyof GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses]
+export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse =
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponses]
 
 export type ClientOptions = {
     baseUrl: `${string}://shared` | (string & {})

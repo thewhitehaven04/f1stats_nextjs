@@ -328,7 +328,6 @@ class LapDataResolver:
         for item in query:
             if item.lap_id_filter:
                 current = df[df["id"].isin(item.lap_id_filter)]
-                logger.logger.warning(current.to_records())
                 current = current.agg(
                     avg_time=NamedAgg(column="laptime", aggfunc="mean"),
                     min_time=NamedAgg(column="laptime", aggfunc="min"),

@@ -2,9 +2,9 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "@hey-api/client-fetch"
 import type {
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostData,
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponse,
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostError,
+    GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostData,
+    GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponse,
+    GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostError,
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostData,
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostResponse,
     GetLapTelemetriesApiSeasonYearEventEventSessionSessionTelemetriesPostError,
@@ -14,9 +14,9 @@ import type {
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetData,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetResponse,
     GetCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGetError,
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
-    GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse,
+    GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
@@ -38,7 +38,7 @@ export type Options<
 }
 
 /**
- * Get Session Laptimes Filtered
+ * Get Session Laps
  * Retrieve filtered lap times for a specific Formula 1 session.
  *
  * Args:
@@ -50,17 +50,14 @@ export type Options<
  * Returns:
  * Filtered lap times for the specified session.
  */
-export const getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPost = <
+export const getSessionLapsApiSeasonYearEventEventSessionSessionLapsPost = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostData,
-        ThrowOnError
-    >,
+    options: Options<GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostData, ThrowOnError>,
 ) => {
     return (options.client ?? _heyApiClient).post<
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostResponse,
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsPostError,
+        GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostResponse,
+        GetSessionLapsApiSeasonYearEventEventSessionSessionLapsPostError,
         ThrowOnError
     >({
         url: "/api/season/{year}/event/{event}/session/{session}/laps",
@@ -163,22 +160,22 @@ export const getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet = <
 }
 
 /**
- * Get Session Laptimes Filtered
+ * Get Aggregate Laptime Data
  */
-export const getSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPost = <
+export const getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? _heyApiClient).post<
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
-        GetSessionLaptimesFilteredApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostResponse,
+        GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionAggregatesPostError,
         ThrowOnError
     >({
-        url: "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
+        url: "/api/season/{year}/event/{event}/session/{session}/aggregates",
         ...options,
         headers: {
             "Content-Type": "application/json",
