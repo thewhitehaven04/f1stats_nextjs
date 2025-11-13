@@ -9,6 +9,7 @@ import { Laptime } from "@/shared/components/laptime/Laptime"
 import { useSession } from "@/shared/hooks/useSession"
 import { AggregateAverageDisplayCard } from "./components/AggregateAverageDisplayCard"
 import { SectorTime } from "@/shared/components/sector-time/SectorTime"
+import { Slope } from "./components/Slope"
 
 export const AggregateAveragesCardRow = () => {
     const { event, session, season } = useSession()
@@ -63,7 +64,7 @@ export const AggregateAveragesCardRow = () => {
                           key={d.group}
                           groupName={d.group}
                           averageTime={<Laptime value={d.avg_time} />}
-                          slope={<div className="px-1">{d.slope?.toFixed(3)}</div>}
+                          slope={<Slope value={d.slope} />}
                           slowestLap={<Laptime isSessionBest={false} value={d.max_time} />}
                           bestLap={<Laptime isPersonalBest value={d.min_time} />}
                           averageS1={<SectorTime value={d.avg_s1_time} />}
