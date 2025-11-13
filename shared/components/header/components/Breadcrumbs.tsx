@@ -29,10 +29,8 @@ const SEGMENTS = [
     },
     {
         expression: /\/season\/(\d{4})\/event\/([a-zA-Z0-9%]+)\/session\/([a-zA-Z0-9%]+)\/laps/,
-        getText: (matchArray: RegExpMatchArray | null) => {
-            return matchArray
-                ? `${decodeURIComponent(matchArray[2])}, ${decodeURIComponent(matchArray[3])} laps`
-                : ""
+        getText: () => {
+            return 'Laps' 
         },
         getHref: (matchArray: RegExpMatchArray | null) => {
             return matchArray
