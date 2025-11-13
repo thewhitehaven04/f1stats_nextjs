@@ -78,27 +78,15 @@ class LapDataResolver:
 
     @staticmethod
     def _set_is_personal_best_sector(laps: DataFrame):
-        pb_s1 = laps.groupby("driver_id")["sector_1_time"].min()
-        pb_s2 = laps.groupby("driver_id")["sector_2_time"].min()
-        pb_s3 = laps.groupby("driver_id")["sector_3_time"].min()
-
-        for driver_id, laptime in pb_s1.items():
-            sector_times = laps[laps["driver_id"] == driver_id]["sector_1_time"]
-            laps.loc[laps["driver_id"] == driver_id, "is_personal_best_s1"] = (
-                sector_times == laptime
-            )
-
-        for driver_id, laptime in pb_s2.items():
-            sector_times = laps[laps["driver_id"] == driver_id]["sector_2_time"]
-            laps.loc[laps["driver_id"] == driver_id, "is_personal_best_s2"] = (
-                sector_times == laptime
-            )
-
-        for driver_id, laptime in pb_s3.items():
-            sector_times = laps[laps["driver_id"] == driver_id]["sector_3_time"]
-            laps.loc[laps["driver_id"] == driver_id, "is_personal_best_s3"] = (
-                sector_times == laptime
-            )
+        laps["is_personal_best_s1"] = laps["sector_1_time"] == laps.groupby(
+            "driver_id"
+        )["sector_1_time"].transform("min")
+        laps["is_personal_best_s2"] = laps["sector_2_time"] == laps.groupby(
+            "driver_id"
+        )["sector_2_time"].transform("min")
+        laps["is_personal_best_s3"] = laps["sector_3_time"] == laps.groupby(
+            "driver_id"
+        )["sector_3_time"].transform("min")
 
     @staticmethod
     def _set_is_personal_best(laps: DataFrame):
@@ -106,13 +94,9 @@ class LapDataResolver:
         # the whole session, unlike the built in `IsPersonalBest` attribute
         # that returns "rolling" personal best, i.e. the personal best at that point in time
         # which means that there are multiple personal bests in the same session
-        personal_best_laps = laps.groupby("driver_id")["laptime"].min()
-        for driver, laptime in personal_best_laps.items():
-            current_driver_laptimes = laps[laps["driver_id"] == driver]["laptime"]
-            laps.loc[laps["driver_id"] == driver, "is_pb"] = (
-                laptime == current_driver_laptimes
-            )
-
+        laps["is_pb"] = laps["laptime"] == laps.groupby("driver_id")[
+            "laptime"
+        ].transform("min")
         return laps
 
     def _get_laps_dataframe_by_filter(self, filter_: SessionQueryFilter):
@@ -226,7 +210,8 @@ class LapDataResolver:
 
         color_map = ColorMapBuilder()
 
-        formatted_laps = laps[
+        formatted_laps = laps.loc[
+            :,
             [
                 "id",
                 "driver_id",
@@ -242,7 +227,7 @@ class LapDataResolver:
                 "lap_number",
                 "is_inlap",
                 "is_outlap",
-            ]
+            ],
         ]
         self._set_is_personal_best_sector(formatted_laps)
         self._set_is_personal_best(formatted_laps)
@@ -335,20 +320,20 @@ class LapDataResolver:
                             list(range(len(x))), x.values, 1
                         ).coef[1],
                     ),
-                    average_s1=NamedAgg(column="sector_1_time", aggfunc='mean'),
-                    average_s2=NamedAgg(column="sector_2_time", aggfunc='mean'),
-                    average_s3=NamedAgg(column="sector_3_time", aggfunc='mean'),
+                    average_s1=NamedAgg(column="sector_1_time", aggfunc="mean"),
+                    average_s2=NamedAgg(column="sector_2_time", aggfunc="mean"),
+                    average_s3=NamedAgg(column="sector_3_time", aggfunc="mean"),
                 ).to_dict()
                 aggs.append(
                     LaptimeGroupAggregateData(
                         group=item.group_name,
-                        avg_time=current['laptime']['avg_time'],
-                        min_time=current['laptime']['min_time'],
-                        max_time=current['laptime']['max_time'],
-                        slope=current['laptime']['slope'],
-                        avg_s1_time=current['sector_1_time']['average_s1'],
-                        avg_s2_time=current['sector_2_time']['average_s2'],
-                        avg_s3_time=current['sector_3_time']['average_s3'],
+                        avg_time=current["laptime"]["avg_time"],
+                        min_time=current["laptime"]["min_time"],
+                        max_time=current["laptime"]["max_time"],
+                        slope=current["laptime"]["slope"],
+                        avg_s1_time=current["sector_1_time"]["average_s1"],
+                        avg_s2_time=current["sector_2_time"]["average_s2"],
+                        avg_s3_time=current["sector_3_time"]["average_s3"],
                     )
                 )
 
