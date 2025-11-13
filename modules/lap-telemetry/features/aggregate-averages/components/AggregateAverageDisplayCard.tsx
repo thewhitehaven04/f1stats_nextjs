@@ -1,6 +1,7 @@
 import type React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/uiComponents/card"
 import { ChartColumnDecreasing, ChartLine, ChartSpline, TrendingDown, TrendingUp } from "lucide-react"
+import style from './aggregate-card.module.css'
 
 interface IAggregateAverageDisplayCardProps {
     groupName: string
@@ -24,7 +25,7 @@ export const AggregateAverageDisplayCard = ({
     averageS3,
 }: IAggregateAverageDisplayCardProps) => {
     return (
-        <Card>
+        <Card className={style['entry-animation']}>
             <CardHeader>
                 <CardTitle>{groupName}</CardTitle>
             </CardHeader>
