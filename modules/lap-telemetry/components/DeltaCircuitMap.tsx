@@ -1,4 +1,4 @@
-import type { CircuitGeometryDto, FastestDelta } from '@/shared/client/generated'
+import type { CircuitGeometryDto, FastestDelta } from "@/shared/client/generated"
 import { encodeSVGPath, SVGPathData } from "svg-pathdata"
 
 const padding = 16
@@ -41,6 +41,7 @@ const getRotatedCoordinates = ({
 }
 
 function getPath({
+    i,
     xStart,
     yStart,
     xEnd,
@@ -50,6 +51,7 @@ function getPath({
     smallDimensionScaleFactor,
     isXSmall,
 }: {
+    i: number
     xStart: number
     yStart: number
     xEnd: number
@@ -59,20 +61,29 @@ function getPath({
     smallDimensionScaleFactor: number
     isXSmall: boolean
 }) {
-    return encodeSVGPath([
-        {
-            type: SVGPathData.MOVE_TO,
-            relative: false,
-            x: (xStart / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
-            y: (yStart / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
-        },
-        {
-            type: SVGPathData.LINE_TO,
-            relative: false,
-            x: (xEnd / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
-            y: (yEnd / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
-        },
-    ])
+    return i === 0
+        ? encodeSVGPath([
+              {
+                  type: SVGPathData.MOVE_TO,
+                  relative: false,
+                  x: (xStart / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
+                  y: (yStart / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
+              },
+              {
+                  type: SVGPathData.LINE_TO,
+                  relative: false,
+                  x: (xEnd / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
+                  y: (yEnd / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
+              },
+          ])
+        : encodeSVGPath([
+              {
+                  type: SVGPathData.LINE_TO,
+                  relative: false,
+                  x: (xEnd / X) * (isXSmall ? smallDimensionScaleFactor : 1) * MAX_DIMENSION,
+                  y: (yEnd / Y) * (isXSmall ? 1 : smallDimensionScaleFactor) * MAX_DIMENSION,
+              },
+          ])
 }
 
 export function DeltaCircuitMap(props: {
@@ -111,7 +122,7 @@ export function DeltaCircuitMap(props: {
             midY,
             rotation: geometry.rotation,
         }),
-        key: d.driver ?? d.group?.name
+        key: d.driver ?? d.group?.name,
     }))
 
     const minX = Math.min(...preparedCoordinates.map((pos) => pos.x))
@@ -133,23 +144,26 @@ export function DeltaCircuitMap(props: {
                 className="overflow-visible my-4"
             >
                 <title>Driver speed comparison</title>
-                {preparedCoordinates.map((pos, index) => {
-                    const first = pos
-                    const second =
-                        preparedCoordinates[
-                            index === preparedCoordinates.length - 1 ? index : index + 1
-                        ]
+                <path
+                    fill="white"
+                    stroke="var(--foreground)"
+                    strokeWidth="5.5"
+                    strokeLinejoin="round"
+                    d={preparedCoordinates
+                        .map((pos, index) => {
+                            const first = pos
+                            const second =
+                                preparedCoordinates[
+                                    index === preparedCoordinates.length - 1 ? index : index + 1
+                                ]
 
-                    const xStart = first.x - minX
-                    const yStart = first.y - minY
-                    if (!second) return null
-                    const xEnd = second.x - minX
-                    const yEnd = second.y - minY
-                    return (
-                        <path
-                            // biome-ignore lint/suspicious/noArrayIndexKey: static array
-                            key={index}
-                            d={getPath({
+                            const xStart = first.x - minX
+                            const yStart = first.y - minY
+                            if (!second) return null
+                            const xEnd = second.x - minX
+                            const yEnd = second.y - minY
+                            return getPath({
+                                i: index,
                                 xStart,
                                 yStart,
                                 xEnd,
@@ -158,13 +172,10 @@ export function DeltaCircuitMap(props: {
                                 Y: rotatedY,
                                 smallDimensionScaleFactor: scaleFactor,
                                 isXSmall: isXSmallDimension,
-                            })}
-                            fill="white"
-                            stroke="var(--foreground)"
-                            strokeWidth="6"
-                        />
-                    )
-                })}
+                            })
+                        })
+                        .join(" ")}
+                />
                 {preparedDeltas.map((pos, index) => {
                     const first = pos
                     const second =
@@ -180,6 +191,7 @@ export function DeltaCircuitMap(props: {
                             // biome-ignore lint/suspicious/noArrayIndexKey: static array
                             key={index}
                             d={getPath({
+                                i: 0,
                                 xStart,
                                 yStart,
                                 xEnd,
@@ -190,8 +202,9 @@ export function DeltaCircuitMap(props: {
                                 isXSmall: isXSmallDimension,
                             })}
                             fill="white"
-                            stroke={pos.key ? colorMap[pos.key] : 'var(--foreground)'}
-                            strokeWidth="4.5"
+                            stroke={pos.key ? colorMap[pos.key] : "var(--foreground)"}
+                            strokeWidth="5"
+                            strokeLinecap='butt'
                         />
                     )
                 })}
