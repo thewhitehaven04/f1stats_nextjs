@@ -1,6 +1,7 @@
+from contextlib import asynccontextmanager
 from typing import Annotated
 from urllib.parse import unquote
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, logger
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 
@@ -19,6 +20,12 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
 )
+
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
 
 
 @app.post(
