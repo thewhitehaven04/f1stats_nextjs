@@ -1,14 +1,14 @@
-import { useMemo, useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { LapsTableSection } from "./features/lap-selector-table/LapSelectorTable"
 import dynamic from "next/dynamic"
 import { useSelectionGroups } from "./hooks/useSelectionGroups"
 import { GroupSelectionContext } from "./context/lap-selection-context"
 import { SelectionCard } from "./features/lap-selector-table/components/SelectionCard"
 import { ChartLoadingIndicator } from "./components/ChartLoadingIndicator"
-import { useSession } from "@/shared/hooks/useSession"
 import type { SessionLapsData } from "@/shared/client/generated"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/uiComponents/tabs"
 import { AggregateAveragesCardRow } from "./features/aggregate-averages/AggregateAveragesCard"
+import { LoadingSpinner } from "@/shared/components/LoadingSpinner"
 
 const AverageTelemetryComparisonView = dynamic(
     () => import("./features/average-telemetry/AverageTelemetryComparisonView"),
@@ -46,7 +46,9 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
 
     return (
         <GroupSelectionContext.Provider value={ctxValue}>
-            <LapsTableSection key={tab} laps={laps} />
+            <Suspense fallback={<LoadingSpinner />}>
+                <LapsTableSection key={tab} laps={laps} />
+            </Suspense>
             <Tabs value={tab} className="mt-4">
                 <TabsList className="w-full">
                     <TabsTrigger value="telemetry" onClick={() => handleTabChange("telemetry")}>
@@ -60,7 +62,9 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="telemetry">
-                    <PerLapTelemetryComparisonView />
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <PerLapTelemetryComparisonView />
+                    </Suspense>
                 </TabsContent>
                 <TabsContent value="averageTelemetry" className="flex flex-col gap-8">
                     <SelectionCard
@@ -70,7 +74,9 @@ export const LapTelemetryScreen = ({ laps }: { laps: SessionLapsData }) => {
                         setActiveGroup={setActiveGroup}
                     />
                     <AggregateAveragesCardRow />
-                    <AverageTelemetryComparisonView groups={groups} />
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <AverageTelemetryComparisonView groups={groups} />
+                    </Suspense>
                 </TabsContent>
             </Tabs>
         </GroupSelectionContext.Provider>

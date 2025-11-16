@@ -12,7 +12,7 @@ import {
     getCircuitGeojsonApiSeasonYearEventEventCircuitGeojsonGet,
 } from "@/shared/client/generated"
 import { ApiClient } from "@/shared/client"
-import { useSession, type TSession } from "@/shared/hooks/useSession"
+import { useSession } from "@/shared/hooks/useSession"
 import { usePerLapTelemetry } from "../../hooks/queries/usePerLapTelemetry"
 
 export type TTelemetryDataset = ChartDataset<
