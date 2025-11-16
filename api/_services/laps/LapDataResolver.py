@@ -1,4 +1,3 @@
-from fastapi import logger
 from pandas import DataFrame, NamedAgg, read_sql
 from sqlalchemy import Connection, and_, null, or_, select
 from numpy.polynomial import Polynomial
@@ -15,10 +14,10 @@ from api._core.models.queries import (
     SessionQueryFilter,
 )
 
-from api._services.color_resolver.ColorMap import ColorMapBuilder
-from api._services.color_resolver.ColorResolver import TeamPlotStyleResolver
-from api._services.color_resolver.models import PlotColor
-from api._services.laps.models.laps import (
+from ..color_resolver.ColorMap import ColorMapBuilder
+from ..color_resolver.ColorResolver import TeamPlotStyleResolver
+from ..color_resolver.models import PlotColor
+from .models.laps import (
     DriverLapData,
     LaptimeGroupAggregateData,
     SessionLapsData,
@@ -40,6 +39,8 @@ class LapDataResolver:
         session_identifier (SessionIdentifier): Identifier for the specific session type
         plot_style_resolver (StyleResolver): Resolver for generating driver-specific plot styles
     """
+
+    SLOW_LAP_THRESHOLD = 1.07
 
     def __init__(
         self,
@@ -102,7 +103,22 @@ class LapDataResolver:
     def _get_laps_dataframe_by_filter(self, filter_: SessionQueryFilter):
         return read_sql(
             con=self.db_connection,
-            sql=select(Laps)
+            sql=select(
+                Laps.id,
+                Laps.driver_id,
+                Laps.laptime,
+                Laps.sector_1_time,
+                Laps.sector_2_time,
+                Laps.sector_3_time,
+                Laps.speedtrap_1,
+                Laps.speedtrap_2,
+                Laps.speedtrap_fl,
+                Laps.stint,
+                Laps.compound_id,
+                Laps.lap_number,
+                Laps.is_inlap,
+                Laps.is_outlap,
+            )
             .where(
                 and_(
                     Laps.season_year == self.season,
@@ -290,7 +306,8 @@ class LapDataResolver:
 
         lap_data.sort(key=lambda x: x.session_data.min_time)
         flying_laps = formatted_laps[
-            formatted_laps["laptime"] < formatted_laps["laptime"].min() * 1.07
+            formatted_laps["laptime"]
+            < formatted_laps["laptime"].min() * self.SLOW_LAP_THRESHOLD
         ]
         return SessionLapsData(
             driver_lap_data=lap_data,
