@@ -10,54 +10,54 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope
 
-const serwist = new Serwist({
-    precacheEntries: self.__SW_MANIFEST,
-    skipWaiting: true,
-    clientsClaim: true,
-    navigationPreload: true,
-    runtimeCaching: defaultCache,
-})
+// const serwist = new Serwist({
+//     precacheEntries: self.__SW_MANIFEST,
+//     skipWaiting: true,
+//     clientsClaim: true,
+//     navigationPreload: true,
+//     runtimeCaching: defaultCache,
+// })
 
-const CACHED_URLS = ["/", "/season/2024", "/season/2025"]
+// const CACHED_URLS = ["/", "/season/2024", "/season/2025"]
 
-self.addEventListener("install", (event) => {
-    event.waitUntil(
-        Promise.all(
-            CACHED_URLS.map((url) =>
-                serwist.handleRequest({
-                    request: new Request(url),
-                    event,
-                }),
-            ),
-        ),
-    )
-})
+// self.addEventListener("install", (event) => {
+//     event.waitUntil(
+//         Promise.all(
+//             CACHED_URLS.map((url) =>
+//                 serwist.handleRequest({
+//                     request: new Request(url),
+//                     event,
+//                 }),
+//             ),
+//         ),
+//     )
+// })
 
-self.addEventListener("push", (event) => {
-    if (event.data) {
-        const data = event.data.json()
-        event.waitUntil(
-            self.registration.showNotification(data.title, {
-                body: data.body,
-                icon: data.icon || "/public/notification.png",
-                data: {
-                    dateOfArrival: Date.now(),
-                    primaryKey: "2",
-                },
-            }),
-        )
-    }
-})
+// self.addEventListener("push", (event) => {
+//     if (event.data) {
+//         const data = event.data.json()
+//         event.waitUntil(
+//             self.registration.showNotification(data.title, {
+//                 body: data.body,
+//                 icon: data.icon || "/public/notification.png",
+//                 data: {
+//                     dateOfArrival: Date.now(),
+//                     primaryKey: "2",
+//                 },
+//             }),
+//         )
+//     }
+// })
 
-self.addEventListener("notificationclick", (event) => {
-    event.notification.close()
-    event.waitUntil(
-        self.clients.openWindow(
-            process.env.NEXT_PUBLIC_VERCEL_ENV
-                ? `https://${process.env.NEXT_PUBLIC_URL}`
-                : "https://localhost:3000/",
-        ),
-    )
-})
+// self.addEventListener("notificationclick", (event) => {
+//     event.notification.close()
+//     event.waitUntil(
+//         self.clients.openWindow(
+//             process.env.NEXT_PUBLIC_VERCEL_ENV
+//                 ? `https://${process.env.NEXT_PUBLIC_URL}`
+//                 : "https://localhost:3000/",
+//         ),
+//     )
+// })
 
-serwist.addEventListeners()
+// serwist.addEventListeners()

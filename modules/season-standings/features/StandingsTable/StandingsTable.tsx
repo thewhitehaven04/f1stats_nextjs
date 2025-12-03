@@ -1,0 +1,40 @@
+"use client"
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/uiComponents/table"
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import type { IStandingsTableProps, IDriverStandingsTableRow } from "./types"
+import { DRIVER_STANDINGS_COLUMNS } from "./columns"
+
+export const StandingsTable = ({ rows }: IStandingsTableProps) => {
+    const { getRowModel, getFlatHeaders } = useReactTable<IDriverStandingsTableRow>({
+        columns: DRIVER_STANDINGS_COLUMNS,
+        data: rows,
+        getCoreRowModel: getCoreRowModel(),
+    })
+
+    return (
+        <Table className="rounded-md overflow-hidden">
+            <TableHeader>
+                <TableRow>
+                    {getFlatHeaders().map(({ column, id, getContext }) => (
+                        <TableHead className="text-start px-1 bg-primary-foreground" key={id}>
+                            {flexRender(column.columnDef.header, getContext())}
+                        </TableHead>
+                    ))}
+                </TableRow>
+            </TableHeader>
+
+            <TableBody>
+                {getRowModel().rows.map(({ id, getVisibleCells }) => (
+                    <TableRow key={id}>
+                        {getVisibleCells().map(({ id: cellId, column, getContext }) => (
+                            <TableCell className="pl-1" key={cellId}>
+                                {flexRender(column.columnDef.cell, getContext())}
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    )
+}

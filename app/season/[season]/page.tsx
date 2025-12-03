@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
-import dbClient from "@/shared/client/db"
 import { SeasonCalendarScreen } from "@/modules/season-calendar/SeasonCalendarScreen"
 import { getSeasonEvents } from "@/modules/season-calendar/models/season-events"
+import { fetchSeasons } from "@/modules/season-calendar/models/seasons"
 
-export const revalidate = 3600 
+export const revalidate = 3600
 
 export async function generateMetadata({
     params,
@@ -14,14 +14,8 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-    // cache every season other than the current one
-    const seasons = await dbClient.seasons.findMany({
-        orderBy: {
-            season_year: "desc",
-        },
-    })
-    return seasons.map((season) => ({
-        season: season.season_year.toString(),
+    return (await fetchSeasons({ seasons: { orderBy: "desc" } })).map((season) => ({
+        season: String(season.season_year),
     }))
 }
 

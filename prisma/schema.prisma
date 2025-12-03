@@ -258,3 +258,12 @@ view laps_with_analytics {
 
   @@ignore
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view season_standings {
+  driver_id   String @db.VarChar(64)
+  season_year Int    @db.SmallInt
+  sum         BigInt?
+
+  @@id([driver_id, season_year])
+}
