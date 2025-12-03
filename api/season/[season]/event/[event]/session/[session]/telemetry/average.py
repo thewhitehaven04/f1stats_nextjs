@@ -12,7 +12,13 @@ from api._services.telemetry.models import AverageTelemetriesResponseDto
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,12 +26,6 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
 )
-
-@asynccontextmanager
-async def lifespan(app):
-    yield
-    get_connection().close()
-    logger.logger.info("DB connection closed")
 
 
 @app.post(

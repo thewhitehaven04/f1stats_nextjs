@@ -10,9 +10,13 @@ from api._services.laps.models.laps import SessionLapsData
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
 
-
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_methods=["GET", "POST"],
@@ -20,11 +24,6 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-@asynccontextmanager
-async def lifespan(app):
-    yield
-    get_connection().close()
-    logger.logger.info("DB connection closed")
 
 
 @app.post(

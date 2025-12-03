@@ -12,21 +12,19 @@ from api._services.telemetry.models import LapTelemetriesResponseDto
 
 from fastapi.middleware.cors import CORSMiddleware
 
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
 
-app = FastAPI()
-
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_methods=["GET", "POST"],
     allow_origins=["*"],
     allow_credentials=True,
 )
-
-@asynccontextmanager
-async def lifespan(app):
-    yield
-    get_connection().close()
-    logger.logger.info("DB connection closed")
 
 
 @app.post(

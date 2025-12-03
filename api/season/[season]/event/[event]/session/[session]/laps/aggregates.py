@@ -10,8 +10,13 @@ from api._repository.engine import get_connection
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LaptimeGroupAggregateData
 
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 app.add_middleware(
@@ -20,12 +25,6 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
 )
-
-@asynccontextmanager
-async def lifespan(app):
-    yield
-    get_connection().close()
-    logger.logger.info("DB connection closed")
 
 
 @app.post(

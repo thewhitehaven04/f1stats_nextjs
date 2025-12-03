@@ -1,8 +1,9 @@
 # this file is used for local debugging only and is a collection of all the endpoints
 # distributed in python serverless functions
+from contextlib import asynccontextmanager
 from typing import Annotated
 from urllib.parse import unquote
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, logger
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import (
@@ -24,7 +25,16 @@ from api._services.telemetry.models import (
 )
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    get_connection().close()
+    logger.logger.info("DB connection closed")
+
+
+app = FastAPI(lifespan=lifespan)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_methods=["GET", "POST"],
