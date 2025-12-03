@@ -1,3 +1,4 @@
+import { Tabs, TabsContent, TabsTrigger } from "@/uiComponents/tabs"
 import { StandingsTable } from "./features/StandingsTable/StandingsTable"
 import type { ISeasonStandings } from "./models/types"
 
@@ -6,7 +7,16 @@ export const SeasonStandingsScreen = (props: { standings: ISeasonStandings }) =>
     return (
         <section className="flex flex-col gap-2">
             <h2>Season {standings.season}</h2>
-            <StandingsTable rows={standings.standings} />
+            <Tabs>
+                <TabsTrigger value="drivers" name="Drivers" />
+                <TabsTrigger value="teams" name="Teams" />
+                <TabsContent value="teams">
+                    <StandingsTable type="team" rows={standings.teamStandings} />
+                </TabsContent>
+                <TabsContent value="drivers">
+                    <StandingsTable type="driver" rows={standings.driverStandings} />
+                </TabsContent>
+            </Tabs>
         </section>
     )
 }

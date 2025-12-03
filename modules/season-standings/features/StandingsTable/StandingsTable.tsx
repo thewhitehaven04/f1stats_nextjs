@@ -2,12 +2,12 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/uiComponents/table"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import type { IStandingsTableProps, IDriverStandingsTableRow } from "./types"
-import { DRIVER_STANDINGS_COLUMNS } from "./columns"
+import type { TStandingsTableProps } from "./types"
+import { DRIVER_STANDINGS_COLUMNS, TEAM_STANDINGS_COLUMNS } from "./columns"
 
-export const StandingsTable = ({ rows }: IStandingsTableProps) => {
-    const { getRowModel, getFlatHeaders } = useReactTable<IDriverStandingsTableRow>({
-        columns: DRIVER_STANDINGS_COLUMNS,
+export const StandingsTable = ({ type, rows }: TStandingsTableProps) => {
+    const { getRowModel, getFlatHeaders } = useReactTable({
+        columns: type === "driver" ? DRIVER_STANDINGS_COLUMNS : TEAM_STANDINGS_COLUMNS,
         data: rows,
         getCoreRowModel: getCoreRowModel(),
     })

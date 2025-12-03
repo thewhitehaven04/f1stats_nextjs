@@ -1,8 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table"
-import type { IDriverStandingsTableRow } from './types'
+import type { IDriverStandingsTableRow, ITeamStandingsTableRow } from "./types"
 
-
-const columns = createColumnHelper<IDriverStandingsTableRow>()
+const columns = createColumnHelper<IDriverStandingsTableRow | ITeamStandingsTableRow>()
 
 export const DRIVER_STANDINGS_COLUMNS = [
     columns.display({
@@ -17,11 +16,11 @@ export const DRIVER_STANDINGS_COLUMNS = [
 
 export const TEAM_STANDINGS_COLUMNS = [
     columns.display({
-        id: 'team',
-        header: 'Team name'
+        id: "team",
+        header: "Team name",
     }),
     columns.display({
-        id: 'points',
-        header: 'Points'
+        id: "points",
+        header: "Points",
     }),
 ]

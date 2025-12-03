@@ -4,13 +4,16 @@ export interface IDriverStandingsTableRow {
 }
 
 export interface ITeamStandingsTableRow {
-    team: {
-        name: string
-        color: string
-    }
+    team: string
     points: number
 }
 
-export interface IStandingsTableProps {
-    rows: IDriverStandingsTableRow[]
-}
+export type TStandingsTableProps =
+    | {
+          type: "driver"
+          rows: IDriverStandingsTableRow[]
+      }
+    | {
+          type: "team"
+          rows: ITeamStandingsTableRow[]
+      }

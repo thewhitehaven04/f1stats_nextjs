@@ -1,7 +1,11 @@
 export interface ISeasonStandings {
     season: number
-    standings: {
+    driverStandings: {
         driver: string
+        points: number
+    }[]
+    teamStandings: {
+        team: string
         points: number
     }[]
 }
