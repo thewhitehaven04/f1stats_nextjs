@@ -3,13 +3,22 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/uiComponents/table"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import type { TStandingsTableProps } from "./types"
-import { DRIVER_STANDINGS_COLUMNS, TEAM_STANDINGS_COLUMNS } from "./columns"
+import {
+    DRIVER_STANDINGS_COLUMN_ORDER,
+    DRIVER_STANDINGS_COLUMNS,
+    TEAM_STANDINGS_COLUMN_ORDER,
+    TEAM_STANDINGS_COLUMNS,
+} from "./columns"
 
 export const StandingsTable = ({ type, rows }: TStandingsTableProps) => {
     const { getRowModel, getFlatHeaders } = useReactTable({
         columns: type === "driver" ? DRIVER_STANDINGS_COLUMNS : TEAM_STANDINGS_COLUMNS,
         data: rows,
         getCoreRowModel: getCoreRowModel(),
+        initialState: {
+            columnOrder:
+                type === "driver" ? DRIVER_STANDINGS_COLUMN_ORDER : TEAM_STANDINGS_COLUMN_ORDER,
+        },
     })
 
     return (
