@@ -5,7 +5,6 @@ import { Header } from "@/shared/components/header"
 import { SeasonSelector } from "@/shared/components/header/components/SeasonSelector"
 import { SessionSearch } from "@/shared/components/header/components/SessionSearch"
 import { fetchEventsWithSessions } from "@/modules/season-calendar/models/fetcher"
-import Link from "next/link"
 
 export default async function Layout({
     children,
@@ -22,11 +21,6 @@ export default async function Layout({
                         <ThemeSelector />
                         <PushNotificationManager />
                     </>
-                }
-                middleSlot={
-                    <Link href={`/season/${(await params).season}/standings`}>
-                        Season standings
-                    </Link>
                 }
             />
             <main className="w-[calc(100vw-36px)] xl:w-[1200px] justify-self-center self-start flex flex-col gap-8">

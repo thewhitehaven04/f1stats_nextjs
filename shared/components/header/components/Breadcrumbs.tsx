@@ -28,6 +28,12 @@ const SEGMENTS = [
         },
     },
     {
+        expression: /\/season\/(\d{4})\/standings/,
+        getText: (matchArray: RegExpMatchArray | null) => {
+            return 'Standings'
+        },
+    },
+    {
         expression: /\/season\/(\d{4})\/event\/([a-zA-Z0-9%]+)\/session\/([a-zA-Z0-9%]+)\/laps/,
         getText: () => {
             return 'Laps' 

@@ -3,10 +3,7 @@ import Link from "next/link"
 import { OfflineHeader } from "./components/OfflineHeader"
 import { Separator } from "@/uiComponents/separator"
 
-export const Header = ({
-    rightSlot,
-    middleSlot,
-}: { rightSlot?: React.ReactNode; middleSlot?: React.ReactNode }) => (
+export const Header = ({ rightSlot }: { rightSlot?: React.ReactNode }) => (
     <div className="sticky backdrop-blur-sm z-40 top-0">
         <header className="bg-base-100 opacity-80 shadow-sm w-screen flex flex-col md:flex-row gap-2 md:gap-8 justify-between items-center px-4 py-1 md:py-2">
             <div className="flex flex-row gap-8 items-start md:items-center w-full">
@@ -14,7 +11,6 @@ export const Header = ({
                     <Link href="/">F1Stats</Link>
                 </div>
                 <Separator orientation="vertical" />
-                {middleSlot}
                 <OfflineHeader />
                 <Breadcrumbs />
             </div>

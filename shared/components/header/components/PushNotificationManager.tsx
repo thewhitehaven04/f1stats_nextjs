@@ -23,9 +23,9 @@ export function PushNotificationManager() {
 
     useEffect(() => {
         if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
-            // setIsSupported(true)
-            // registerServiceWorker()
-            // console.log("Service worker has been registered")
+            setIsSupported(true)
+            registerServiceWorker()
+            console.log("Service worker has been registered")
         } else {
             console.warn("Push notifications are unsupported by this user agent")
         }

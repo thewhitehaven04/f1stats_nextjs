@@ -12,16 +12,16 @@ export const fetchDriverSeasonStandings = async ({
                 season_year: season,
             },
             orderBy: {
-                sum: 'desc',
-            }
+                sum: "desc",
+            },
         }),
         dbClient.season_standings.findMany({
             where: {
                 season_year: season,
             },
             orderBy: {
-                sum: 'desc',
-            }
+                sum: "desc",
+            },
         }),
     ])
     return {
