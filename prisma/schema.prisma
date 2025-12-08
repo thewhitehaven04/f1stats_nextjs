@@ -261,9 +261,19 @@ view laps_with_analytics {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view season_standings {
-  driver_id   String @db.VarChar(64)
-  season_year Int    @db.SmallInt
+  driver_id   String  @db.VarChar(64)
+  season_year Int     @db.SmallInt
   sum         BigInt?
 
   @@id([driver_id, season_year])
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view teams_season_standings {
+  id                Int    @db.SmallInt
+  team_display_name String @db.VarChar(64)
+  season_year       Int    @db.SmallInt
+  sum               BigInt?
+  
+  @@id([id, season_year])
 }

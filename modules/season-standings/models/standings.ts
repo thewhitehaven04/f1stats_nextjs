@@ -26,13 +26,15 @@ export const fetchDriverSeasonStandings = async ({
     ])
     return {
         season: season,
-        driverStandings: driverStandings.map((standing) => ({
+        driverStandings: driverStandings.map((standing, index) => ({
             driver: standing.driver_id,
             points: Number(standing.sum),
+            position: index + 1,
         })),
-        teamStandings: teamStandings.map((standing) => ({
+        teamStandings: teamStandings.map((standing, index) => ({
             team: standing.team_display_name,
             points: Number(standing.sum),
+            position: index + 1,
         })),
     }
 }

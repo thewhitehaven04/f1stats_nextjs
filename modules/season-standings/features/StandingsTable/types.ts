@@ -12,12 +12,10 @@ export interface ITeamStandingsTableRow {
 
 export type TStandingsTableProps =
     | {
-          position: number
           type: "driver"
           rows: IDriverStandingsTableRow[]
       }
     | {
-          position: number
           type: "team"
           rows: ITeamStandingsTableRow[]
       }
