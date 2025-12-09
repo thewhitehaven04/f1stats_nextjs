@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from api._repository.repository import Circuits, Events
 from api._repository.engine import postgres
 from geopy.distance import geodesic, Point
+import json
 
 from api._services.circuits.models import CircuitGeometryDto
 
@@ -40,17 +41,18 @@ class CircuitResolver:
 
     def get_circuit_geometry(self):
         record = self.get_circuit_record()
+        geojson = json.loads(record.geojson)
         return CircuitGeometryDto(
-            geojson=record.geojson["features"][0], rotation=record.rotation
+            geojson=geojson["features"][0], rotation=record.rotation
         )
 
     def _get_circuit_geometry_points(self) -> list[Point]:
         return list(
             map(
                 lambda coord: Point(longitude=coord[0], latitude=coord[1]),
-                self.get_circuit_record().geojson["features"][0]["geometry"][
-                    "coordinates"
-                ],
+                json.loads(self.get_circuit_record().geojson)["features"][0][
+                    "geometry"
+                ]["coordinates"],
             )
         )
 
@@ -106,5 +108,7 @@ class CircuitResolver:
 
     def calculate_geodesic_distance(self):
         circuit_tuple = self.get_circuit_record()
-        coordinates = circuit_tuple.geojson["features"][0]["geometry"]["coordinates"]
+        coordinates = json.loads(circuit_tuple.geojson)["features"][0]["geometry"][
+            "coordinates"
+        ]
         return self._distance_to_finish(coordinates)

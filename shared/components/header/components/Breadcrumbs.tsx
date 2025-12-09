@@ -32,13 +32,9 @@ const SEGMENTS = [
         getText: () => {
             return 'Standings'
         },
-        getHref: (matchArray: RegExpMatchArray | null) => {
-            return matchArray
-                ? `/season/${matchArray[1]}/standings`
-                : ""
-        },
+        getHref: (matchArray: RegExpMatchArray | null) => matchArray ? `/season/${matchArray[1]}/standings` : "",
     },
-    {
+   {
         expression: /\/season\/(\d{4})\/event\/([a-zA-Z0-9%]+)\/session\/([a-zA-Z0-9%]+)\/laps/,
         getText: () => {
             return 'Laps' 
