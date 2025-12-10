@@ -23,7 +23,7 @@ export function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
     const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null)
     const [subscriptionId, setSubscriptionId] = useState(
-        typeof window !== "undefined" ? (localStorage.get("subscriptionId") ?? null) : null,
+        typeof window !== "undefined" ? localStorage.getItem("subscriptionId") || null : null,
     )
 
     useQuery({
@@ -32,12 +32,12 @@ export function PushNotificationManager() {
             const sub = (
                 await getSubscriptionApiSubscriptionsIdGet({
                     path: {
-                        id: subscriptionId,
+                        id: subscriptionId as string,
                     },
                     throwOnError: true,
                 })
             ).data
-            setPushSubscription(JSON.parse(sub.subscription))
+            // setPushSubscription(JSON.parse(sub.subscription))
         },
         enabled: !!subscriptionId,
     })

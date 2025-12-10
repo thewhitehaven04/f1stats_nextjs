@@ -6,6 +6,7 @@ import { SessionSearch } from "@/shared/components/header/components/SessionSear
 import { fetchEventsWithSessions } from "@/modules/season-calendar/models/fetcher"
 import { PushNotificationManager } from '@/modules/push-message-subscription/features/PushNotificationManager'
 
+
 export default async function Layout({
     children,
     params,
