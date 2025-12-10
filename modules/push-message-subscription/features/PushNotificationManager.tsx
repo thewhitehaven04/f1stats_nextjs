@@ -23,7 +23,9 @@ export function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
     const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null)
     const [subscriptionId, setSubscriptionId] = useState(
-        typeof window !== "undefined" ? localStorage.getItem("subscriptionId") || null : null,
+        typeof window !== "undefined"
+            ? Number(localStorage.getItem("subscriptionId")) || null
+            : null,
     )
 
     useQuery({
@@ -32,12 +34,12 @@ export function PushNotificationManager() {
             const sub = (
                 await getSubscriptionApiSubscriptionsIdGet({
                     path: {
-                        id: subscriptionId as string,
+                        id: String(subscriptionId),
                     },
                     throwOnError: true,
                 })
             ).data
-            // setPushSubscription(JSON.parse(sub.subscription))
+            setPushSubscription(JSON.parse(sub.subscription))
         },
         enabled: !!subscriptionId,
     })
@@ -72,7 +74,7 @@ export function PushNotificationManager() {
 
         const { subscriptionId } = await subscribeUser(JSON.parse(JSON.stringify(sub)))
         localStorage.setItem("subscriptionId", String(subscriptionId))
-        setSubscriptionId(subscriptionId)
+        setSubscriptionId(Number(subscriptionId))
         setPushSubscription(sub)
 
         send({
@@ -91,10 +93,12 @@ export function PushNotificationManager() {
 
     async function unsubscribeFromPush() {
         await pushSubscription?.unsubscribe()
-        await unsubscribeUser({
-            subscriptionId,
-        })
-        setPushSubscription(null)
+        if (subscriptionId) {
+            await unsubscribeUser({
+                subscriptionId,
+            })
+            setPushSubscription(null)
+        }
     }
 
     return (
