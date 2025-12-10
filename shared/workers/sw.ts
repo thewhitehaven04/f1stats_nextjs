@@ -35,20 +35,16 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("push", (event) => {
     if (event.data) {
-        const data = event.data.json()
-        const options = {
-            body: data.body,
-            icon: data.icon || "/public/notification.png",
-            data: {
-                dateOfArrival: Date.now(),
-                primaryKey: "2",
-            },
-        }
-        console.log('data, options:')
-        console.log(data)
-        console.log(options)
-
-        event.waitUntil(self.registration.showNotification(data.title, options))
+        event.waitUntil(
+            self.registration.showNotification("Data update", {
+                body: event.data.text(),
+                icon: "/public/notification.png",
+                data: {
+                    dateOfArrival: Date.now(),
+                    primaryKey: "2",
+                },
+            }),
+        )
     }
 })
 
