@@ -22,7 +22,9 @@ const urlBase64ToUint8Array = (base64String: string) => {
 export function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
     const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null)
-    const [subscriptionId, setSubscriptionId] = useState(localStorage.get("subscriptionId") ?? null)
+    const [subscriptionId, setSubscriptionId] = useState(
+        typeof window !== "undefined" ? (localStorage.get("subscriptionId") ?? null) : null,
+    )
 
     useQuery({
         queryKey: ["subcriptions", subscriptionId],
