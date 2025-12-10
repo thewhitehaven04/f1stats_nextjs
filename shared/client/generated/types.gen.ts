@@ -223,6 +223,11 @@ export type StintData = {
     deg_rate: number | null
 }
 
+export type SubscriptionsDto = {
+    id: number
+    subscription: string
+}
+
 export type TelemetryMeasurementDto = {
     speed: number
     rpm: number
@@ -421,6 +426,35 @@ export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggr
 
 export type GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse =
     GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses[keyof GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponses]
+
+export type GetSubscriptionApiSubscriptionsIdGetData = {
+    body?: never
+    path: {
+        id: string
+    }
+    query?: never
+    url: "/api/subscriptions/{id}"
+}
+
+export type GetSubscriptionApiSubscriptionsIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError
+}
+
+export type GetSubscriptionApiSubscriptionsIdGetError =
+    GetSubscriptionApiSubscriptionsIdGetErrors[keyof GetSubscriptionApiSubscriptionsIdGetErrors]
+
+export type GetSubscriptionApiSubscriptionsIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SubscriptionsDto
+}
+
+export type GetSubscriptionApiSubscriptionsIdGetResponse =
+    GetSubscriptionApiSubscriptionsIdGetResponses[keyof GetSubscriptionApiSubscriptionsIdGetResponses]
 
 export type ClientOptions = {
     baseUrl: `${string}://shared` | (string & {})

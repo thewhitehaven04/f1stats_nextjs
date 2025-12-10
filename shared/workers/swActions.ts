@@ -10,39 +10,37 @@ setVapidDetails(
     process.env.VAPID_PRIVATE_KEY!,
 )
 
-let subscription: PushSubscription | null = null
-let subscriptionId: bigint | null = null
-
 export async function subscribeUser(sub: PushSubscription) {
-    subscription = sub
     const res = await db.subscriptions.create({
         data: {
             subscription: JSON.stringify(sub),
         },
     })
-    subscriptionId = res.id
+    return { success: true, subscriptionId: res.id }
+}
+
+export async function unsubscribeUser({
+    subscriptionId,
+}: {
+    subscriptionId: number
+}) {
+    await db.subscriptions.delete({
+        where: {
+            id: subscriptionId,
+        },
+    })
     return { success: true }
 }
 
-export async function unsubscribeUser() {
-    subscription = null
-
-    if (subscriptionId) {
-        await db.subscriptions.delete({
-            where: {
-                id: subscriptionId,
-            },
-        })
-        return { success: true }
-    }
-    return { success: false }
-}
-
-export async function send({ title, message }: { title: string; message: string }) {
-    if (!subscription) {
-        throw new Error("No subscription available")
-    }
-
+export async function send({
+    subscription,
+    title,
+    message,
+}: {
+    subscription: PushSubscription
+    title: string
+    message: string
+}) {
     try {
         await sendNotification(
             subscription,

@@ -3,13 +3,16 @@ import { EventCard } from "./features/EventCard"
 import type { TMappedSeasonEvent } from "./models/types"
 import { Button } from "@/uiComponents/button"
 
-export const SeasonCalendarScreen = ({ events }: { events: TMappedSeasonEvent[] }) => {
+export const SeasonCalendarScreen = ({
+    events,
+    season,
+}: { events: TMappedSeasonEvent[]; season: string }) => {
     const testingEvents = events.filter((event) => event.format === "testing")
     const calendarEvents = events.filter((event) => event.format !== "testing")
     return (
         <section className="flex flex-col gap-4">
-            <Button asChild className='w-max' variant='secondary'>
-                <Link href="./standings">Season standings</Link>
+            <Button asChild className="w-max" variant="secondary">
+                <Link href={`${season}/standings`}>Season standings</Link>
             </Button>
             <h2 className="text-lg">Pre-Season testing</h2>
             <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(330px,_1fr))] gap-4">

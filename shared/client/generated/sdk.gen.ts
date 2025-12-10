@@ -17,6 +17,9 @@ import type {
     GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostData,
     GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostResponse,
     GetAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAggregatesPostError,
+    GetSubscriptionApiSubscriptionsIdGetData,
+    GetSubscriptionApiSubscriptionsIdGetResponse,
+    GetSubscriptionApiSubscriptionsIdGetError,
 } from "./types.gen"
 import { client as _heyApiClient } from "./client.gen"
 
@@ -181,5 +184,21 @@ export const getAggregateLaptimeDataApiSeasonYearEventEventSessionSessionLapsAgg
             "Content-Type": "application/json",
             ...options?.headers,
         },
+    })
+}
+
+/**
+ * Get Subscription
+ */
+export const getSubscriptionApiSubscriptionsIdGet = <ThrowOnError extends boolean = false>(
+    options: Options<GetSubscriptionApiSubscriptionsIdGetData, ThrowOnError>,
+) => {
+    return (options.client ?? _heyApiClient).get<
+        GetSubscriptionApiSubscriptionsIdGetResponse,
+        GetSubscriptionApiSubscriptionsIdGetError,
+        ThrowOnError
+    >({
+        url: "/api/subscriptions/{id}",
+        ...options,
     })
 }

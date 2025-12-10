@@ -3,7 +3,7 @@
 from contextlib import asynccontextmanager
 from typing import Annotated
 from urllib.parse import unquote
-from fastapi import Depends, FastAPI, logger
+from fastapi import Depends, FastAPI, HTTPException, logger
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Connection
 from api._core.models.queries import (
@@ -14,15 +14,19 @@ from api._core.models.queries import (
     SessionQueryFilter,
 )
 from api._repository.engine import get_connection
+from api._repository.repository import Subscriptions
 from api._services.circuits.CircuitResolver import CircuitResolver
 from api._services.circuits.models import CircuitGeometryDto
 from api._services.laps.LapDataResolver import LapDataResolver
 from api._services.laps.models.laps import LaptimeGroupAggregateData, SessionLapsData
+from api._services.subscriptions.SubscriptionService import SubscriptionService
+from api._services.subscriptions.models.subscriptions import SubscriptionsDto
 from api._services.telemetry.TelemetryResolver import TelemetryResolver
 from api._services.telemetry.models import (
     AverageTelemetriesResponseDto,
     LapTelemetriesResponseDto,
 )
+from ._repository.engine import postgres
 
 
 @asynccontextmanager
@@ -146,6 +150,7 @@ async def get_average_lap_telemetries(
 async def get_circuit_geojson(year: str, event: str):
     return CircuitResolver(event=unquote(event), season=year).get_circuit_geometry()
 
+
 @app.post(
     "/api/season/{year}/event/{event}/session/{session}/laps/aggregates",
     response_model=list[LaptimeGroupAggregateData],
@@ -165,3 +170,12 @@ async def get_aggregate_laptime_data(
     ).get_aggregate_data(
         query=body.queries,
     )
+
+
+@app.get("/api/subscriptions/{id}", response_model=SubscriptionsDto)
+async def get_subscription(id: str):
+    subscription = SubscriptionService(engine=postgres).get_subscription_by_id(id)
+    if subscription:
+        return subscription
+    else:
+        raise HTTPException(status_code=404, detail="Subscription not found")

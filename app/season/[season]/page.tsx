@@ -20,6 +20,7 @@ export async function generateStaticParams() {
 }
 
 export default async function SeasonPage({ params }: { params: Promise<{ season: string }> }) {
-    const events = await getSeasonEvents({ season: (await params).season })
-    return <SeasonCalendarScreen events={events} />
+    const season = (await params).season
+    const events = await getSeasonEvents({ season })
+    return <SeasonCalendarScreen events={events} season={season} />
 }

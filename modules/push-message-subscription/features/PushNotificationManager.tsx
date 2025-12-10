@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { LucideTriangleAlert, LucideBell, LucideBellOff } from "lucide-react"
 import { send, subscribeUser, unsubscribeUser } from "@/shared/workers/swActions"
 import { Button } from "@/uiComponents/button"
+import { useQuery } from "@tanstack/react-query"
+import { getSubscriptionApiSubscriptionsIdGet } from "@/shared/client/generated"
 
 const urlBase64ToUint8Array = (base64String: string) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
@@ -19,7 +21,24 @@ const urlBase64ToUint8Array = (base64String: string) => {
 
 export function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
-    const [subscription, setSubscription] = useState<PushSubscription | null>(null)
+    const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null)
+    const [subscriptionId, setSubscriptionId] = useState(localStorage.get("subscriptionId") ?? null)
+
+    useQuery({
+        queryKey: ["subcriptions", subscriptionId],
+        queryFn: async () => {
+            const sub = (
+                await getSubscriptionApiSubscriptionsIdGet({
+                    path: {
+                        id: subscriptionId,
+                    },
+                    throwOnError: true,
+                })
+            ).data
+            setPushSubscription(JSON.parse(sub.subscription))
+        },
+        enabled: !!subscriptionId,
+    })
 
     useEffect(() => {
         if ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window) {
@@ -37,7 +56,9 @@ export function PushNotificationManager() {
             updateViaCache: "none",
         })
         const sub = await registration.pushManager.getSubscription()
-        setSubscription(sub)
+        if (sub) {
+            setPushSubscription(sub)
+        }
     }
 
     async function subscribeToPush() {
@@ -46,28 +67,41 @@ export function PushNotificationManager() {
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
         })
-        await subscribeUser(JSON.parse(JSON.stringify(sub)))
-        setSubscription(sub)
+
+        const { subscriptionId } = await subscribeUser(JSON.parse(JSON.stringify(sub)))
+        localStorage.setItem("subscriptionId", String(subscriptionId))
+        setSubscriptionId(subscriptionId)
+        setPushSubscription(sub)
+
         send({
+            subscription: {
+                endpoint: sub.endpoint,
+                keys: {
+                    auth: String(sub.getKey("auth")),
+                    p256dh: String(sub.getKey("p256dh")),
+                },
+            },
             title: "F1Stats",
-            message: "You've subscribed to push notifications",
+            message:
+                "This is a test messsage. If you see this, you've subscribed to push notifications",
         })
     }
 
     async function unsubscribeFromPush() {
-        send({
-            title: "F1Stats",
-            message: "You've unsubscribed from push notifications",
+        await pushSubscription?.unsubscribe()
+        await unsubscribeUser({
+            subscriptionId,
         })
-        await subscription?.unsubscribe()
-        setSubscription(null)
-        await unsubscribeUser()
+        setPushSubscription(null)
     }
 
     return (
-        <Button variant="secondary" onClick={!subscription ? subscribeToPush : unsubscribeFromPush}>
+        <Button
+            variant="secondary"
+            onClick={!pushSubscription ? subscribeToPush : unsubscribeFromPush}
+        >
             {isSupported ? (
-                subscription ? (
+                pushSubscription ? (
                     <LucideBell />
                 ) : (
                     <LucideBellOff />

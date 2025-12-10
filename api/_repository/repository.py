@@ -4,10 +4,8 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     CHAR,
-    Column,
     Computed,
     Date,
-    DateTime,
     ForeignKeyConstraint,
     Index,
     Integer,
@@ -15,7 +13,6 @@ from sqlalchemy import (
     REAL,
     SmallInteger,
     String,
-    Table,
     Text,
     text,
 )
@@ -28,22 +25,6 @@ class Base(DeclarativeBase):
     pass
 
 
-class PrismaMigrations(Base):
-    __tablename__ = "_prisma_migrations"
-    __table_args__ = (PrimaryKeyConstraint("id", name="_prisma_migrations_pkey"),)
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    checksum: Mapped[str] = mapped_column(String(64))
-    migration_name: Mapped[str] = mapped_column(String(255))
-    started_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(True), server_default=text("now()")
-    )
-    applied_steps_count: Mapped[int] = mapped_column(Integer, server_default=text("0"))
-    finished_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
-    logs: Mapped[Optional[str]] = mapped_column(Text)
-    rolled_back_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
-
-
 class Circuits(Base):
     __tablename__ = "circuits"
     __table_args__ = (PrimaryKeyConstraint("id", name="circuits_pkey"),)
@@ -51,7 +32,7 @@ class Circuits(Base):
     id: Mapped[str] = mapped_column(String(8), primary_key=True)
     name: Mapped[str] = mapped_column(Text)
     geojson: Mapped[dict] = mapped_column(JSONB)
-    rotation: Mapped[int] = mapped_column(SmallInteger, server_default=text('0'))
+    rotation: Mapped[int] = mapped_column(SmallInteger, server_default=text("0"))
 
     events: Mapped[List["Events"]] = relationship("Events", back_populates="circuit")
 
@@ -63,23 +44,6 @@ class Compounds(Base):
     id: Mapped[str] = mapped_column(String(16), primary_key=True)
 
     laps: Mapped[List["Laps"]] = relationship("Laps", back_populates="compound")
-
-
-t_driver_laps_with_analytics = Table(
-    "driver_laps_with_analytics",
-    Base.metadata,
-    Column("driver_id", String(64)),
-    Column("event_name", Text),
-    Column("session_type_id", String(32)),
-    Column("season_year", SmallInteger),
-    Column("pb_s1", REAL),
-    Column("pb_s2", REAL),
-    Column("pb_s3", REAL),
-    Column("pb_st1", SmallInteger),
-    Column("pb_st2", SmallInteger),
-    Column("pb_stfl", SmallInteger),
-    Column("pb_laptime", REAL),
-)
 
 
 class Drivers(Base):
@@ -117,22 +81,6 @@ class EventFormats(Base):
     )
 
 
-t_laps_with_analytics = Table(
-    "laps_with_analytics",
-    Base.metadata,
-    Column("event_name", Text),
-    Column("session_type_id", String(32)),
-    Column("season_year", SmallInteger),
-    Column("min_s1", REAL),
-    Column("min_s2", REAL),
-    Column("min_s3", REAL),
-    Column("best_st1", SmallInteger),
-    Column("best_st2", SmallInteger),
-    Column("best_stfl", SmallInteger),
-    Column("best_laptime", REAL),
-)
-
-
 class Seasons(Base):
     __tablename__ = "seasons"
     __table_args__ = (PrimaryKeyConstraint("season_year", name="seasons_pkey"),)
@@ -159,6 +107,14 @@ class SessionTypes(Base):
         "EventSessions", back_populates="session_type"
     )
     laps: Mapped[List["Laps"]] = relationship("Laps", back_populates="session_type")
+
+
+class Subscriptions(Base):
+    __tablename__ = "subscriptions"
+    __table_args__ = (PrimaryKeyConstraint("id", name="subscriptions_pkey"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    subscription: Mapped[dict] = mapped_column(JSONB)
 
 
 class Teams(Base):
@@ -427,6 +383,14 @@ class SessionResults(Base):
             name="fk_event_sessions_event_name_season_year_session_type_id",
         ),
         PrimaryKeyConstraint("id", name="session_results_pkey"),
+        Index(
+            "session_results_driver_id_session_type_id_event_name_season_key",
+            "driver_id",
+            "session_type_id",
+            "event_name",
+            "season_year",
+            unique=True,
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
