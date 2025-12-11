@@ -19,6 +19,7 @@ export const StandingsTable = ({ type, rows }: TStandingsTableProps) => {
             columnOrder:
                 type === "driver" ? DRIVER_STANDINGS_COLUMN_ORDER : TEAM_STANDINGS_COLUMN_ORDER,
         },
+        enableColumnResizing: false,
     })
 
     return (
@@ -26,7 +27,11 @@ export const StandingsTable = ({ type, rows }: TStandingsTableProps) => {
             <TableHeader>
                 <TableRow>
                     {getFlatHeaders().map(({ column, id, getContext }) => (
-                        <TableHead className="text-start px-1 bg-primary-foreground" key={id}>
+                        <TableHead
+                            className="text-start px-1 bg-primary-foreground"
+                            style={{ width: `${column.getSize()}px` }}
+                            key={id}
+                        >
                             {flexRender(column.columnDef.header, getContext())}
                         </TableHead>
                     ))}
