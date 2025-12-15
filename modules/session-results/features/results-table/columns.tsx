@@ -13,6 +13,7 @@ import { createColumnHelper } from "@tanstack/react-table"
 import Link from "next/link"
 import { Checkbox } from "@/uiComponents/checkbox"
 import { useSetDriverSelection } from "../atoms/driverSelection"
+import { useParams, useRouter } from 'next/navigation'
 
 const baseColumnHelper = createColumnHelper<IBaseResultsData>()
 const practiceHelper = createColumnHelper<IPracticeData>()
@@ -65,11 +66,12 @@ const PRACTICE_COLUMNS_DEF = [
         enableSorting: true,
         cell: (info) => {
             const value = info.getValue()
+            const params = useParams()
             return value ? (
                 <Link
                     className="hover:underline"
                     prefetch={false}
-                    href={`/season/${2024}/team/${value.id}`}
+                    href={`/season/${params.season}/team/${value.id}`}
                 >
                     {value.name}
                 </Link>
@@ -107,11 +109,12 @@ const QUALI_COLUMNS_DEF = [
         enableSorting: true,
         cell: (info) => {
             const value = info.getValue()
+            const params = useParams()
             return value ? (
                 <Link
                     className="hover:underline"
                     prefetch={false}
-                    href={`/season/${2024}/team/${value.id}`}
+                    href={`/season/${params.season}/team/${value.id}`}
                 >
                     {value.name}
                 </Link>
@@ -154,11 +157,12 @@ export const RACE_COLUMNS_DEF = [
         enableSorting: true,
         cell: (info) => {
             const value = info.getValue()
+            const params = useParams()
             return value ? (
                 <Link
                     className="hover:underline"
                     prefetch={false}
-                    href={`/season/${2024}/team/${value.id}`}
+                    href={`/season/${params.season}/team/${value.id}`}
                 >
                     {value.name}
                 </Link>
