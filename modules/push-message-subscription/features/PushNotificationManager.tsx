@@ -6,6 +6,8 @@ import { Button } from "@/uiComponents/button"
 import { useQuery } from "@tanstack/react-query"
 import { getSubscriptionApiSubscriptionsIdGet } from "@/shared/client/generated"
 
+const LS_SUBSCRIPTION_KEY = "subscriptionId"
+
 const urlBase64ToUint8Array = (base64String: string) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
     const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/")
@@ -24,7 +26,7 @@ export function PushNotificationManager() {
     const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null)
     const [subscriptionId, setSubscriptionId] = useState(
         typeof window !== "undefined"
-            ? Number(localStorage.getItem("subscriptionId")) || null
+            ? Number(localStorage.getItem(LS_SUBSCRIPTION_KEY)) || null
             : null,
     )
 
@@ -73,7 +75,7 @@ export function PushNotificationManager() {
         })
 
         const { subscriptionId } = await subscribeUser(JSON.parse(JSON.stringify(sub)))
-        localStorage.setItem("subscriptionId", String(subscriptionId))
+        localStorage.setItem(LS_SUBSCRIPTION_KEY, String(subscriptionId))
         setSubscriptionId(Number(subscriptionId))
         setPushSubscription(sub)
 
@@ -97,6 +99,7 @@ export function PushNotificationManager() {
             await unsubscribeUser({
                 subscriptionId,
             })
+            localStorage.removeItem(LS_SUBSCRIPTION_KEY)
             setPushSubscription(null)
         }
     }
